@@ -17,8 +17,7 @@ body {
 
 .app-container > :nth-child(1) {
   flex: 0 0 auto;
-  width: 50px;
-  background-color: RGB(47, 74, 101);
+  width: 10px;
 }
 
 .app-container > :nth-child(2) {
