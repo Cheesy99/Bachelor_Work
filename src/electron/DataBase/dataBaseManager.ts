@@ -36,7 +36,7 @@ class DatabaseManager {
     this.executeSqlCommands(organizedSchema);
   }
 
-  public async insertData(jsonObject: JsonObject) {
+  public async insertData(jsonObject: JsonObject): Promise<number> {
     console.log("Size of object", jsonObject.length);
     for (let i = 0; i < jsonObject.length; ++i) {
       let insertSQL = jsonObject[i];
@@ -82,13 +82,16 @@ class DatabaseManager {
         sqlCommand += valuesArray.join(", ");
         sqlCommand += ";";
 
-        this.executeSqlCommands(sqlCommand);
+        await this.executeSqlCommands(sqlCommand);
       } else {
         //There is a base value to add it just that the value of termin are null!!!
         // console.log("DEBUG!!!", baseValues);
         console.error("No values to insert into main_table.");
       }
     }
+    return this.executeSqlWithReponse(
+      `SELECT COUNT(*) AS row_count FROM main_table`
+    );
   }
 
   private generateSQLTables(tables: tableSchema): string {
@@ -225,6 +228,20 @@ class DatabaseManager {
       });
 
       this.dataBase.run("COMMIT");
+    });
+  }
+
+  private executeSqlWithReponse(sqlCommand: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.dataBase.get(sqlCommand, (err, row) => {
+        if (err) {
+          console.error("Error executing SQL command:", err.message, err);
+          reject(err);
+        } else {
+          const result = row ? Object.values(row)[0] : 0;
+          resolve(result);
+        }
+      });
     });
   }
 

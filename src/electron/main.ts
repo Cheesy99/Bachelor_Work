@@ -22,7 +22,9 @@ app.on("ready", () => {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
 
-  ipcMain.handle("getTableData", () => {});
+  ipcMain.handle("getTableData", (event, from, tableName) => {
+    return;
+  });
 
   ipcMain.on("upload-json", async (event, fileData) => {
     loader.loadData(fileData);

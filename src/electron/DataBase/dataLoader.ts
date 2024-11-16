@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import SchemaBuilder from "./schemaBuilder.js";
 import FieldNames from "./Interfaces/fieldNames.js";
 import JsonObject from "./Interfaces/JsonObject.js";
+import TableData from "./Interfaces/TableData.js";
 
 class DataLoader extends EventEmitter {
   private mapper: JsonToSqlMapper;
@@ -21,8 +22,11 @@ class DataLoader extends EventEmitter {
       this.schemaStructure = this.schemaBuilder.schema;
 
       try {
-        this.mapper.insertData(jsonObject, this.schemaStructure!);
-        this.emit("dataLoaded", 5);
+        let amount_of_rows_in_main = this.mapper.insertData(
+          jsonObject,
+          this.schemaStructure!
+        );
+        this.emit("dataLoaded", amount_of_rows_in_main);
       } catch (error) {
         console.error("Schema is undefined", error);
       }
@@ -30,6 +34,11 @@ class DataLoader extends EventEmitter {
       console.error("Error parsing JSON data", error);
     }
   }
+
+  public async getTable(
+    fromID: number[],
+    tableName: string //Promise<TableData> {
+  ) {}
 }
 
 export default DataLoader;
