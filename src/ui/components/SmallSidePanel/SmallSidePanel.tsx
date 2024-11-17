@@ -22,7 +22,6 @@ function SmallSidePanel() {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
 
-        //@ts-ignore
         window.electronAPI.sendJsonFile(fileData);
       };
       reader.readAsText(file);

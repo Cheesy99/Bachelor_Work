@@ -4,7 +4,6 @@ import Table from "./Table/Table";
 
 function MainWindow() {
   const handleChange = useEffect(() => {
-    //@ts-ignore
     window.electronAPI.onDatabaseChange(
       async (amountOfRowsFromMainTable: number) => {
         console.log(
@@ -12,13 +11,11 @@ function MainWindow() {
         );
         let tableData;
         if (amountOfRowsFromMainTable < 20) {
-          //@ts-ignore
           tableData = await window.electronAPI.getTableData(
             [1, amountOfRowsFromMainTable],
             "main_table"
           );
         } else {
-          //@ts-ignore
           tableData = await window.electronAPI.getTableData(
             [1, 20],
             "main_table"
