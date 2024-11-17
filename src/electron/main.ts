@@ -29,7 +29,6 @@ app.on("ready", () => {
   ipcMain.on("upload-json", async (event, fileData) => {
     loader.loadData(fileData);
     console.log("File data inserted into database");
-    event.sender.send("database-updated");
   });
   loader.on("dataLoaded", (insertedCount: number) => {
     mainWindow.webContents.send("database-change", insertedCount);

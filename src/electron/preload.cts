@@ -9,7 +9,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   },
   //Invoke you get a promise back
   getTableData: (fromID: number[], tableName: string) =>
-    electron.ipcRenderer.invoke("getTable", fromID),
+    electron.ipcRenderer.invoke("getTableData", fromID, tableName),
 
   onDatabaseChange: (callback: (amountOfRows: number) => void) => {
     ipcRenderer.on("database-change", (event, amountOfRows) => {
