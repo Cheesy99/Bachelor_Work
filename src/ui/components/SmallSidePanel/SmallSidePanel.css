@@ -17,7 +17,6 @@
   bottom: 70px;
   left: 50%;
   transform: translateX(-50%);
-  cursor: pointer;
 }
 
 .upload-icon-label {
@@ -25,7 +24,6 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  cursor: pointer;
 }
 
 .icon {
@@ -34,5 +32,6 @@
 }
 
 .icon:hover {
+  cursor: pointer;
   color: #0056b3;
 }

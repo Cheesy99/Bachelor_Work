@@ -4,6 +4,7 @@ import SchemaBuilder from "./schemaBuilder.js";
 import FieldNames from "./Interfaces/fieldNames.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import TableData from "./Interfaces/TableData.js";
+import DatabaseManager from "./DataBaseManager/dataBaseManager.js";
 
 class DataLoader extends EventEmitter {
   private mapper: JsonToSqlMapper;
@@ -22,7 +23,7 @@ class DataLoader extends EventEmitter {
       this.schemaStructure = this.schemaBuilder.schema;
 
       try {
-        let amount_of_rows_in_main = this.mapper.insertData(
+        let amount_of_rows_in_main = await this.mapper.insertData(
           jsonObject,
           this.schemaStructure!
         );
@@ -36,9 +37,13 @@ class DataLoader extends EventEmitter {
   }
 
   public async getTable(
-    fromID: number[],
-    tableName: string //Promise<TableData> {
-  ) {}
+    fromID: [startingId: number, endId: number],
+    tableName: string
+  ): Promise<TableData> {
+    console.log("I have been called");
+    const dbManager = DatabaseManager.getInstance();
+    return dbManager.getTableData(fromID, tableName);
+  }
 }
 
 export default DataLoader;

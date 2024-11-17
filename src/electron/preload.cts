@@ -4,11 +4,10 @@ const electron = require("electron");
 
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   sendJsonFile: (fileData: string) => {
-    console.log(fileData);
     ipcRenderer.send("upload-json", fileData);
   },
   //Invoke you get a promise back
-  getTableData: (fromID: number[], tableName: string) =>
+  getTableData: (fromID: [startId: number, endId: number], tableName: string) =>
     electron.ipcRenderer.invoke("getTableData", fromID, tableName),
 
   onDatabaseChange: (callback: (amountOfRows: number) => void) => {

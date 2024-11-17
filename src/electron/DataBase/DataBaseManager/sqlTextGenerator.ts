@@ -1,6 +1,6 @@
 import DatabaseManager from "./dataBaseManager.js";
-import JsonObject from "./Interfaces/JsonObject.js";
-import tableSchema from "./Interfaces/tableSchema.js";
+import JsonObject from "../Interfaces/JsonObject.js";
+import tableSchema from "../Interfaces/tableSchema.js";
 class SqlTextGenerator {
   private dataBaseManager;
   constructor(dbManager: DatabaseManager) {

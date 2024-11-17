@@ -1,4 +1,4 @@
-import DatabaseManager from "./dataBaseManager.js";
+import DatabaseManager from "./DataBaseManager/dataBaseManager.js";
 import FieldNames from "./Interfaces/fieldNames.js";
 import Schema from "./Interfaces/fieldNames.js";
 import JsonObject from "./Interfaces/JsonObject.js";

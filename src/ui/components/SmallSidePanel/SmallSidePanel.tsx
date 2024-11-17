@@ -15,13 +15,13 @@ function SmallSidePanel() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log("I have been called");
+
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
-        console.log("File data:", fileData);
+
         //@ts-ignore
         window.electronAPI.sendJsonFile(fileData);
       };
@@ -33,6 +33,9 @@ function SmallSidePanel() {
 
   return (
     <div className="small_panel">
+      <label htmlFor="excelUpload" className="excel-icon-label">
+        <i className="fas fa-file-excel icon"></i>
+      </label>
       <label htmlFor="sqlUpload" className="sql-icon-label">
         <i className="fas fa-database icon"></i>
       </label>

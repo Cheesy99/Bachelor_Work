@@ -1,10 +1,11 @@
 import sqlite3 from "sqlite3";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { isDev } from "../util.js";
-import JsonObject from "./Interfaces/JsonObject.js";
-import tableSchema from "./Interfaces/tableSchema.js";
+import { isDev } from "../../util.js";
+import JsonObject from "../Interfaces/JsonObject.js";
+import tableSchema from "../Interfaces/tableSchema.js";
 import SqlTextGenerator from "./sqlTextGenerator.js";
+import TableData from "../Interfaces/TableData.js";
 class DatabaseManager {
   private static instance: DatabaseManager;
   private dataBase: sqlite3.Database;
@@ -17,7 +18,7 @@ class DatabaseManager {
 
     this.dbPath = path.join(
       __dirname,
-      isDev() ? "../../" : "../",
+      isDev() ? "../../../" : "../../",
       "dataBase.db"
     );
     this.dataBase = new sqlite3.Database(this.dbPath);
@@ -45,6 +46,23 @@ class DatabaseManager {
     );
     //@ts-ignore
     return row.row_count;
+  }
+
+  public async getTableData(
+    fromID: [startingID: number, endingId: number],
+    tableName: string
+  ): Promise<TableData> {
+    const [startID, endID] = fromID;
+    const schemaQuery = `PRAGMA table_info(${tableName})`;
+    const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startID} AND ${endID}`;
+
+    const schemaResult = await this.executeSqlGetData(schemaQuery);
+    const dataResult = await this.executeSqlGetData(dataQuery);
+
+    const schema = schemaResult.map((row: any) => row.name);
+    const rows = dataResult.map((row: any) => Object.values(row));
+
+    return { schema, rows };
   }
 
   public executeSqlCommands(sqlCommand: string): void {
@@ -77,6 +95,19 @@ class DatabaseManager {
           reject(err);
         } else {
           resolve(row);
+        }
+      });
+    });
+  }
+
+  public executeSqlGetData(sqlCommand: string): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.dataBase.all(sqlCommand, (err, rows) => {
+        if (err) {
+          console.error("Error executing SQL command:", err.message, err);
+          reject(err);
+        } else {
+          resolve(rows);
         }
       });
     });
