@@ -7,7 +7,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.send("upload-json", fileData);
   },
   getTableData: (fromID: [startId: number, endId: number], tableName: string) =>
-    electron.ipcRenderer.invoke("getTableData", fromID, tableName),
+    ipcRenderer.invoke("getTableData", fromID, tableName),
 
   onDatabaseChange: (callback) => {
     ipcRenderer.on("database-change", (event, amountOfRows) => {
