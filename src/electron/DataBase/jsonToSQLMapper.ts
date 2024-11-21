@@ -12,7 +12,7 @@ export class JsonToSqlMapper {
   }
 
   public async insertData(
-    jsonObject: JsonObject,
+    jsonObject: JsonObject[],
     jsonSchemas: FieldNames[]
   ): Promise<number> {
     this.db.schemaEntry(this.convertDataToTableSchema(jsonSchemas));

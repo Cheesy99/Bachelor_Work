@@ -3,113 +3,112 @@ import JsonObject from "../Interfaces/JsonObject.js";
 import tableSchema from "../Interfaces/tableSchema.js";
 class SqlTextGenerator {
   private dataBaseManager;
+  private foreignCurrentIndex: number = 0;
+  private mainTableCurrentIndex: number = 0;
   constructor(dbManager: DatabaseManager) {
     this.dataBaseManager = dbManager;
   }
-  public async createSqlTableText(jsonObject: JsonObject): Promise<string> {
-    let sqlCommand = "";
-    console.log("Size of object", jsonObject.length);
-    for (let i = 0; i < jsonObject.length; ++i) {
-      let insertSQL = jsonObject[i];
-      const columns = Object.keys(insertSQL);
-      const columnNames = columns
-        .map((column) => `"${this.cleanName(column.replace(/\s+/g, ""))}"`)
-        .join(", ");
+  public async createSqlTableText(
+    jsonObjectArray: JsonObject[]
+  ): Promise<string[]> {
+    let returnCommandQueue: string[] = [];
+    let sqlCommand = `INSERT INTO main_table (id ,${Object.keys(
+      jsonObjectArray[0]
+    ).join(", ")}) VALUES `;
+    let mainTableValues: string[] = [];
 
-      let valuesArray = [];
-      let baseValues = "";
-      for (const key of columns) {
-        if (!Array.isArray(insertSQL[key])) {
-          baseValues += `'${insertSQL[key]}', `;
+    jsonObjectArray.forEach((jsonObject: JsonObject) => {
+      let nestedColumnValue: {
+        columnPosition: number;
+        foreignKeys: number[];
+      }[] = [];
+      let columnValues: string[] = new Array(
+        Object.keys(jsonObject).length
+      ).fill("");
+      Object.keys(jsonObject).forEach(async (key, index) => {
+        console.log("keys", key);
+        const value = jsonObject[key];
+        if (Array.isArray(value)) {
+          let command = await this.creatingInputTextForForeignTable(key, value);
+          returnCommandQueue.push(command[0]);
+          nestedColumnValue.push({
+            columnPosition: index,
+            foreignKeys: command[1],
+          });
+        } else {
+          columnValues[index] = this.formatValue(value);
         }
-      }
+      });
 
-      // Remove the trailing comma and space from baseValues
-      baseValues = baseValues.slice(0, -2);
+      // Create multiple rows for each element in nestedColumnValue
+      // This will probably only work for jsonObject that only have one nested object
+      let duplicatedRows: string[][] = [];
+      nestedColumnValue.forEach((nestedColumn) => {
+        nestedColumn.foreignKeys.forEach((foreignKey) => {
+          let newRow = [...columnValues];
+          newRow[nestedColumn.columnPosition] = `${foreignKey}`;
+          duplicatedRows.push(newRow);
+        });
+      });
 
-      for (const key of columns) {
-        if (Array.isArray(insertSQL[key])) {
-          let idForForeignTable = await this.insertIntoForeignTable(
-            key,
-            insertSQL[key]
-          );
-          if (idForForeignTable.length > 0) {
-            for (let i = idForForeignTable[0]; i <= idForForeignTable[1]; i++) {
-              valuesArray.push(`(${baseValues}, ${i})`);
-            }
-          } else {
-            valuesArray.push(`(${baseValues}, NULL)`);
-          }
-        }
-      }
+      // Flatten the 2D array and add it to returnCommandQueue with parentheses
+      duplicatedRows.forEach((row) =>
+        returnCommandQueue.push(`(${row.join(", ")})`)
+      );
+    });
 
-      if (valuesArray.length === 0) {
-        valuesArray.push(`(${baseValues}, NULL)`);
-      }
-
-      if (valuesArray.length > 0) {
-        sqlCommand = `INSERT INTO main_table (${columnNames}) VALUES `;
-
-        sqlCommand += valuesArray.join(", ");
-        sqlCommand += ";";
-      } else {
-        //There is a base value to add it just that the value of termin are null!!!
-        throw new Error("No values to insert into main_table");
-      }
-    }
-
-    return sqlCommand;
+    return returnCommandQueue;
   }
 
-  private async insertIntoForeignTable(
+  private async creatingInputTextForForeignTable(
     tableName: string,
-    data: any[]
-  ): Promise<[number, number]> {
-    let startingId: number;
-    let endingId: number;
-    if (data.length === 0) return [-1, -1];
+    data: JsonObject[]
+  ): Promise<[string, number[]]> {
+    let newIds: number[] = [];
+    let sqlCommand: string = `INSERT INTO ${tableName} (id, ${Object.keys(
+      data[0]
+    )
+      .map(this.cleanName)
+      .join(", ")}) VALUES `;
+    // TODO: Empty array could be a problem here example: "modulZuordnungen" : [ ],
+    data.forEach((item, index) => {
+      let values = Object.values(item)
+        .map((value) => this.formatValue(value))
+        .join(", ");
+      values = `${this.foreignCurrentIndex}, ${values}`;
+      sqlCommand += `(${values}),`;
+      let id = this.foreignCurrentIndex;
+      newIds.push(id);
+      this.foreignCurrentIndex++;
+    });
 
-    const columns = Object.keys(data[0]);
-    const columnNames = columns
-      .map((column) => `"${this.cleanName(column.replace(/\s+/g, ""))}"`)
-      .join(", ");
-    let sqlCommand = `INSERT INTO ${tableName} (${columnNames}) VALUES `;
+    sqlCommand = sqlCommand.slice(0, -1) + ";";
 
-    const values = data
-      .map((row) => {
-        const rowValues = columns
-          .map((column) => `'${row[column]}'`)
-          .join(", ");
-        return `(${rowValues})`;
-      })
-      .join(",\n");
-    sqlCommand += values + ";";
-    let startingRow = await this.dataBaseManager.executeSqlWithReponse(
-      "SELECT last_insert_rowid() as id"
-    );
-    this.dataBaseManager.executeSqlCommands(sqlCommand);
-    let endingRow = await this.dataBaseManager.executeSqlWithReponse(
-      "SELECT last_insert_rowid() as id"
-    );
-    startingId = startingRow.id;
-    endingId = endingRow.id;
-    return [++startingId, endingId];
+    return [sqlCommand, newIds];
+  }
+  private cleanName(name: string): string {
+    return name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9_]/g, "_");
   }
 
-  private cleanName(name: string): string {
-    return name.replace(/[^a-zA-Z0-9_]/g, "_");
+  private formatValue(value: any): string {
+    if (typeof value === "string") {
+      // Replace spaces and hyphens with underscores
+      value = value.replace(/[\s-]/g, "_");
+      return `'${value.replace(/'/g, "''")}'`;
+    }
+    return `${value}`;
   }
 
   public createSqlSchemaText(tables: tableSchema): string {
     let sql = "";
 
     if (tables["null"]) {
-      sql += this.createTableSQL("main_table", tables["null"], tables);
+      sql += this.createSchemaText("main_table", tables["null"], tables);
     }
 
     Object.keys(tables).forEach((table) => {
       if (table !== "null") {
-        sql += this.createTableSQL(table, tables[table], tables);
+        sql += this.createSchemaText(table, tables[table], tables);
       }
     });
 
@@ -126,18 +125,18 @@ class SqlTextGenerator {
     }
   };
 
-  private createTableSQL = (
+  private createSchemaText = (
     tableName: string,
     columns: string[],
     tables: tableSchema
   ) => {
     let stack: string[] = [];
-    let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n`;
+    let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY ,\n`;
 
     columns.forEach((column) => {
       if (tables[column]) {
         stack.push(`  ${column} INTEGER,\n`);
-        stack.push(`  FOREIGN KEY (${column}) REFERENCES termine(id),\n`);
+        stack.push(`  FOREIGN KEY (${column}) REFERENCES ${column}(id),\n`);
       } else {
         tableSQL += `  ${column} VARCHAR(255),\n`;
       }

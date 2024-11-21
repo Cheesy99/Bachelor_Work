@@ -18,7 +18,7 @@ class DataLoader extends EventEmitter {
 
   public async loadData(jsonData: string) {
     try {
-      const jsonObject: JsonObject = JSON.parse(jsonData);
+      const jsonObject: JsonObject[] = JSON.parse(jsonData);
       this.schemaBuilder.createSchema(jsonObject);
       this.schemaStructure = this.schemaBuilder.schema;
 

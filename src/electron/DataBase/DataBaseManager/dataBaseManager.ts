@@ -37,15 +37,13 @@ class DatabaseManager {
     this.executeSqlCommands(organizedSchema);
   }
 
-  public async insertData(jsonObject: JsonObject): Promise<number> {
-    await this.executeSqlCommands(
-      await this.sqlGen.createSqlTableText(jsonObject)
-    );
-    let row = this.executeSqlWithReponse(
-      `SELECT COUNT(*) AS row_count FROM main_table`
-    );
-    //@ts-ignore
-    return row.row_count;
+  public async insertData(jsonObject: JsonObject[]): Promise<number> {
+    let insertDataCommands = await this.sqlGen.createSqlTableText(jsonObject);
+    console.log("sql query", insertDataCommands);
+    insertDataCommands.forEach((command) => {
+      this.executeSqlCommands(command);
+    });
+    return -1;
   }
 
   public async getTableData(
