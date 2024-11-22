@@ -39,7 +39,6 @@ app.on("ready", () => {
     await loader.loadData(fileData);
   });
   loader.on("dataLoaded", (insertedCount: number) => {
-    console.log("Emitting database-change event with:", insertedCount);
     mainWindow.webContents.send("database-change", insertedCount);
   });
 });

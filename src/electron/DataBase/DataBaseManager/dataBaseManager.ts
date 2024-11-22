@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import sqlite3 from "sqlite3";
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -22,7 +23,7 @@ class DatabaseManager {
       "dataBase.db"
     );
     this.dataBase = new sqlite3.Database(this.dbPath);
-    this.sqlGen = new SqlTextGenerator(this);
+    this.sqlGen = new SqlTextGenerator();
   }
 
   public static getInstance(): DatabaseManager {
@@ -38,8 +39,7 @@ class DatabaseManager {
   }
 
   public async insertData(jsonObject: JsonObject[]): Promise<number> {
-    let insertDataCommands = await this.sqlGen.createSqlTableText(jsonObject);
-    console.log("sql query", insertDataCommands);
+    const insertDataCommands = await this.sqlGen.createSqlTableText(jsonObject);
     insertDataCommands.forEach((command) => {
       this.executeSqlCommands(command);
     });
@@ -72,7 +72,6 @@ class DatabaseManager {
       this.dataBase.run("BEGIN TRANSACTION");
       commands.forEach((command) => {
         this.dataBase.run(command, (err) => {
-          // console.log("Executing SQL command:", command);
           if (err) {
             console.error("Error executing SQL command:", err.message, err);
           } else {

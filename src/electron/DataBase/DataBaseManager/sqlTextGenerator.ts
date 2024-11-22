@@ -1,35 +1,33 @@
-import DatabaseManager from "./dataBaseManager.js";
 import JsonObject from "../Interfaces/JsonObject.js";
 import tableSchema from "../Interfaces/tableSchema.js";
 class SqlTextGenerator {
-  private dataBaseManager;
   private foreignCurrentIndex: number = 0;
   private mainTableCurrentIndex: number = 0;
-  constructor(dbManager: DatabaseManager) {
-    this.dataBaseManager = dbManager;
-  }
   public async createSqlTableText(
     jsonObjectArray: JsonObject[]
   ): Promise<string[]> {
-    let returnCommandQueue: string[] = [];
-    let sqlCommand = `INSERT INTO main_table (id ,${Object.keys(
+    const returnCommandQueue: string[] = [];
+
+    const sqlCommand = `INSERT INTO main_table (id ,${Object.keys(
       jsonObjectArray[0]
     ).join(", ")}) VALUES `;
-    let mainTableValues: string[] = [];
+    const mainTableValues: string[] = [];
 
     jsonObjectArray.forEach((jsonObject: JsonObject) => {
-      let nestedColumnValue: {
+      const nestedColumnValue: {
         columnPosition: number;
         foreignKeys: number[];
       }[] = [];
-      let columnValues: string[] = new Array(
-        Object.keys(jsonObject).length
+      const columnValues: string[] = new Array(
+        Object.keys(jsonObject).length // check here if the length of the array is long enough
       ).fill("");
       Object.keys(jsonObject).forEach(async (key, index) => {
-        console.log("keys", key);
         const value = jsonObject[key];
         if (Array.isArray(value)) {
-          let command = await this.creatingInputTextForForeignTable(key, value);
+          const command = await this.creatingInputTextForForeignTable(
+            key,
+            value
+          );
           returnCommandQueue.push(command[0]);
           nestedColumnValue.push({
             columnPosition: index,
@@ -40,21 +38,23 @@ class SqlTextGenerator {
         }
       });
 
+      columnValues.forEach((value) => {
+        console.log("columnvalues", value);
+      });
       // Create multiple rows for each element in nestedColumnValue
       // This will probably only work for jsonObject that only have one nested object
-      let duplicatedRows: string[][] = [];
-      nestedColumnValue.forEach((nestedColumn) => {
-        nestedColumn.foreignKeys.forEach((foreignKey) => {
-          let newRow = [...columnValues];
-          newRow[nestedColumn.columnPosition] = `${foreignKey}`;
-          duplicatedRows.push(newRow);
-        });
-      });
 
-      // Flatten the 2D array and add it to returnCommandQueue with parentheses
-      duplicatedRows.forEach((row) =>
-        returnCommandQueue.push(`(${row.join(", ")})`)
-      );
+      //This is a good idea you probably need to make it in a new database but maybe not check that
+      //ColumnValue array is large enought which it probably isn't
+      // nestedColumnValue.forEach(nestedColumn => {
+      //   const { columnPosition, foreignKeys } = nestedColumn;
+      //   columnValues[columnPosition] = `nestedColumn_${columnPosition}`;
+      //   foreignKeys.forEach(foreignKey => {
+      //     columnValues.splice(columnPosition + 1, 0, `foreignKey_${foreignKey}`);
+      //   });
+      // });
+
+      // mainTableValues.push(`(${this.mainTableCurrentIndex++}, ${columnValues.join(", ")})`);
     });
 
     return returnCommandQueue;
@@ -64,20 +64,20 @@ class SqlTextGenerator {
     tableName: string,
     data: JsonObject[]
   ): Promise<[string, number[]]> {
-    let newIds: number[] = [];
+    const newIds: number[] = [];
     let sqlCommand: string = `INSERT INTO ${tableName} (id, ${Object.keys(
       data[0]
     )
       .map(this.cleanName)
       .join(", ")}) VALUES `;
     // TODO: Empty array could be a problem here example: "modulZuordnungen" : [ ],
-    data.forEach((item, index) => {
+    data.forEach((item) => {
       let values = Object.values(item)
         .map((value) => this.formatValue(value))
         .join(", ");
       values = `${this.foreignCurrentIndex}, ${values}`;
       sqlCommand += `(${values}),`;
-      let id = this.foreignCurrentIndex;
+      const id = this.foreignCurrentIndex;
       newIds.push(id);
       this.foreignCurrentIndex++;
     });

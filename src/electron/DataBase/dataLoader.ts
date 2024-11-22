@@ -40,7 +40,6 @@ class DataLoader extends EventEmitter {
     fromID: [startingId: number, endId: number],
     tableName: string
   ): Promise<TableData> {
-    console.log("I have been called");
     const dbManager = DatabaseManager.getInstance();
     return dbManager.getTableData(fromID, tableName);
   }
