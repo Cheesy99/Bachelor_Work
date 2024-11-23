@@ -8,7 +8,7 @@ class SqlTextGenerator {
   ): Promise<string[]> {
     const returnCommandQueue: string[] = [];
 
-    const sqlCommand = `INSERT INTO main_table (id ,${Object.keys(
+    let sqlCommand: string = `INSERT INTO main_table (id ,${Object.keys(
       jsonObjectArray[0]
     ).join(", ")}) VALUES `;
     const mainTableFinalEntries: string[][] = [];
@@ -16,67 +16,63 @@ class SqlTextGenerator {
       { length: jsonObjectArray.length },
       () => Array(Object.keys(jsonObjectArray[0]).length).fill("")
     );
-    const allPromises = jsonObjectArray.map(
-      async (jsonObject: JsonObject, outerIndex: number) => {
-        const nestedValue: {
-          rowPosition: number;
-          columnPosition: number;
-          foreignKeys: number[];
-        }[] = [];
-        const promises = Object.keys(jsonObject).map(
-          async (key, innerIndex) => {
-            const value = jsonObject[key];
-            if (Array.isArray(value) || typeof value === "object") {
-              const command = await this.creatingInputTextForForeignTable(
-                key,
-                value
-              );
-              returnCommandQueue.push(command[0]);
-              nestedValue.push({
-                rowPosition: outerIndex,
-                columnPosition: innerIndex,
-                foreignKeys: command[1],
-              });
-              tableValues[outerIndex][innerIndex] = "x";
-            } else {
-              tableValues[outerIndex][innerIndex] = this.formatValue(value);
-            }
-          }
-        );
-
-        await Promise.all(promises);
-
-        tableValues.forEach((row, rowIndex) => {
-          nestedValue.forEach((nestedValues, index) => {
-            if (rowIndex === nestedValues.rowPosition) {
-              nestedValues.foreignKeys.forEach((foreignKey, index) => {
-                let rowDuplicate = [...row];
-                rowDuplicate[nestedValues.columnPosition] =
-                  foreignKey.toString();
-                mainTableFinalEntries.push(rowDuplicate);
-              });
-            }
+    jsonObjectArray.map((jsonObject: JsonObject, outerIndex: number) => {
+      const nestedValue: {
+        rowPosition: number;
+        columnPosition: number;
+        foreignKeys: number[];
+      }[] = [];
+      const promises = Object.keys(jsonObject).map((key, innerIndex) => {
+        const value = jsonObject[key];
+        if (Array.isArray(value) || typeof value === "object") {
+          const command = this.creatingInputTextForForeignTable(key, value);
+          returnCommandQueue.push(command[0]);
+          nestedValue.push({
+            rowPosition: outerIndex,
+            columnPosition: innerIndex,
+            foreignKeys: command[1],
           });
+          tableValues[outerIndex][innerIndex] = "x";
+        } else {
+          tableValues[outerIndex][innerIndex] = this.formatValue(value);
+        }
+      });
+
+      tableValues.forEach((row, rowIndex) => {
+        nestedValue.forEach((nestedValues, index) => {
+          if (rowIndex === nestedValues.rowPosition) {
+            nestedValues.foreignKeys.forEach((foreignKey, index) => {
+              let rowDuplicate = [...row];
+              rowDuplicate[nestedValues.columnPosition] = foreignKey.toString();
+              mainTableFinalEntries.push(rowDuplicate);
+            });
+          }
         });
-      }
-    );
+      });
+    });
 
-    await Promise.all(allPromises);
+    // for (let i = 0; i < mainTableFinalEntries.length; i++) {
+    //   for (let j = 0; j < mainTableFinalEntries[i].length; j++) {
+    //     process.stdout.write(mainTableFinalEntries[i][j] + " I ");
+    //   }
+    //   console.log();
+    // }
 
-    for (let i = 0; i < mainTableFinalEntries.length; i++) {
-      for (let j = 0; j < mainTableFinalEntries[i].length; j++) {
-        process.stdout.write(mainTableFinalEntries[i][j] + " I ");
-      }
-      console.log();
-    }
+    mainTableFinalEntries.forEach((entryRow) => {
+      const values = entryRow.map((value) => value).join(", ");
+      sqlCommand += `(${++this.mainTableCurrentIndex}, ${values}) ,`;
+    });
+
+    sqlCommand = sqlCommand.slice(0, -1) + ";";
+    returnCommandQueue.push(sqlCommand);
 
     return returnCommandQueue;
   }
 
-  private async creatingInputTextForForeignTable(
+  private creatingInputTextForForeignTable(
     tableName: string,
     data: JsonObject[]
-  ): Promise<[string, number[]]> {
+  ): [string, number[]] {
     const newIds: number[] = [];
     let sqlCommand: string = `INSERT INTO ${tableName} (id, ${Object.keys(
       data[0]
@@ -88,11 +84,9 @@ class SqlTextGenerator {
       let values = Object.values(item)
         .map((value) => this.formatValue(value))
         .join(", ");
-      values = `${this.foreignCurrentIndex}, ${values}`;
+      values = `${++this.foreignCurrentIndex}, ${values}`;
       sqlCommand += `(${values}),`;
-      const id = this.foreignCurrentIndex;
-      newIds.push(id);
-      this.foreignCurrentIndex++;
+      newIds.push(this.foreignCurrentIndex);
     });
 
     sqlCommand = sqlCommand.slice(0, -1) + ";";

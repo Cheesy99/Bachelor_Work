@@ -40,9 +40,14 @@ class DatabaseManager {
 
   public async insertData(jsonObject: JsonObject[]): Promise<number> {
     const insertDataCommands = await this.sqlGen.createSqlTableText(jsonObject);
-    insertDataCommands.forEach((command) => {
-      this.executeSqlCommands(command);
-    });
+
+    console.log(insertDataCommands);
+    insertDataCommands
+      .slice()
+      .reverse()
+      .forEach((command) => {
+        this.executeSqlCommands(command);
+      });
     return -1;
   }
 
