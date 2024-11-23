@@ -11,51 +11,64 @@ class SqlTextGenerator {
     const sqlCommand = `INSERT INTO main_table (id ,${Object.keys(
       jsonObjectArray[0]
     ).join(", ")}) VALUES `;
-    const mainTableValues: string[] = [];
+    const mainTableFinalEntries: string[][] = [];
+    const tableValues: string[][] = Array.from(
+      { length: jsonObjectArray.length },
+      () => Array(Object.keys(jsonObjectArray[0]).length).fill("")
+    );
+    const allPromises = jsonObjectArray.map(
+      async (jsonObject: JsonObject, outerIndex: number) => {
+        const nestedValue: {
+          rowPosition: number;
+          columnPosition: number;
+          foreignKeys: number[];
+        }[] = [];
+        const promises = Object.keys(jsonObject).map(
+          async (key, innerIndex) => {
+            const value = jsonObject[key];
+            if (Array.isArray(value) || typeof value === "object") {
+              const command = await this.creatingInputTextForForeignTable(
+                key,
+                value
+              );
+              returnCommandQueue.push(command[0]);
+              nestedValue.push({
+                rowPosition: outerIndex,
+                columnPosition: innerIndex,
+                foreignKeys: command[1],
+              });
+              tableValues[outerIndex][innerIndex] = "x";
+            } else {
+              tableValues[outerIndex][innerIndex] = this.formatValue(value);
+            }
+          }
+        );
 
-    jsonObjectArray.forEach((jsonObject: JsonObject) => {
-      const nestedColumnValue: {
-        columnPosition: number;
-        foreignKeys: number[];
-      }[] = [];
-      const columnValues: string[] = new Array(
-        Object.keys(jsonObject).length // check here if the length of the array is long enough
-      ).fill("");
-      Object.keys(jsonObject).forEach(async (key, index) => {
-        const value = jsonObject[key];
-        if (Array.isArray(value)) {
-          const command = await this.creatingInputTextForForeignTable(
-            key,
-            value
-          );
-          returnCommandQueue.push(command[0]);
-          nestedColumnValue.push({
-            columnPosition: index,
-            foreignKeys: command[1],
+        await Promise.all(promises);
+
+        tableValues.forEach((row, rowIndex) => {
+          nestedValue.forEach((nestedValues, index) => {
+            if (rowIndex === nestedValues.rowPosition) {
+              nestedValues.foreignKeys.forEach((foreignKey, index) => {
+                let rowDuplicate = [...row];
+                rowDuplicate[nestedValues.columnPosition] =
+                  foreignKey.toString();
+                mainTableFinalEntries.push(rowDuplicate);
+              });
+            }
           });
-        } else {
-          columnValues[index] = this.formatValue(value);
-        }
-      });
+        });
+      }
+    );
 
-      columnValues.forEach((value) => {
-        console.log("columnvalues", value);
-      });
-      // Create multiple rows for each element in nestedColumnValue
-      // This will probably only work for jsonObject that only have one nested object
+    await Promise.all(allPromises);
 
-      //This is a good idea you probably need to make it in a new database but maybe not check that
-      //ColumnValue array is large enought which it probably isn't
-      // nestedColumnValue.forEach(nestedColumn => {
-      //   const { columnPosition, foreignKeys } = nestedColumn;
-      //   columnValues[columnPosition] = `nestedColumn_${columnPosition}`;
-      //   foreignKeys.forEach(foreignKey => {
-      //     columnValues.splice(columnPosition + 1, 0, `foreignKey_${foreignKey}`);
-      //   });
-      // });
-
-      // mainTableValues.push(`(${this.mainTableCurrentIndex++}, ${columnValues.join(", ")})`);
-    });
+    for (let i = 0; i < mainTableFinalEntries.length; i++) {
+      for (let j = 0; j < mainTableFinalEntries[i].length; j++) {
+        process.stdout.write(mainTableFinalEntries[i][j] + " I ");
+      }
+      console.log();
+    }
 
     return returnCommandQueue;
   }
