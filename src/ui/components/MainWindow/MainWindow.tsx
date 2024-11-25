@@ -1,36 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 
 function MainWindow() {
-  const handleChange = useEffect(() => {
-    window.electronAPI.onDatabaseChange(
-      async (amountOfRowsFromMainTable: number) => {
-        console.log(
-          `Database updated, refreshing table view... ${amountOfRowsFromMainTable} `
-        );
-        let tableData;
-        if (amountOfRowsFromMainTable < 20) {
-          tableData = await window.electronAPI.getTableData(
-            [1, amountOfRowsFromMainTable],
-            "main_table"
-          );
-        } else {
-          tableData = await window.electronAPI.getTableData(
-            [1, 20],
-            "main_table"
-          );
-        }
-        console.log(tableData);
+  const [tableData, setTableData] = useState<TableData | null>(null);
 
-        // Add your logic to refresh the table view here
-      }
-    );
-  }, []);
+  const fetchTableData = async () => {
+    const data = await window.electronAPI.getTableData([1, 20], "main_table");
+    setTableData(data);
+    console.log(data);
+  };
 
   return (
     <div className="main-window">
       <div className="stage">
+        <button onClick={fetchTableData}>Fetch Table Data</button>
+        {tableData && (
+          <div>
+            <h3>Table Data:</h3>
+            <pre>{JSON.stringify(tableData, null, 2)}</pre>
+          </div>
+        )}
         <Table />
       </div>
     </div>

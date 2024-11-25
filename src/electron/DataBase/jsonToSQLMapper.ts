@@ -11,13 +11,9 @@ export class JsonToSqlMapper {
     this.db = DatabaseManager.getInstance();
   }
 
-  public async insertData(
-    jsonObject: JsonObject[],
-    jsonSchemas: FieldNames[]
-  ): Promise<number> {
+  public insertData(jsonObject: JsonObject[], jsonSchemas: FieldNames[]): void {
     this.db.schemaEntry(this.convertDataToTableSchema(jsonSchemas));
-    let number_of_rows = await this.db.insertData(jsonObject);
-    return number_of_rows;
+    this.db.insertData(jsonObject);
   }
 
   private convertDataToTableSchema(data: FieldNames[]): tableSchema {

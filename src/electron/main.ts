@@ -6,7 +6,7 @@ import DataLoader from "./DataBase/dataLoader.js";
 import JsonToSqlMapper from "./DataBase/jsonToSQLMapper.js";
 import SchemaBuilder from "./DataBase/schemaBuilder.js";
 import TableData from "./DataBase/Interfaces/TableData.js";
-
+import DatabaseManager from "./DataBase/DataBaseManager/dataBaseManager.js";
 const mapper = new JsonToSqlMapper();
 const schema = new SchemaBuilder();
 const loader = new DataLoader(mapper, schema);
@@ -31,12 +31,27 @@ app.on("ready", () => {
       tableName: string
     ) => {
       const tableData: TableData = await loader.getTable(from, tableName);
+      console.log("tableName", tableName);
       return tableData;
     }
   );
 
-  ipcMain.on("upload-json", async (event, fileData) => {
+  ipcMain.handle("upload-json", async (event, fileData) => {
+    const dbManager = DatabaseManager.getInstance();
     await loader.loadData(fileData);
+    try {
+      const result = await dbManager.executeSqlGetData(
+        "SELECT COUNT(*) as rowCount FROM main_table"
+      );
+      const rowCount = result[0].rowCount;
+
+      console.log("rowCount result", rowCount);
+
+      return rowCount;
+    } catch (err) {
+      console.error("Error processing JSON file: ", err);
+      throw err;
+    }
   });
   loader.on("dataLoaded", (insertedCount: number) => {
     mainWindow.webContents.send("database-change", insertedCount);

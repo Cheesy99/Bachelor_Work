@@ -38,17 +38,15 @@ class DatabaseManager {
     this.executeSqlCommands(organizedSchema);
   }
 
-  public async insertData(jsonObject: JsonObject[]): Promise<number> {
-    const insertDataCommands = await this.sqlGen.createSqlTableText(jsonObject);
+  public insertData(jsonObject: JsonObject[]): void {
+    const insertDataCommands = this.sqlGen.createSqlTableText(jsonObject);
 
-    console.log(insertDataCommands);
     insertDataCommands
       .slice()
       .reverse()
       .forEach((command) => {
         this.executeSqlCommands(command);
       });
-    return -1;
   }
 
   public async getTableData(

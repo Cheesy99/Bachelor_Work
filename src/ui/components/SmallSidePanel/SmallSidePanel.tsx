@@ -22,7 +22,8 @@ function SmallSidePanel() {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
 
-        window.electronAPI.sendJsonFile(fileData);
+        const amountOfRows = window.electronAPI.sendJsonFile(fileData);
+        console.log(amountOfRows);
       };
       reader.readAsText(file);
     } else {

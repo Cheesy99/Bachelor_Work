@@ -3,9 +3,7 @@ import tableSchema from "../Interfaces/tableSchema.js";
 class SqlTextGenerator {
   private foreignCurrentIndex: number = 0;
   private mainTableCurrentIndex: number = 0;
-  public async createSqlTableText(
-    jsonObjectArray: JsonObject[]
-  ): Promise<string[]> {
+  public createSqlTableText(jsonObjectArray: JsonObject[]): string[] {
     const returnCommandQueue: string[] = [];
 
     let sqlCommand: string = `INSERT INTO main_table (id ,${Object.keys(
@@ -50,13 +48,6 @@ class SqlTextGenerator {
         });
       });
     });
-
-    // for (let i = 0; i < mainTableFinalEntries.length; i++) {
-    //   for (let j = 0; j < mainTableFinalEntries[i].length; j++) {
-    //     process.stdout.write(mainTableFinalEntries[i][j] + " I ");
-    //   }
-    //   console.log();
-    // }
 
     mainTableFinalEntries.forEach((entryRow) => {
       const values = entryRow.map((value) => value).join(", ");

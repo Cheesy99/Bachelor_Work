@@ -16,18 +16,14 @@ class DataLoader extends EventEmitter {
     this.schemaBuilder = schemaBuilder;
   }
 
-  public async loadData(jsonData: string) {
+  public loadData(jsonData: string): void {
     try {
       const jsonObject: JsonObject[] = JSON.parse(jsonData);
       this.schemaBuilder.createSchema(jsonObject);
       this.schemaStructure = this.schemaBuilder.schema;
 
       try {
-        let amount_of_rows_in_main = await this.mapper.insertData(
-          jsonObject,
-          this.schemaStructure!
-        );
-        this.emit("dataLoaded", amount_of_rows_in_main);
+        this.mapper.insertData(jsonObject, this.schemaStructure!);
       } catch (error) {
         console.error("Schema is undefined", error);
       }
