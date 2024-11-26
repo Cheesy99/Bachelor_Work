@@ -8,6 +8,7 @@
 }
 
 .stage {
+  overflow: auto;
   background-color: rgb(185, 185, 185);
   border-radius: 1%;
   height: 95%;

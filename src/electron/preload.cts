@@ -4,7 +4,7 @@ const electron = require("electron");
 
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   sendJsonFile: (fileData: string) => {
-    ipcRenderer.invoke("upload-json", fileData);
+    ipcRenderer.send("upload-json", fileData);
   },
   getTableData: (fromID: [startId: number, endId: number], tableName: string) =>
     ipcRenderer.invoke("getTableData", fromID, tableName),

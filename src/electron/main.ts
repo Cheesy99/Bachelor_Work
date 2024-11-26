@@ -36,23 +36,11 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle("upload-json", async (event, fileData) => {
+  ipcMain.on("upload-json", async (event, fileData) => {
     const dbManager = DatabaseManager.getInstance();
     await loader.loadData(fileData);
-    try {
-      const result = await dbManager.executeSqlGetData(
-        "SELECT COUNT(*) as rowCount FROM main_table"
-      );
-      const rowCount = result[0].rowCount;
-
-      console.log("rowCount result", rowCount);
-
-      return rowCount;
-    } catch (err) {
-      console.error("Error processing JSON file: ", err);
-      throw err;
-    }
   });
+
   loader.on("dataLoaded", (insertedCount: number) => {
     mainWindow.webContents.send("database-change", insertedCount);
   });

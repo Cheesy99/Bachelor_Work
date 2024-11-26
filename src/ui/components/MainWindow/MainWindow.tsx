@@ -1,27 +1,22 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
+import { Context } from "../../App";
+import TableData from "../../tableDataContext";
 
 function MainWindow() {
-  const [tableData, setTableData] = useState<TableData | null>(null);
+  const context = useContext(Context);
 
-  const fetchTableData = async () => {
-    const data = await window.electronAPI.getTableData([1, 20], "main_table");
-    setTableData(data);
-    console.log(data);
-  };
+  if (!context) {
+    throw new Error("SmallSidePanel must be used within a Context.Provider");
+  }
+
+  const [tableData] = context;
 
   return (
     <div className="main-window">
       <div className="stage">
-        <button onClick={fetchTableData}>Fetch Table Data</button>
-        {tableData && (
-          <div>
-            <h3>Table Data:</h3>
-            <pre>{JSON.stringify(tableData, null, 2)}</pre>
-          </div>
-        )}
-        <Table />
+        <Table {...tableData!} />
       </div>
     </div>
   );
