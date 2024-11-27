@@ -1,32 +1,39 @@
-import tableSchema from "../DataBase/Interfaces/tableSchema.js";
+import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
-import TableSchema from "./Interfaces/tableSchema.js";
 
 class SchemaBuilder {
-  private result: TableSchema[] = [];
-
   public build(json: JsonObject[]): TableSchema[] {
-    json.forEach((obj, index) => {
-      this.result.push(...this.recursiveSchema(obj, [], index));
-    });
-
-    return this.result;
+    let result: TableSchema[] = [];
+    if (Array.isArray(json)) {
+      json.forEach((obj, index) =>
+        result.push(...this.removeDuplicates(this.recursiveSchema(obj, index)))
+      );
+    }
+    return this.removeDuplicates(result);
   }
 
   private recursiveSchema(
     json: JsonObject,
-    tableSchema: TableSchema[],
     tableName: string | number
   ): TableSchema[] {
-    let tableResult: TableSchema = { [tableName]: [] };
-    Object.keys(json).forEach((key) => {
+    let keys = Object.keys(json);
+    let result = [{ [tableName]: keys }];
+    keys.forEach((key) => {
       if (Array.isArray(json[key])) {
-        tableResult[tableName].push(key);
-        tableSchema.push(...this.recursiveSchema(json[key], [], key));
-      } else if (typeof json[key] === "string") {
-        tableSchema.push({ key: schema.push(json[key]) });
-      } else {
+        json[key].forEach((obj) => {
+          result.push(...this.recursiveSchema(obj, key));
+        });
       }
+    });
+
+    return result;
+  }
+
+  private removeDuplicates(tableSchema: TableSchema[]): TableSchema[] {
+    const seen = new Set();
+    return tableSchema.filter((tableSchema) => {
+      const jsonString = JSON.stringify(tableSchema);
+      return seen.has(jsonString) ? false : seen.add(jsonString);
     });
   }
 }

@@ -1,6 +1,7 @@
 import { JsonToSqlMapper } from "./jsonToSQLMapper.js";
 import { EventEmitter } from "events";
-import SchemaBuilder from "./schemaBuilder.js";
+// import SchemaBuilder from "./schemaBuilder.js";
+import SchemaBuilder from "../Backend/SchemaBuilder.js";
 import FieldNames from "./Interfaces/fieldNames.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import TableData from "./Interfaces/TableData.js";
@@ -17,19 +18,22 @@ class DataLoader extends EventEmitter {
   }
 
   public loadData(jsonData: string): void {
-    try {
-      const jsonObject: JsonObject[] = JSON.parse(jsonData);
-      this.schemaBuilder.createSchema(jsonObject);
-      this.schemaStructure = this.schemaBuilder.schema;
+    // try {
+    const jsonObject: JsonObject[] = JSON.parse(jsonData);
+    // this.schemaBuilder.createSchema(jsonObject);
+    // this.schemaStructure = this.schemaBuilder.schema;
+    let result = this.schemaBuilder.build(jsonObject);
 
-      try {
-        this.mapper.insertData(jsonObject, this.schemaStructure!);
-      } catch (error) {
-        console.error("Schema is undefined", error);
-      }
-    } catch (error) {
-      console.error("Error parsing JSON data", error);
-    }
+    console.log("result", result);
+
+    //   try {
+    //     // this.mapper.insertData(jsonObject, this.schemaStructure!);
+    //   } catch (error) {
+    //     console.error("Schema is undefined", error);
+    //   }
+    // } catch (error) {
+    //   console.error("Error parsing JSON data", error);
+    // }
   }
 
   public async getTable(

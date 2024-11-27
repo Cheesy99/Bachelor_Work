@@ -1,5 +1,5 @@
 import JsonObject from "./Interfaces/JsonObject.js";
-import TableSchema from "./Interfaces/tableSchema.js";
+import TableSchema from "./Interfaces/TableSchema.js";
 import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 class SQLBuilder {
