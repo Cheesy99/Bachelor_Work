@@ -6,7 +6,9 @@ class SchemaBuilder {
     let result: TableSchema[] = [];
     if (Array.isArray(json)) {
       json.forEach((obj, index) =>
-        result.push(...this.removeDuplicates(this.recursiveSchema(obj, index)))
+        result.push(
+          ...this.removeDuplicates(this.recursiveSchema(obj, "main_table"))
+        )
       );
     }
     return this.removeDuplicates(result);
@@ -25,7 +27,6 @@ class SchemaBuilder {
         });
       }
     });
-
     return result;
   }
 
