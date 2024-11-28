@@ -4,7 +4,7 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 import { isDev } from "../../util.js";
 import JsonObject from "../Interfaces/JsonObject.js";
-import tableSchema from "../Interfaces/tableSchema.js";
+import TableSchema from "../../Backend/Interfaces/TableSchema.js";
 import SqlTextGenerator from "./sqlTextGenerator.js";
 import TableData from "../Interfaces/TableData.js";
 class DatabaseManager {
@@ -33,7 +33,8 @@ class DatabaseManager {
     return DatabaseManager.instance;
   }
 
-  public schemaEntry(Schema: tableSchema): void {
+  public schemaEntry(Schema: TableSchema): void {
+    console.log("I reached here");
     const organizedSchema = this.sqlGen.createSqlSchemaText(Schema);
     this.executeSqlCommands(organizedSchema);
   }

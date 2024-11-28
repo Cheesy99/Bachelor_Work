@@ -1,17 +1,15 @@
 import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
-
+import DataCleaner from "./Utils/DataCleaner.js";
 class SchemaBuilder {
-  public build(json: JsonObject[]): TableSchema[] {
+  public build(json: JsonObject[]): TableSchema {
     let result: TableSchema[] = [];
     if (Array.isArray(json)) {
-      json.forEach((obj, index) =>
-        result.push(
-          ...this.removeDuplicates(this.recursiveSchema(obj, "main_table"))
-        )
+      json.forEach((obj) =>
+        result.push(...this.recursiveSchema(obj, "main_table"))
       );
     }
-    return this.removeDuplicates(result);
+    return this.cleanData(result);
   }
 
   private recursiveSchema(
@@ -28,6 +26,33 @@ class SchemaBuilder {
       }
     });
     return result;
+  }
+
+  private cleanData(tableSchema: TableSchema[]): TableSchema {
+    // Removes Duplicate object that are exactly the same
+    this.removeDuplicates(tableSchema);
+
+    //Here we need to make sure the we only have one table and all the columns types found for a
+    //column are collected and are all add to the table
+
+    let mergedSchema: { [key: string]: Set<string> } = {};
+
+    tableSchema.forEach((schema) => {
+      Object.keys(schema).forEach((key: string) => {
+        if (!mergedSchema[key]) {
+          mergedSchema[key] = new Set();
+        }
+        schema[key].forEach((value: string) => {
+          mergedSchema[key].add(DataCleaner.cleanName(value));
+        });
+      });
+    });
+
+    let schemaArray = Object.keys(mergedSchema).map((key) => ({
+      [key]: Array.from(mergedSchema[key]),
+    }));
+
+    return Object.assign({}, ...schemaArray);
   }
 
   private removeDuplicates(tableSchema: TableSchema[]): TableSchema[] {

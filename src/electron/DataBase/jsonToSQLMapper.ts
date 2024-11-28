@@ -1,3 +1,5 @@
+import TableSchema from "../Backend/Interfaces/TableSchema.js";
+import SchemaBuilder from "../Backend/SchemaBuilder.js";
 import DatabaseManager from "./DataBaseManager/dataBaseManager.js";
 import FieldNames from "./Interfaces/fieldNames.js";
 import Schema from "./Interfaces/fieldNames.js";
@@ -11,27 +13,10 @@ export class JsonToSqlMapper {
     this.db = DatabaseManager.getInstance();
   }
 
-  public insertData(jsonObject: JsonObject[], jsonSchemas: FieldNames[]): void {
-    this.db.schemaEntry(this.convertDataToTableSchema(jsonSchemas));
+  public insertData(jsonObject: JsonObject[], jsonSchemas: TableSchema): void {
+    console.log("I am here ");
+    this.db.schemaEntry(jsonSchemas);
     this.db.insertData(jsonObject);
-  }
-
-  private convertDataToTableSchema(data: FieldNames[]): tableSchema {
-    const tables: tableSchema = {};
-
-    data.forEach((item) => {
-      const parent = this.cleanName(item.parent || "null");
-      const key = this.cleanName(item.key);
-      if (!tables[parent]) {
-        tables[parent] = [];
-      }
-      tables[parent].push(key);
-    });
-    return tables;
-  }
-
-  private cleanName(name: string): string {
-    return name.replace(/[^a-zA-Z0-9_]/g, "_");
   }
 }
 

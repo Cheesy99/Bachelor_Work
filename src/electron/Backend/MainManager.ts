@@ -26,7 +26,7 @@ class MainManager {
   }
 
   public insertJson(json: JsonObject[]) {
-    let schemaString: TableSchema[] = this.sqlBuilder.getSchema(json);
+    let schemaArray: TableSchema = this.sqlBuilder.getSchema(json);
   }
   public sqlCommand() {}
   public exportToExcel() {}

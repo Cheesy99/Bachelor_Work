@@ -10,7 +10,6 @@ import DatabaseManager from "./DataBaseManager/dataBaseManager.js";
 class DataLoader extends EventEmitter {
   private mapper: JsonToSqlMapper;
   private schemaBuilder: SchemaBuilder;
-  private schemaStructure?: FieldNames[];
   constructor(mapper: JsonToSqlMapper, schemaBuilder: SchemaBuilder) {
     super();
     this.mapper = mapper;
@@ -18,22 +17,18 @@ class DataLoader extends EventEmitter {
   }
 
   public loadData(jsonData: string): void {
-    // try {
-    const jsonObject: JsonObject[] = JSON.parse(jsonData);
-    // this.schemaBuilder.createSchema(jsonObject);
-    // this.schemaStructure = this.schemaBuilder.schema;
-    let result = this.schemaBuilder.build(jsonObject);
+    try {
+      const jsonObject: JsonObject[] = JSON.parse(jsonData);
+      let result = this.schemaBuilder.build(jsonObject);
 
-    console.log("result", result);
-
-    //   try {
-    //     // this.mapper.insertData(jsonObject, this.schemaStructure!);
-    //   } catch (error) {
-    //     console.error("Schema is undefined", error);
-    //   }
-    // } catch (error) {
-    //   console.error("Error parsing JSON data", error);
-    // }
+      try {
+        this.mapper.insertData(jsonObject, result);
+      } catch (error) {
+        console.error("Schema is undefined", error);
+      }
+    } catch (error) {
+      console.error("Error parsing JSON data", error);
+    }
   }
 
   public async getTable(

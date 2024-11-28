@@ -10,7 +10,7 @@ class SQLBuilder {
     this.tableBuilder = tableBuilder;
   }
 
-  getSchema(json: JsonObject[]): TableSchema[] {
+  getSchema(json: JsonObject[]): TableSchema {
     return this.schemaBuilder.build(json);
   }
 }
