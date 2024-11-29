@@ -5,6 +5,7 @@ import TableSchema from "./Interfaces/TableSchema.js";
 import SchemaBuilder from "./SchemaBuilder.js";
 import SQLBuilder from "./SQLBuilder.js";
 import TableBuilder from "./TableBuilder.js";
+import SqlTextGenerator from "./SQLTextGenerator.js";
 
 class MainManager {
   private static instance: MainManager;
@@ -21,12 +22,19 @@ class MainManager {
 
   private constructor() {
     this.dataBase = DataBaseConnector.getInstance();
-    this.sqlBuilder = new SQLBuilder(new SchemaBuilder(), new TableBuilder());
+    this.sqlBuilder = new SQLBuilder(
+      new SchemaBuilder(),
+      new TableBuilder(),
+      new SqlTextGenerator()
+    );
     this.excelExporter = new ExcelExporter();
   }
 
-  public insertJson(json: JsonObject[]) {
-    let schemaArray: TableSchema = this.sqlBuilder.getSchema(json);
+  public async insertJson(json: JsonObject[]) {
+    let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(json);
+    await this.dataBase.sqlCommand(schemaSqlCommand);
+    // let inputDataSqlCommand: string[] = this.sqlBuilder.getData(json);
+    // await this.dataBase.sqlCommand(inputDataSqlCommand);
   }
   public sqlCommand() {}
   public exportToExcel() {}

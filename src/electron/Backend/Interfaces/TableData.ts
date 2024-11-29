@@ -1,5 +1,7 @@
+import TableSchema from "./TableSchema.js";
+
 interface TableData {
-  schema: string[];
+  schema: TableSchema;
   table: string[][];
 }
 

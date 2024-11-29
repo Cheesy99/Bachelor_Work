@@ -3,9 +3,10 @@ import tableSchema from "../Interfaces/tableSchema.js";
 class SqlTextGenerator {
   private foreignCurrentIndex: number = 0;
   private mainTableCurrentIndex: number = 0;
+  private schemaTable: string[] = [];
   public createSqlTableText(jsonObjectArray: JsonObject[]): string[] {
     const returnCommandQueue: string[] = [];
-
+    this.schemaTable = Object.keys(jsonObjectArray[0]);
     let sqlCommand: string = `INSERT INTO main_table (id ,${Object.keys(
       jsonObjectArray[0]
     ).join(", ")}) VALUES `;
@@ -20,17 +21,21 @@ class SqlTextGenerator {
         columnPosition: number;
         foreignKeys: number[];
       }[] = [];
-      const promises = Object.keys(jsonObject).map((key, innerIndex) => {
+      Object.keys(jsonObject).map((key, innerIndex) => {
         const value = jsonObject[key];
         if (Array.isArray(value) || typeof value === "object") {
           const command = this.creatingInputTextForForeignTable(key, value);
-          returnCommandQueue.push(command[0]);
-          nestedValue.push({
-            rowPosition: outerIndex,
-            columnPosition: innerIndex,
-            foreignKeys: command[1],
-          });
-          tableValues[outerIndex][innerIndex] = "x";
+          if (command !== null) {
+            returnCommandQueue.push(command[0]);
+            nestedValue.push({
+              rowPosition: outerIndex,
+              columnPosition: innerIndex,
+              foreignKeys: command[1],
+            });
+            tableValues[outerIndex][innerIndex] = "x";
+          } else {
+            tableValues[outerIndex][innerIndex] = "";
+          }
         } else {
           tableValues[outerIndex][innerIndex] = this.formatValue(value);
         }
@@ -63,7 +68,14 @@ class SqlTextGenerator {
   private creatingInputTextForForeignTable(
     tableName: string,
     data: JsonObject[]
-  ): [string, number[]] {
+  ): [string, number[]] | null {
+    if (!data || data.length === 0) {
+      console.log(
+        `Skipping input text creation for table ${tableName} due to empty data.`
+      );
+      return null;
+    }
+
     const newIds: number[] = [];
     let sqlCommand: string = `INSERT INTO ${tableName} (id, ${Object.keys(
       data[0]
@@ -100,9 +112,9 @@ class SqlTextGenerator {
   public createSqlSchemaText(tables: tableSchema): string {
     let sql = "";
 
-    if (tables["null"]) {
-      sql += this.createSchemaText("main_table", tables["null"], tables);
-    }
+    // if (tables["null"]) {
+    //   sql += this.createSchemaText("main_table", tables["null"], tables);
+    // }
 
     Object.keys(tables).forEach((table) => {
       if (table !== "null") {
@@ -128,6 +140,7 @@ class SqlTextGenerator {
     columns: string[],
     tables: tableSchema
   ) => {
+    console.log("tables", tables);
     let stack: string[] = [];
     let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY ,\n`;
 
