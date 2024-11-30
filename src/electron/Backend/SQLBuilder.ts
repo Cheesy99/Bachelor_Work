@@ -4,6 +4,7 @@ import TableSchema from "./Interfaces/TableSchema.js";
 import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 import DataCleaner from "./Utils/DataCleaner.js";
+import TableData from "./Interfaces/TableData.js";
 class SQLBuilder {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
@@ -25,8 +26,13 @@ class SQLBuilder {
     return DataCleaner.cleanSqlCommand(command);
   }
 
-  public getData(json: JsonObject[]) {
-    let tableData = this.tableBuilder.build(json, this.tableSchema!);
+  public getData(
+    json: JsonObject[] //string[] {
+  ) {
+    let tableData: TableData[] = this.tableBuilder.build(
+      json,
+      this.tableSchema!
+    );
     // return this.sqlTextBuilder.createInputDataText(tableData);
   }
 }

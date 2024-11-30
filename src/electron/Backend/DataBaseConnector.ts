@@ -8,7 +8,7 @@ class DataBaseConnector {
   private dataBase: sqlite3.Database;
   private dbPath: string;
   public static getInstance(): DataBaseConnector {
-    if (!DataBaseConnector.getInstance) {
+    if (!DataBaseConnector.instance) {
       DataBaseConnector.instance = new DataBaseConnector();
     }
 

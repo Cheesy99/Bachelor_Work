@@ -47,7 +47,7 @@ class SqlTextGenerator {
     return tableSQL;
   };
 
-  public createInputDataText(tableData: TableData) {}
+  // public createInputDataText(tableData: TableData[]): string[] {}
 }
 
 export default SqlTextGenerator;

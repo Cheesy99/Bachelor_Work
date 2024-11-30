@@ -23,11 +23,11 @@ function SmallSidePanel() {
       .replace(/ß/g, "ss");
   }
 
-  const fetchTableData = async () => {
-    const data = await window.electronAPI.getTableData([1, 100], "main_table");
-    setTableData(data);
-    console.log(data);
-  };
+  // const fetchTableData = async () => {
+  //   const data = await window.electronAPI.getTableData([1, 100], "main_table");
+  //   setTableData(data);
+  //   console.log(data);
+  // };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -37,9 +37,8 @@ function SmallSidePanel() {
       reader.onload = () => {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
-
-        const amountOfRows = window.electronAPI.sendJsonFile(fileData);
-        console.log(amountOfRows);
+        console.log("I am in UI");
+        window.electronAPI.sendJsonFile(fileData);
       };
       reader.readAsText(file);
     } else {
@@ -65,7 +64,7 @@ function SmallSidePanel() {
         accept=".json"
         onChange={handleFileChange}
       />
-      <button onClick={fetchTableData}>Get Data</button>
+      {/* <button onClick={fetchTableData}>Get Data</button> */}
     </div>
   );
 }
