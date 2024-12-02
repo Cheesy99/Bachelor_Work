@@ -31,12 +31,12 @@ class MainManager {
   }
 
   public async insertJson(json: string): Promise<void> {
-    console.log("Entered here");
     const jsonObject: JsonObject[] = JSON.parse(json);
     let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(jsonObject);
     await this.dataBase.sqlCommand(schemaSqlCommand);
     let inputDataSqlCommand = this.sqlBuilder.getData(jsonObject);
-    // await this.dataBase.sqlCommand(inputDataSqlCommand);
+    console.log(inputDataSqlCommand);
+    await this.dataBase.sqlCommand(inputDataSqlCommand);
   }
   public sqlCommand() {}
   public exportToExcel() {}

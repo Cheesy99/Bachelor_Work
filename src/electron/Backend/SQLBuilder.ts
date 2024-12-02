@@ -26,14 +26,13 @@ class SQLBuilder {
     return DataCleaner.cleanSqlCommand(command);
   }
 
-  public getData(
-    json: JsonObject[] //string[] {
-  ) {
+  public getData(json: JsonObject[]) {
     let tableData: TableData[] = this.tableBuilder.build(
       json,
       this.tableSchema!
     );
-    // return this.sqlTextBuilder.createInputDataText(tableData);
+
+    return this.sqlTextBuilder.createInputDataText(tableData);
   }
 }
 

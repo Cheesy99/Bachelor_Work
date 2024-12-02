@@ -47,7 +47,26 @@ class SqlTextGenerator {
     return tableSQL;
   };
 
-  // public createInputDataText(tableData: TableData[]): string[] {}
+  public createInputDataText(tableData: TableData[]): string[] {
+    const returnCommandQueue: string[] = [];
+    tableData.reverse().forEach((tableData) => {
+      let key = Object.keys(tableData.schema)[0];
+      let sqlCommand: string = `INSERT INTO ${key} (${tableData.schema[
+        key
+      ].join(", ")}) VALUES `;
+
+      tableData.table.forEach((row) => {
+        const escapedRow = row.map((value) =>
+          typeof value === "string" ? `'${value.replace(/'/g, "''")}'` : value
+        );
+        sqlCommand += `( ${escapedRow.join(", ")} ),`;
+      });
+
+      sqlCommand = sqlCommand.slice(0, -1) + ";";
+      returnCommandQueue.push(sqlCommand);
+    });
+    return returnCommandQueue;
+  }
 }
 
 export default SqlTextGenerator;
