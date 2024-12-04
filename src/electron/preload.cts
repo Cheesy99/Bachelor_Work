@@ -7,17 +7,24 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     console.log("Preload got called");
     ipcRenderer.send("upload-json", fileData);
   },
-  getTableData: (fromID: [startId: number, endId: number], tableName: string) =>
+  getTableData: (fromID: FromId, tableName: string) =>
     ipcRenderer.invoke("getTableData", fromID, tableName),
 
   onDatabaseChange: (callback) => {
-    ipcRenderer.on("database-updated", async () => {
-      const data = await ipcRenderer.invoke(
-        "getTableData",
-        [1, 100],
-        "main_table"
-      );
-      callback(data);
-    });
+    ipcRenderer.on(
+      "database-updated",
+      async (_, fromID: FromId, tableName: string) => {
+        const data = await ipcRenderer.invoke(
+          "getTableData",
+          fromID,
+          tableName
+        );
+        callback(data);
+      }
+    );
+  },
+
+  sendSqlCommand: (command: string, tableName: string) => {
+    ipcRenderer.send("sqlCommand", command, tableName);
   },
 } satisfies Window["electronAPI"]);

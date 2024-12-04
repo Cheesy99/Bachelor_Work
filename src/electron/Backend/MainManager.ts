@@ -16,7 +16,6 @@ class MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager();
     }
-
     return MainManager.instance;
   }
 
@@ -35,17 +34,16 @@ class MainManager {
     let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(jsonObject);
     await this.dataBase.sqlCommand(schemaSqlCommand);
     let inputDataSqlCommand = this.sqlBuilder.getData(jsonObject);
-    // console.log(inputDataSqlCommand);
     await this.dataBase.sqlCommand(inputDataSqlCommand);
   }
 
   public async getTableData(
-    fromID: [startId: number, endId: number],
+    fromID: FromId,
     tableName: string
   ): Promise<TableData> {
-    const [startID, endID] = fromID;
+    const { startId, endId } = fromID;
     const schemaQuery = `PRAGMA table_info(${tableName})`;
-    const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startID} AND ${endID}`;
+    const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
     const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
     const schema = schemaResult.map((row: any) => row.name);
@@ -53,7 +51,18 @@ class MainManager {
     return { schema, rows };
   }
 
-  public sqlCommand() {}
+  public async getCurrentIndexRange(tableName: string): Promise<FromId> {
+    const minIdQuery = `SELECT MIN(id) as minId FROM ${tableName}`;
+    const maxIdQuery = `SELECT MAX(id) as maxId FROM ${tableName}`;
+    const minIdResult = await this.dataBase.sqlCommandWithReponse(minIdQuery);
+    const maxIdResult = await this.dataBase.sqlCommandWithReponse(maxIdQuery);
+    const startId = minIdResult[0].minId;
+    const endId = maxIdResult[0].maxId;
+    return { startId, endId };
+  }
+  public async sqlCommand(sqlCommand: string): Promise<void> {
+    await this.dataBase.sqlCommand([sqlCommand]);
+  }
   public exportToExcel() {}
 }
 

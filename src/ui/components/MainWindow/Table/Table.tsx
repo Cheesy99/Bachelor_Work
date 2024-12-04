@@ -1,13 +1,17 @@
 import TableData from "../../../tableDataContext";
 import "./Table.css";
 
-function Table(tableData: TableData) {
-  let data: TableData | undefined;
+interface TableProps {
+  data: {
+    schema: string[];
+    rows: (string | number)[][];
+  } | null;
+  onHeaderClick: (column: (string | number)[]) => void;
+}
 
-  if (tableData !== null) {
-    data = tableData;
-  } else {
-    data = { schema: [], rows: [] };
+function Table({ data, onHeaderClick }: TableProps) {
+  if (!data) {
+    return <div>No data available</div>; // Handle the case where data is null
   }
 
   return (
@@ -27,7 +31,7 @@ function Table(tableData: TableData) {
             <td></td>
           ) : (
             data.rows.map((item) => (
-              <tr key={item[0]}>
+              <tr key={item[0]} onClick={() => onHeaderClick(item)}>
                 {item.map((row) => (
                   <td>{row}</td>
                 ))}

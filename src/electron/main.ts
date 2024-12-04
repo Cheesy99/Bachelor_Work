@@ -15,33 +15,41 @@ app.on("ready", () => {
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
-
-  ipcMain.on("upload-json", async (event, fileData: string) => {
+  const dbManager = MainManager.getInstance();
+  ipcMain.on("upload-json", async (_, fileData: string) => {
     try {
-      console.log("Arrived here");
-      const dbManager = MainManager.getInstance();
       if (dbManager && typeof dbManager.insertJson === "function") {
         await dbManager.insertJson(fileData);
-        mainWindow.webContents.send("database-updated");
+        const tableIndex: FromId = await dbManager.getCurrentIndexRange(
+          "main_table"
+        );
+        if (tableIndex.endId > 100) tableIndex.endId = 100;
+        mainWindow.webContents.send(
+          "database-updated",
+          tableIndex,
+          "main_table"
+        );
       } else {
         console.error(
           "MainManager instance or insertJson method is not defined"
         );
       }
-
-      ipcMain.handle(
-        "getTableData",
-        async (
-          _,
-          fromID: [startId: number, endId: number],
-          tableName: string
-        ) => {
-          const dbManager = MainManager.getInstance();
-          return await dbManager.getTableData(fromID, tableName);
-        }
-      );
     } catch (error) {
       console.error("Error handling upload-json event:", error);
     }
+  });
+
+  ipcMain.handle(
+    "getTableData",
+    async (_, fromID: FromId, tableName: string) => {
+      return await dbManager.getTableData(fromID, tableName);
+    }
+  );
+
+  ipcMain.on("sqlCommand", async (_, command: string, tableName: string) => {
+    await dbManager.sqlCommand(command);
+    const tableIndex: FromId = await dbManager.getCurrentIndexRange(tableName);
+    if (tableIndex.endId > 100) tableIndex.endId = 100;
+    mainWindow.webContents.send("database-updated", tableIndex, tableName);
   });
 });

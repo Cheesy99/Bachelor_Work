@@ -3,13 +3,16 @@ type TableData = {
   rows: (string | number)[][];
 };
 
+type FromId = {
+  startId: number;
+  endId: number;
+};
+
 interface Window {
   electronAPI: {
     sendJsonFile: (fileData: string) => void;
-    getTableData: (
-      fromID: [startId: number, endId: number],
-      tableName: string
-    ) => Promise<TableData>;
+    getTableData: (fromID: FromId, tableName: string) => Promise<TableData>;
     onDatabaseChange: (callback) => void;
+    sendSqlCommand: (sqlCommand: string, tableName: string) => void;
   };
 }

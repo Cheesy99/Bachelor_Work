@@ -14,13 +14,16 @@ export const Context = React.createContext<ContextType | undefined>(undefined);
 
 function App() {
   const [tableData, setTableData] = useState<TableData | null>(null);
-
+  const [showSqlInput, setShowSqlInput] = useState(false);
+  const toggleSqlInput = () => {
+    setShowSqlInput((prev) => !prev);
+  };
   return (
     <Context.Provider value={[tableData, setTableData]}>
       <div className="app-container">
-        <SmallSidePanel />
+        <SmallSidePanel toggleSqlInput={toggleSqlInput} />
         <BigSidePanel />
-        <MainWindow />
+        <MainWindow showSqlInput={showSqlInput} />
       </div>
     </Context.Provider>
   );

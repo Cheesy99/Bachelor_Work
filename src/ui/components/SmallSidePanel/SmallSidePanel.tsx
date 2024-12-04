@@ -3,14 +3,12 @@ import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
 
-function SmallSidePanel() {
+function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
   const context = useContext(Context);
 
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-
-  const [_, setTableData] = context;
 
   function translateUmlauts(text: string): string {
     return text
@@ -22,12 +20,6 @@ function SmallSidePanel() {
       .replace(/Ü/g, "Ue")
       .replace(/ß/g, "ss");
   }
-
-  // const fetchTableData = async () => {
-  //   const data = await window.electronAPI.getTableData([1, 100], "main_table");
-  //   setTableData(data);
-  //   console.log(data);
-  // };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -51,7 +43,11 @@ function SmallSidePanel() {
       <label htmlFor="excelUpload" className="excel-icon-label">
         <i className="fas fa-file-excel icon"></i>
       </label>
-      <label htmlFor="sqlUpload" className="sql-icon-label">
+      <label
+        htmlFor="sqlUpload"
+        className="sql-icon-label"
+        onClick={toggleSqlInput}
+      >
         <i className="fas fa-database icon"></i>
       </label>
       <label htmlFor="fileUpload" className="upload-icon-label">
@@ -64,7 +60,6 @@ function SmallSidePanel() {
         accept=".json"
         onChange={handleFileChange}
       />
-      {/* <button onClick={fetchTableData}>Get Data</button> */}
     </div>
   );
 }
