@@ -35,9 +35,24 @@ class MainManager {
     let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(jsonObject);
     await this.dataBase.sqlCommand(schemaSqlCommand);
     let inputDataSqlCommand = this.sqlBuilder.getData(jsonObject);
-    console.log(inputDataSqlCommand);
+    // console.log(inputDataSqlCommand);
     await this.dataBase.sqlCommand(inputDataSqlCommand);
   }
+
+  public async getTableData(
+    fromID: [startId: number, endId: number],
+    tableName: string
+  ): Promise<TableData> {
+    const [startID, endID] = fromID;
+    const schemaQuery = `PRAGMA table_info(${tableName})`;
+    const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startID} AND ${endID}`;
+    const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
+    const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
+    const schema = schemaResult.map((row: any) => row.name);
+    const rows = dataResult.map((row: string | number) => Object.values(row));
+    return { schema, rows };
+  }
+
   public sqlCommand() {}
   public exportToExcel() {}
 }

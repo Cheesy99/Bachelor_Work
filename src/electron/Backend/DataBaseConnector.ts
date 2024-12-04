@@ -26,6 +26,19 @@ class DataBaseConnector {
     this.dataBase = new sqlite3.Database(this.dbPath);
   }
 
+  public sqlCommandWithReponse(sqlCommand: string): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.dataBase.all(sqlCommand, (err, rows) => {
+        if (err) {
+          console.error("Error executing SQL command:", err.message, err);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
+
   public sqlCommand(sqlCommand: string[]): Promise<void> {
     return new Promise((resolve, reject) => {
       this.dataBase.serialize(() => {

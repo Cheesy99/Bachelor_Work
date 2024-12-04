@@ -21,12 +21,25 @@ app.on("ready", () => {
       console.log("Arrived here");
       const dbManager = MainManager.getInstance();
       if (dbManager && typeof dbManager.insertJson === "function") {
-        await dbManager.insertJson(fileData); // Wait for the insertJson method to complete
+        await dbManager.insertJson(fileData);
+        mainWindow.webContents.send("database-updated");
       } else {
         console.error(
           "MainManager instance or insertJson method is not defined"
         );
       }
+
+      ipcMain.handle(
+        "getTableData",
+        async (
+          _,
+          fromID: [startId: number, endId: number],
+          tableName: string
+        ) => {
+          const dbManager = MainManager.getInstance();
+          return await dbManager.getTableData(fromID, tableName);
+        }
+      );
     } catch (error) {
       console.error("Error handling upload-json event:", error);
     }

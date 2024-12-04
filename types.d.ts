@@ -1,6 +1,6 @@
 type TableData = {
   schema: string[];
-  rows: any[][];
+  rows: (string | number)[][];
 };
 
 interface Window {
@@ -10,6 +10,6 @@ interface Window {
       fromID: [startId: number, endId: number],
       tableName: string
     ) => Promise<TableData>;
-    onDatabaseChange: (callback: (amountOfRows: number) => void) => void;
+    onDatabaseChange: (callback) => void;
   };
 }

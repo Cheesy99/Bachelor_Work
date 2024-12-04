@@ -11,8 +11,13 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("getTableData", fromID, tableName),
 
   onDatabaseChange: (callback) => {
-    ipcRenderer.on("database-change", (event, amountOfRows) => {
-      callback(amountOfRows);
+    ipcRenderer.on("database-updated", async () => {
+      const data = await ipcRenderer.invoke(
+        "getTableData",
+        [1, 100],
+        "main_table"
+      );
+      callback(data);
     });
   },
 } satisfies Window["electronAPI"]);

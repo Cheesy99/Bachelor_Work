@@ -5,8 +5,8 @@ import Row from "./Interfaces/Row.js";
 class TableBuilder {
   private tableDate: TableData[] = [];
   private foreignIndex: number = 0;
-  private mainIndex: number = 0;
   private shiftingStack: Row[] = [];
+  private mainTableIndex: number = 0;
   public build(json: JsonObject[], tableSchema: TableSchema): TableData[] {
     Object.keys(tableSchema).forEach((key: string) => {
       tableSchema[key].push("id");
@@ -19,6 +19,8 @@ class TableBuilder {
     json.forEach((object, index) => {
       this.recursive(object, "main_table", index);
     });
+
+    this.mainTableCleaner();
 
     return this.tableDate;
   }
@@ -91,6 +93,18 @@ class TableBuilder {
     });
 
     tableData.table.push(rowData);
+  }
+
+  private mainTableCleaner() {
+    let idIndex = this.tableDate[0].schema["main_table"].findIndex(
+      (value) => value === "id"
+    );
+
+    console.log("mainTable", idIndex);
+
+    this.tableDate[0].table.forEach((row) => {
+      row[idIndex] = this.mainTableIndex++;
+    });
   }
 }
 export default TableBuilder;
