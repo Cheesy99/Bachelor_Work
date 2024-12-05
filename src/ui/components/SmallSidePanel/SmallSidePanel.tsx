@@ -21,10 +21,17 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
       .replace(/ß/g, "ss");
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
 
     if (file) {
+      const databaseExists = await window.electronAPI.databaseExists();
+      if (databaseExists) {
+        alert("Database already exists.");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         let fileData = reader.result as string;

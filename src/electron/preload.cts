@@ -25,6 +25,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   },
 
   sendSqlCommand: (command: string, tableName: string) => {
+    console.log("Arrived here");
     ipcRenderer.send("sqlCommand", command, tableName);
+  },
+
+  databaseExists: () => {
+    return ipcRenderer.invoke("databaseExists");
   },
 } satisfies Window["electronAPI"]);

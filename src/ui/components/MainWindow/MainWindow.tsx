@@ -1,26 +1,21 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
 
 function MainWindow({ showSqlInput }: { showSqlInput: boolean }) {
   const context = useContext(Context);
-  const [tableData, setTableData] = useState(context ? context[0] : null);
+
   const [sqlCommand, setSqlCommand] = useState("");
 
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-
-  useEffect(() => {
-    window.electronAPI.onDatabaseChange((data: TableData) => {
-      setTableData(data);
-    });
-  }, []);
-
+  const [tableData] = context;
   const handleHeaderClick = (column: (string | number)[]) => {};
 
   const handleSqlSubmit = async () => {
+    console.log("arrived here");
     window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
   };
 

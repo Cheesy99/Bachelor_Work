@@ -29,6 +29,10 @@ class MainManager {
     this.excelExporter = new ExcelExporter();
   }
 
+  get dataBaseExist() {
+    return this.dataBase.databaseExists();
+  }
+
   public async insertJson(json: string): Promise<void> {
     const jsonObject: JsonObject[] = JSON.parse(json);
     let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(jsonObject);

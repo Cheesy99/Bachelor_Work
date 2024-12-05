@@ -16,6 +16,10 @@ app.on("ready", () => {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
   const dbManager = MainManager.getInstance();
+
+  ipcMain.handle("databaseExists", async () => {
+    return dbManager.dataBaseExist;
+  });
   ipcMain.on("upload-json", async (_, fileData: string) => {
     try {
       if (dbManager && typeof dbManager.insertJson === "function") {
@@ -47,6 +51,7 @@ app.on("ready", () => {
   );
 
   ipcMain.on("sqlCommand", async (_, command: string, tableName: string) => {
+    console.log("Now you are in main");
     await dbManager.sqlCommand(command);
     const tableIndex: FromId = await dbManager.getCurrentIndexRange(tableName);
     if (tableIndex.endId > 100) tableIndex.endId = 100;

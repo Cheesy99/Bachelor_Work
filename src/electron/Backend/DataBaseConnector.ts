@@ -1,5 +1,6 @@
 import sqlite3 from "sqlite3";
 import * as path from "path";
+import * as fs from "fs";
 import { fileURLToPath } from "url";
 import { isDev } from "../util.js";
 
@@ -24,6 +25,10 @@ class DataBaseConnector {
       "dataBase.db"
     );
     this.dataBase = new sqlite3.Database(this.dbPath);
+  }
+
+  public databaseExists(): boolean {
+    return fs.existsSync(this.dbPath);
   }
 
   public sqlCommandWithReponse(sqlCommand: string): Promise<any[]> {

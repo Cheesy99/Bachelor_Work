@@ -14,5 +14,6 @@ interface Window {
     getTableData: (fromID: FromId, tableName: string) => Promise<TableData>;
     onDatabaseChange: (callback) => void;
     sendSqlCommand: (sqlCommand: string, tableName: string) => void;
+    databaseExists: () => Promise<boolean>;
   };
 }
