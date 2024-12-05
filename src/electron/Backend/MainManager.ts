@@ -65,7 +65,8 @@ class MainManager {
     return { startId, endId };
   }
   public async sqlCommand(sqlCommand: string): Promise<void> {
-    await this.dataBase.sqlCommand([sqlCommand]);
+    let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
+    console.log(result);
   }
   public exportToExcel() {}
 }

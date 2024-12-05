@@ -14,12 +14,17 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on(
       "database-updated",
       async (_, fromID: FromId, tableName: string) => {
-        const data = await ipcRenderer.invoke(
-          "getTableData",
-          fromID,
-          tableName
-        );
-        callback(data);
+        const databaseExists = await ipcRenderer.invoke("databaseExists");
+        if (databaseExists) {
+          const data = await ipcRenderer.invoke(
+            "getTableData",
+            fromID,
+            tableName
+          );
+          callback(data);
+        } else {
+          console.log("Database is empty");
+        }
       }
     );
   },

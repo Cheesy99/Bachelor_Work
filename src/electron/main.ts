@@ -51,7 +51,7 @@ app.on("ready", () => {
   );
 
   ipcMain.on("sqlCommand", async (_, command: string, tableName: string) => {
-    console.log("Now you are in main");
+    console.log(command);
     await dbManager.sqlCommand(command);
     const tableIndex: FromId = await dbManager.getCurrentIndexRange(tableName);
     if (tableIndex.endId > 100) tableIndex.endId = 100;

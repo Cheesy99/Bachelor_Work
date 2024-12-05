@@ -27,8 +27,22 @@ class DataBaseConnector {
     this.dataBase = new sqlite3.Database(this.dbPath);
   }
 
-  public databaseExists(): boolean {
-    return fs.existsSync(this.dbPath);
+  public databaseExists(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT COUNT(*) as count FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'`;
+      this.dataBase.get(query, (err, row) => {
+        if (err) {
+          console.error(
+            "Error checking if database has tables:",
+            err.message,
+            err
+          );
+          reject(err);
+        } else {
+          resolve((row as { count: number }).count > 0);
+        }
+      });
+    });
   }
 
   public sqlCommandWithReponse(sqlCommand: string): Promise<any[]> {
