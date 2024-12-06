@@ -4,7 +4,7 @@ import "./Table.css";
 interface TableProps {
   data: {
     schema: string[];
-    rows: (string | number)[][];
+    table: (string | number)[][];
   } | null;
   onHeaderClick: (column: (string | number)[]) => void;
 }
@@ -27,10 +27,10 @@ function Table({ data, onHeaderClick }: TableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.rows === undefined ? (
+          {data.table === undefined ? (
             <td></td>
           ) : (
-            data.rows.map((item) => (
+            data.table.map((item) => (
               <tr key={item[0]} onClick={() => onHeaderClick(item)}>
                 {item.map((row) => (
                   <td>{row}</td>

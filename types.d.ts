@@ -1,6 +1,6 @@
 type TableData = {
   schema: string[];
-  rows: (string | number)[][];
+  table: (string | number)[][];
 };
 
 type FromId = {

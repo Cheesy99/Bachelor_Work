@@ -51,8 +51,8 @@ class MainManager {
     const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
     const schema = schemaResult.map((row: any) => row.name);
-    const rows = dataResult.map((row: string | number) => Object.values(row));
-    return { schema, rows };
+    const table = dataResult.map((row: string | number) => Object.values(row));
+    return { schema, table };
   }
 
   public async getCurrentIndexRange(tableName: string): Promise<FromId> {
@@ -64,9 +64,11 @@ class MainManager {
     const endId = maxIdResult[0].maxId;
     return { startId, endId };
   }
-  public async sqlCommand(sqlCommand: string): Promise<void> {
+  public async sqlCommand(sqlCommand: string) {
     let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
-    console.log(result);
+    const schema = result.map((row: any) => row.name);
+    const table = result.map((row: string | number) => Object.values(row));
+    console.log({ schema, table });
   }
   public exportToExcel() {}
 }
