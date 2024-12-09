@@ -1,3 +1,5 @@
+import "./BigSidePanel.css";
+
 interface BigSidePanelProps {
   columnValues: (string | number)[];
 }
