@@ -41,4 +41,15 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   databaseExists: () => {
     return ipcRenderer.invoke("databaseExists");
   },
+
+  exportToExcel: () => {
+    return ipcRenderer.send("exportToExcel");
+  },
+  getTableSchema: (tableName: string) => {
+    return ipcRenderer.invoke("getTableSchema");
+  },
+
+  getRow: (id: number, tableName: string) => {
+    return ipcRenderer.invoke("getRow");
+  },
 } satisfies Window["electronAPI"]);

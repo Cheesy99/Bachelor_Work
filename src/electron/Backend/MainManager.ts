@@ -45,11 +45,9 @@ class MainManager {
     tableName: string
   ): Promise<TableData> {
     const { startId, endId } = fromID;
-    const schemaQuery = `PRAGMA table_info(${tableName})`;
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
-    const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
-    const schema = schemaResult.map((row: any) => row.name);
+    const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
     return { schema, table };
   }
@@ -68,7 +66,18 @@ class MainManager {
     const table = result.map((row: string | number) => Object.values(row));
     return table;
   }
-  public exportToExcel() {}
+
+  public async getTableSchema(tableName: string): Promise<string[]> {
+    const schemaQuery = `PRAGMA table_info(${tableName})`;
+    const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
+    const schema = schemaResult.map((row: any) => row.name);
+    return schema;
+  }
+
+  public async getRow(id: number, tableName: string) {}
+  public exportToExcel() {
+    console.log("Exporting to excel");
+  }
 }
 
 export default MainManager;

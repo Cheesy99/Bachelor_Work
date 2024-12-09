@@ -21,6 +21,10 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
       .replace(/ß/g, "ss");
   }
 
+  const exportToExcel = async () => {
+    await window.electronAPI.exportToExcel();
+  };
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -47,7 +51,11 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
 
   return (
     <div className="small_panel">
-      <label htmlFor="excelUpload" className="excel-icon-label">
+      <label
+        htmlFor="excelUpload"
+        className="excel-icon-label"
+        onClick={exportToExcel}
+      >
         <i className="fas fa-file-excel icon"></i>
       </label>
       <label
