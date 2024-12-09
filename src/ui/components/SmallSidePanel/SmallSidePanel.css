@@ -19,6 +19,13 @@
   transform: translateX(-50%);
 }
 
+.excel-icon-label {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .upload-icon-label {
   position: absolute;
   bottom: 20px;

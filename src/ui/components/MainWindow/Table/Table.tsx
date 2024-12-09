@@ -14,6 +14,12 @@ function Table({ data, onHeaderClick }: TableProps) {
     return <div>No data available</div>; // Handle the case where data is null
   }
 
+  const handleHeaderClick = (columnIndex: number) => {
+    const columnValues = data!.table.map((row) => row[columnIndex]);
+    const uniqueColumnValues = Array.from(new Set(columnValues));
+    onHeaderClick(uniqueColumnValues);
+  };
+
   return (
     <div className="table-container">
       <table>
@@ -22,7 +28,11 @@ function Table({ data, onHeaderClick }: TableProps) {
             {data.schema === undefined ? (
               <th></th>
             ) : (
-              data.schema.map((item, index) => <th key={index}>{item}</th>)
+              data.schema.map((item, index) => (
+                <th key={index} onClick={() => handleHeaderClick(index)}>
+                  {item}
+                </th>
+              ))
             )}
           </tr>
         </thead>

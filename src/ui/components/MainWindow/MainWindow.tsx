@@ -3,7 +3,15 @@ import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
 
-function MainWindow({ showSqlInput }: { showSqlInput: boolean }) {
+interface MainWindowProps {
+  showSqlInput: boolean;
+  setSelectedColumnValues: (values: (string | number)[]) => void;
+}
+
+function MainWindow({
+  showSqlInput,
+  setSelectedColumnValues,
+}: MainWindowProps) {
   const context = useContext(Context);
 
   const [sqlCommand, setSqlCommand] = useState("");
@@ -13,14 +21,14 @@ function MainWindow({ showSqlInput }: { showSqlInput: boolean }) {
   }
   const [tableData, setTableData] = context;
 
-  const handleHeaderClick = (column: (string | number)[]) => {};
+  const handleHeaderClick = (columnValues: (string | number)[]) => {
+    setSelectedColumnValues(columnValues);
+  };
 
   const handleSqlSubmit = async () => {
     console.log("arrived here");
     let newTableData: (string | number)[][] =
       await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
-
-    console.log(newTableData);
     const updatedTableData: TableData = {
       schema: tableData!.schema,
       table: newTableData,

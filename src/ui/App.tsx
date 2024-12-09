@@ -14,6 +14,9 @@ export const Context = React.createContext<ContextType | undefined>(undefined);
 function App() {
   const [tableData, setTableData] = useState<TableData | null>(null);
   const [showSqlInput, setShowSqlInput] = useState(false);
+  const [selectedColumnValues, setSelectedColumnValues] = useState<
+    (string | number)[]
+  >([]);
 
   useEffect(() => {
     const checkDatabaseAndFetchData = async () => {
@@ -44,8 +47,11 @@ function App() {
     <Context.Provider value={[tableData, setTableData]}>
       <div className="app-container">
         <SmallSidePanel toggleSqlInput={toggleSqlInput} />
-        <BigSidePanel />
-        <MainWindow showSqlInput={showSqlInput} />
+        <BigSidePanel columnValues={selectedColumnValues} />
+        <MainWindow
+          showSqlInput={showSqlInput}
+          setSelectedColumnValues={setSelectedColumnValues}
+        />
       </div>
     </Context.Provider>
   );
