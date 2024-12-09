@@ -50,11 +50,11 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.on("sqlCommand", async (_, command: string, tableName: string) => {
-    console.log(command);
-    await dbManager.sqlCommand(command);
-    const tableIndex: FromId = await dbManager.getCurrentIndexRange(tableName);
-    if (tableIndex.endId > 100) tableIndex.endId = 100;
-    mainWindow.webContents.send("database-updated", tableIndex, tableName);
-  });
+  ipcMain.handle(
+    "sqlCommand",
+    async (_, command: string, tableName: string) => {
+      let result = await dbManager.sqlCommand(command);
+      return result;
+    }
+  );
 });

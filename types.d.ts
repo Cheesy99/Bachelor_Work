@@ -13,7 +13,10 @@ interface Window {
     sendJsonFile: (fileData: string) => void;
     getTableData: (fromID: FromId, tableName: string) => Promise<TableData>;
     onDatabaseChange: (callback) => void;
-    sendSqlCommand: (sqlCommand: string, tableName: string) => void;
+    sendSqlCommand: (
+      sqlCommand: string,
+      tableName: string
+    ) => Promise<(string | number)[][]>;
     databaseExists: () => Promise<boolean>;
   };
 }

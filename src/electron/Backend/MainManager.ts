@@ -1,7 +1,6 @@
 import DataBaseConnector from "./DataBaseConnector.js";
 import ExcelExporter from "./ExcelExporter.js";
 import JsonObject from "./Interfaces/JsonObject.js";
-import TableSchema from "./Interfaces/TableSchema.js";
 import SchemaBuilder from "./SchemaBuilder.js";
 import SQLBuilder from "./SQLBuilder.js";
 import TableBuilder from "./TableBuilder.js";
@@ -64,11 +63,10 @@ class MainManager {
     const endId = maxIdResult[0].maxId;
     return { startId, endId };
   }
-  public async sqlCommand(sqlCommand: string) {
+  public async sqlCommand(sqlCommand: string): Promise<(string | number)[][]> {
     let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
-    const schema = result.map((row: any) => row.name);
     const table = result.map((row: string | number) => Object.values(row));
-    console.log({ schema, table });
+    return table;
   }
   public exportToExcel() {}
 }

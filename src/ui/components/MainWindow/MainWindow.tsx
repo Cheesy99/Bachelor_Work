@@ -11,12 +11,22 @@ function MainWindow({ showSqlInput }: { showSqlInput: boolean }) {
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-  const [tableData] = context;
+  const [tableData, setTableData] = context;
+
   const handleHeaderClick = (column: (string | number)[]) => {};
 
   const handleSqlSubmit = async () => {
     console.log("arrived here");
-    window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
+    let newTableData: (string | number)[][] =
+      await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
+
+    console.log(newTableData);
+    const updatedTableData: TableData = {
+      schema: tableData!.schema,
+      table: newTableData,
+    };
+
+    setTableData(updatedTableData);
   };
 
   return (

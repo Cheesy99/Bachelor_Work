@@ -28,12 +28,14 @@ function Table({ data, onHeaderClick }: TableProps) {
         </thead>
         <tbody>
           {data.table === undefined ? (
-            <td></td>
+            <tr>
+              <td></td>
+            </tr>
           ) : (
-            data.table.map((item) => (
-              <tr key={item[0]} onClick={() => onHeaderClick(item)}>
-                {item.map((row) => (
-                  <td>{row}</td>
+            data.table.map((item, rowIndex) => (
+              <tr key={rowIndex} onClick={() => onHeaderClick(item)}>
+                {item.map((row, cellIndex) => (
+                  <td key={cellIndex}>{row}</td>
                 ))}
               </tr>
             ))
