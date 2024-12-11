@@ -4,3 +4,12 @@
   border: 1px solid #ccc;
   padding: 10px;
 }
+
+.column-elements {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0; /* Remove default padding */
+}
+
+.column-elements li {
+  margin-bottom: 8px; /* Optional: Add some space between items */
+}

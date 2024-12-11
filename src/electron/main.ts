@@ -69,4 +69,8 @@ app.on("ready", () => {
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
     return await dbManager.getRow(id, tableName);
   });
+
+  ipcMain.handle("checkIfTable", async (_, tableName: string) => {
+    return await dbManager.checkForTable(tableName);
+  });
 });

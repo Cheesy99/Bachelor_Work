@@ -8,9 +8,14 @@ function BigSidePanel({ columnValues }: BigSidePanelProps) {
   return (
     <div className="big-side-panel">
       <h2>Column Values</h2>
-      <ul>
+      <ul className="column-elements">
         {columnValues.map((value, index) => (
-          <li key={index}>{value}</li>
+          <li key={index}>
+            <label>
+              <input type="checkbox" defaultChecked={true} />
+              {value}
+            </label>
+          </li>
         ))}
       </ul>
     </div>

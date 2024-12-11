@@ -21,5 +21,6 @@ interface Window {
     ) => Promise<(string | number)[][]>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => void;
+    checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
   };
 }

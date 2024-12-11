@@ -52,4 +52,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getRow: (id: number, tableName: string) => {
     return ipcRenderer.invoke("getRow");
   },
+
+  checkIfColumnIsTable: (tableName: string) => {
+    return ipcRenderer.invoke("checkIfTable");
+  },
 } satisfies Window["electronAPI"]);

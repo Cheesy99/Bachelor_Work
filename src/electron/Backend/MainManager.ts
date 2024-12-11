@@ -78,6 +78,12 @@ class MainManager {
   public exportToExcel() {
     console.log("Exporting to excel");
   }
+
+  public async checkForTable(tableName: string): Promise<boolean> {
+    const query = `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`;
+    const result = await this.dataBase.sqlCommandWithReponse(query);
+    return result.length > 0;
+  }
 }
 
 export default MainManager;

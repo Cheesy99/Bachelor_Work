@@ -20,3 +20,12 @@ th {
   background-color: #000000;
   text-align: left;
 }
+
+.header-cell {
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+.header-cell:hover {
+  font-size: 0.83em;
+}
