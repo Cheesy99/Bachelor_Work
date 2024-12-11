@@ -74,15 +74,14 @@ class MainManager {
     return schema;
   }
 
-  public async getRow(id: number, tableName: string) {}
-  public exportToExcel() {
-    console.log("Exporting to excel");
-  }
-
   public async checkForTable(tableName: string): Promise<boolean> {
     const query = `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`;
     const result = await this.dataBase.sqlCommandWithReponse(query);
     return result.length > 0;
+  }
+
+  public async exportToExcel(result: TableData) {
+    await this.excelExporter.exportResultToExcel(result);
   }
 }
 

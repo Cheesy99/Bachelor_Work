@@ -58,16 +58,12 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle("exportToExcel", async () => {
-    await dbManager.exportToExcel();
+  ipcMain.handle("exportToExcel", async (_, result: TableData) => {
+    await dbManager.exportToExcel(result);
   });
 
   ipcMain.handle("getTableSchema", async (_, tableName: string) => {
     return await dbManager.getTableSchema(tableName);
-  });
-
-  ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
-    return await dbManager.getRow(id, tableName);
   });
 
   ipcMain.handle("checkIfTable", async (_, tableName: string) => {

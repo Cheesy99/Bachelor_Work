@@ -20,7 +20,7 @@ interface Window {
       tableName: string
     ) => Promise<(string | number)[][]>;
     databaseExists: () => Promise<boolean>;
-    exportToExcel: () => void;
+    exportToExcel: (result: TableData) => void;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
   };
 }
