@@ -66,7 +66,7 @@ function Table({ data, onHeaderClick }: TableProps) {
   ) => {
     const foreignTableInfo: { index: number; name: string } | undefined =
       columnIndexForeignTable.find((item) => item.index === cellIndex);
-    if (foreignTableInfo && nestedTableData) {
+    if (foreignTableInfo && nestedTableData && nestedTableData.table) {
       const foreignRow = nestedTableData.table[rowIndex];
 
       return (

@@ -22,7 +22,7 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
   }
 
   const exportToExcel = async () => {
-    await window.electronAPI.exportToExcel();
+    // await window.electronAPI.exportToExcel();
   };
 
   const handleFileChange = async (
@@ -40,7 +40,6 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
       reader.onload = () => {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
-        console.log("I am in UI");
         window.electronAPI.sendJsonFile(fileData);
       };
       reader.readAsText(file);
