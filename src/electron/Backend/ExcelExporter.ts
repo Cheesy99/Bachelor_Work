@@ -1,6 +1,7 @@
 import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
+import fileSaver from "file-saver";
 
+const { saveAs } = fileSaver;
 class ExcelExporter {
   public async exportResultToExcel(result: TableData): Promise<void> {
     const worksheet = XLSX.utils.aoa_to_sheet([result.schema, ...result.table]);
