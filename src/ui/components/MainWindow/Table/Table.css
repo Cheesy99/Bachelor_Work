@@ -1,6 +1,7 @@
 .table-container {
   overflow: auto;
   background-color: rgb(170, 170, 170);
+  width: 100%;
 }
 
 table {

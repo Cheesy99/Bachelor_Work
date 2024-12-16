@@ -13,7 +13,9 @@
   background-color: rgb(185, 185, 185);
   border-radius: 1%;
   height: 95%;
-  width: 95%;
+  width: 89%;
+  margin-right: auto;
+  margin-left: 10px;
 }
 
 .sql-input {
@@ -21,6 +23,8 @@
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
+  width: 80%;
+  margin-right: 115px;
 }
 
 .sql-input input {
