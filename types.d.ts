@@ -22,5 +22,8 @@ interface Window {
     databaseExists: () => Promise<boolean>;
     exportToExcel: (result: TableData) => void;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
+    howManyRows: (tableName: string) => Promise<number>;
+    saveResult: (tableData: TableData) => Promise<void>;
+    getSaveResult: () => Promise<TableData | boolean>;
   };
 }

@@ -69,4 +69,16 @@ app.on("ready", () => {
   ipcMain.handle("checkIfTable", async (_, tableName: string) => {
     return await dbManager.checkForTable(tableName);
   });
+
+  ipcMain.handle("howManyRows", async (_, tableName: string) => {
+    return await dbManager.amountOfRows(tableName);
+  });
+
+  ipcMain.handle("saveResult", async (_, tableData) => {
+    return await dbManager.saveResult(tableData);
+  });
+
+  ipcMain.handle("getSavedResult", async (_) => {
+    return await dbManager.getSavedResult();
+  });
 });

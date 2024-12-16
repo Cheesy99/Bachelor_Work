@@ -56,4 +56,15 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   checkIfColumnIsTable: (tableName: string) => {
     return ipcRenderer.invoke("checkIfTable");
   },
+
+  howManyRows: (tableName: string) => {
+    return ipcRenderer.invoke("howManyRows", tableName);
+  },
+
+  saveResult: (tableData: TableData) => {
+    return ipcRenderer.invoke("saveResult", tableData);
+  },
+  getSaveResult: () => {
+    return ipcRenderer.invoke("getSaveResult");
+  },
 } satisfies Window["electronAPI"]);

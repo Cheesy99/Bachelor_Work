@@ -83,6 +83,19 @@ class MainManager {
   public async exportToExcel(result: TableData) {
     await this.excelExporter.exportResultToExcel(result);
   }
+
+  getSavedResult(): Promise<TableData | boolean> {
+    throw new Error("Method not implemented.");
+  }
+  saveResult(tableData: any): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  public async amountOfRows(tableName: string): Promise<number> {
+    const query = `SELECT COUNT(*) as count FROM ${tableName}`;
+    const result = await this.dataBase.sqlCommandWithReponse(query);
+    console.log(result[0].count);
+    return result[0].count;
+  }
 }
 
 export default MainManager;
