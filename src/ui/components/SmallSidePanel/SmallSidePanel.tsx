@@ -2,23 +2,13 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
+import Adapter from "../../Utils/Adapter";
 
 function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
   const context = useContext(Context);
-
+  const adapter = Adapter.getInstance();
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
-  }
-
-  function translateUmlauts(text: string): string {
-    return text
-      .replace(/ä/g, "ae")
-      .replace(/ö/g, "oe")
-      .replace(/ü/g, "ue")
-      .replace(/Ä/g, "Ae")
-      .replace(/Ö/g, "Oe")
-      .replace(/Ü/g, "Ue")
-      .replace(/ß/g, "ss");
   }
 
   const exportToExcel = async () => {
@@ -28,24 +18,7 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      const databaseExists = await window.electronAPI.databaseExists();
-      if (databaseExists) {
-        alert("Database already exists.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => {
-        let fileData = reader.result as string;
-        fileData = translateUmlauts(fileData);
-        window.electronAPI.sendJsonFile(fileData);
-      };
-      reader.readAsText(file);
-    } else {
-      alert("Invalid file type. Please select a .json file.");
-    }
+    adapter.insertJsonData(event);
   };
 
   const openSettings = () => {};

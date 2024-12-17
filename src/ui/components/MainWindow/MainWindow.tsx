@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
+import Adapter from "../../Utils/Adapter";
 
 interface MainWindowProps {
   showSqlInput: boolean;
@@ -13,7 +14,7 @@ function MainWindow({
   setSelectedColumnValues,
 }: MainWindowProps) {
   const context = useContext(Context);
-
+  const adapter = Adapter.getInstance();
   const [sqlCommand, setSqlCommand] = useState("");
 
   if (!context) {

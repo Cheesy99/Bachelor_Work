@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import TableData from "../../../tableDataContext";
 import "./Table.css";
+import Adapter from "../../../Utils/Adapter";
 
 interface TableProps {
   data: {
@@ -12,9 +12,9 @@ interface TableProps {
 
 function Table({ data, onHeaderClick }: TableProps) {
   const [columnIndexForeignTable, setColumnIndexForeignTable] = useState<
-    { index: number; name: string }[]
+    { index: number; columnName: string }[]
   >([]);
-
+  const adapter = Adapter.getInstance();
   //This might have to be an array cause we can have more than one foreign keys columns
   const [nestedTableData, setNestedTableData] = useState<TableData>();
 
@@ -22,12 +22,12 @@ function Table({ data, onHeaderClick }: TableProps) {
     if (data && data.table.length > 0) {
       const firstRow = data.table[0];
       const slicedRow = firstRow.slice(1);
-      const indices: { index: number; name: string }[] = [];
+      const indices: { index: number; columnName: string }[] = [];
       slicedRow.forEach(async (value, index) => {
         if (typeof value === "number") {
           const columnIndex = index + 1;
           const columnName = data.schema[columnIndex];
-          indices.push({ index: columnIndex, name: columnName });
+          indices.push({ index: columnIndex, columnName: columnName });
           const from = {
             startId: 0,
             endId: Math.max(
@@ -64,7 +64,7 @@ function Table({ data, onHeaderClick }: TableProps) {
     cellIndex: number,
     rowIndex: number
   ) => {
-    const foreignTableInfo: { index: number; name: string } | undefined =
+    const foreignTableInfo: { index: number; columnName: string } | undefined =
       columnIndexForeignTable.find((item) => item.index === cellIndex);
     if (foreignTableInfo && nestedTableData && nestedTableData.table) {
       const foreignRow = nestedTableData.table[rowIndex];
