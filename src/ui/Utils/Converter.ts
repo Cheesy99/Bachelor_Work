@@ -13,7 +13,9 @@ class Converter {
 
     return this.convertOneView(data);
   }
-  private convertNestedView(data: TableData[]): TableView {}
+  private convertNestedView(data: TableData[]): TableView {
+    if (data.length === 0) return { schema: [], table: [] };
+  }
 
   private convertOneView(data: TableData[]): TableData {}
 }

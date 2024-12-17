@@ -1,4 +1,3 @@
-import TableData from "../tableDataContext";
 import TableView from "./Interface_Enum/TableView";
 
 class Adapter {
