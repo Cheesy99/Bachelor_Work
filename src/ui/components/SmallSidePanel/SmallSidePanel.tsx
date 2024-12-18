@@ -2,7 +2,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
-import Adapter from "../../Utils/Adapter";
+import Adapter from "../../Connector/Adapter";
 
 function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
   const context = useContext(Context);

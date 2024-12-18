@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Table.css";
-import Adapter from "../../../Utils/Adapter";
+import Adapter from "../../../Connector/Adapter";
 
 interface TableProps {
   data: {

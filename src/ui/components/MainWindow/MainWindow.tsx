@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
-import Adapter from "../../Utils/Adapter";
+import Adapter from "../../Connector/Adapter";
 
 interface MainWindowProps {
   showSqlInput: boolean;

@@ -1,3 +1,5 @@
+type Table = TableData | TableView;
+
 type TableData = {
   schema: string[];
   table: (string | number)[][];
