@@ -1,6 +1,5 @@
 import sqlite3 from "sqlite3";
 import * as path from "path";
-import * as fs from "fs";
 import { fileURLToPath } from "url";
 import { isDev } from "../util.js";
 

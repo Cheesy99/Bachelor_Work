@@ -12,7 +12,7 @@ class Converter {
     this.strategy = strategy;
   }
 
-  public convert(data: TableData): TableView | TableData {
+  public convert(data: TableData): Promise<TableView | TableData> {
     return this.strategy.convert(data);
   }
 

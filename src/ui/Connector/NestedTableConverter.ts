@@ -7,7 +7,7 @@ type TableStruct = {
 };
 class NestedTableConverter implements ConversionStrategy {
   private tableData?: TableData;
-  async convert(data: TableData): Promise<TableView> {
+  public async convert(data: TableData): Promise<TableView> {
     this.tableData = data;
     const result = await this.convertNestedView(this.tableData.schema);
     console.log(result);

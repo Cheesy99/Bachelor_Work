@@ -1,4 +1,3 @@
-import JsonObject from "./Interfaces/JsonObject.js";
 import TableData from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import DataCleaner from "./Utils/DataCleaner.js";

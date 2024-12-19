@@ -8,6 +8,20 @@ interface TableProps {
 }
 
 function Table({ data, onHeaderClick }: TableProps) {
+  const [tableData, setTableData] = useState<Table>();
+  let tableType: string = "TableData";
+  useEffect(() => {
+    const observer = (newData: Table, tableType: string) => {
+      setTableData(newData);
+    };
+
+    Adapter.getInstance().subscribe(observer);
+
+    return () => {
+      Adapter.getInstance().unsubscribe(observer);
+    };
+  }, []);
+
   const isTableData = (data: TableData | TableView): data is TableData => {
     return "type" in data;
   };

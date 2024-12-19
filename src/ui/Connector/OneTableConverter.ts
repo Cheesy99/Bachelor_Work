@@ -1,8 +1,7 @@
 import ConversionStrategy from "./Interface/ConversionStrategy";
-import TableView from "./Interface/TableView";
 
 class OneTableConverter implements ConversionStrategy {
-  convert(data: TableData): TableData {
+  async convert(data: TableData): Promise<TableData> {
     throw new Error("Method not implemented.");
   }
 }

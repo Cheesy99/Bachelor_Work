@@ -7,10 +7,10 @@ class Adapter {
   private static instance: Adapter;
   private static converter: Converter;
   private setTableData: React.Dispatch<
-    React.SetStateAction<Table | null>
+    React.SetStateAction<Promise<Table> | null>
   > | null = null;
   private viewSetting: ViewSetting = ViewSetting.NESTEDTABLES;
-
+  private observers: ((data: Table, tableType: string) => void)[] = [];
   public static getInstance(): Adapter {
     if (!Adapter.instance) {
       Adapter.instance = new Adapter(new Converter());
@@ -21,7 +21,18 @@ class Adapter {
   private constructor(converter: Converter) {
     Adapter.converter = converter;
   }
+  // Observer Pattern
+  subscribe(observer: (data: Table, tableType: string) => void) {
+    this.observers.push(observer);
+  }
 
+  unsubscribe(observer: (data: Table, tableType: string) => void) {
+    this.observers = this.observers.filter((obs) => obs !== observer);
+  }
+
+  notify(data: Table, tableType: string) {
+    this.observers.forEach((observer) => observer(data, tableType));
+  }
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
 
@@ -46,16 +57,19 @@ class Adapter {
   public setViewSetting(viewSetting: ViewSetting): void {
     this.viewSetting = viewSetting;
   }
-
-  public convert(tableData: TableData, tableView: ViewSetting): Table {
+  // Stragtegy Pattern
+  public async convert(
+    tableData: TableData,
+    tableView: ViewSetting
+  ): Promise<Table> {
     if (this.viewSetting === ViewSetting.NESTEDTABLES)
       Adapter.converter.setStrategy(new NestedTableConverter());
     else Adapter.converter.setStrategy(new OneTableConverter());
-    return Adapter.converter.convert(tableData);
+    return await Adapter.converter.convert(tableData);
   }
 
   public setTableDataSetter(
-    setter: React.Dispatch<React.SetStateAction<Table | null>>
+    setter: React.Dispatch<React.SetStateAction<Promise<Table> | null>>
   ): this {
     this.setTableData = setter;
     return this;
@@ -69,8 +83,8 @@ class Adapter {
         fromID,
         "main_table"
       );
-      this.convert(data, ViewSetting.NESTEDTABLES);
-      if (this.setTableData) this.setTableData(data);
+      const result = this.convert(data, ViewSetting.NESTEDTABLES);
+      if (this.setTableData) this.setTableData(result);
     } else {
       console.log("Database does not exist.");
     }
@@ -80,7 +94,7 @@ class Adapter {
     window.electronAPI.onDatabaseChange((data: TableData) => {
       if (this.setTableData) {
         const convertedData = this.convert(data, this.viewSetting);
-        this.setTableData(data);
+        this.setTableData(convertedData);
       }
     });
   }

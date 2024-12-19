@@ -1,7 +1,5 @@
-import TableView from "./TableView";
-
 interface ConversionStrategy {
-  convert(data: TableData): TableData | TableView;
+  convert(data: TableData): Promise<TableData | TableView>;
 }
 
 export default ConversionStrategy;

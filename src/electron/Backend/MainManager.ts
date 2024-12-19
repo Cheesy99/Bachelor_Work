@@ -1,15 +1,12 @@
 import DataBaseConnector from "./DataBaseConnector.js";
 import ExcelExporter from "./ExcelExporter.js";
 import JsonObject from "./Interfaces/JsonObject.js";
-import SchemaBuilder from "./SchemaBuilder.js";
-import SQLBuilder from "./SQLBuilder.js";
-import TableBuilder from "./TableBuilder.js";
-import SqlTextGenerator from "./SQLTextGenerator.js";
+import SqlBuilder from "./SqlBuilder.js";
 
 class MainManager {
   private static instance: MainManager;
   private dataBase: DataBaseConnector;
-  private sqlBuilder: SQLBuilder;
+  private sqlBuilder: SqlBuilder;
   private excelExporter: ExcelExporter;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
@@ -20,11 +17,8 @@ class MainManager {
 
   private constructor() {
     this.dataBase = DataBaseConnector.getInstance();
-    this.sqlBuilder = new SQLBuilder(
-      new SchemaBuilder(),
-      new TableBuilder(),
-      new SqlTextGenerator()
-    );
+    // Factory pattern
+    this.sqlBuilder = SqlBuilder.createSqlBuilder();
     this.excelExporter = new ExcelExporter();
   }
 
