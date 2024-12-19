@@ -1,21 +1,29 @@
+import Adapter from "./Adapter";
 import ConversionStrategy from "./Interface/ConversionStrategy";
-import TableView from "./Interface/TableView";
-
+import { areArraysEqual, getMinMax } from "./Utils";
+type TableStruct = {
+  schema: string[];
+  table: (string | number | number[])[][];
+};
 class NestedTableConverter implements ConversionStrategy {
   private tableData?: TableData;
-  convert(data: TableData): TableView {
+  async convert(data: TableData): Promise<TableView> {
     this.tableData = data;
-    return this.convertNestedView(this.tableData.schema);
+    const result = await this.convertNestedView(this.tableData.schema);
+    console.log(result);
+    return result;
   }
 
-  private convertNestedView(incomingSchema: string[]): TableView {
-    const result: TableView = { schema: incomingSchema, table: [] };
+  private async convertNestedView(
+    incomingSchema: string[]
+  ): Promise<TableView> {
+    const resultTable: (string | number | number[])[][] = [];
+    const result: TableStruct = { schema: incomingSchema, table: [] };
     if (!this.tableData) {
       throw new Error("TableData is not initialized");
     }
     for (let rowIndex = 0; rowIndex < this.tableData.table.length; ++rowIndex) {
-      let inputRow: (string | number | number[])[];
-      let newIndex;
+      let inputRow: (string | number | number[])[] = [];
       this.tableData.table[rowIndex].forEach((value, columnIndex) => {
         if (columnIndex === 0) {
           inputRow.push(value);
@@ -25,16 +33,18 @@ class NestedTableConverter implements ConversionStrategy {
             rowIndex,
             columnIndex,
             inputRow,
-            this.tableData!.schema.at(columnIndex)
+            this.tableData!.schema[columnIndex]
           );
 
           inputRow.push(result.listOfForeignKeys);
-          newIndex = result.continueIndexFrom;
+          rowIndex = result.continueIndexFrom;
         } else inputRow.push(value);
       });
+      resultTable.push(inputRow);
     }
-    console.log(JSON.stringify(result, null, 2));
-    return result;
+    result.table = resultTable;
+    const final = await this.convertToTableView(result);
+    return final;
   }
 
   private checkForDuplicateRow(
@@ -42,10 +52,10 @@ class NestedTableConverter implements ConversionStrategy {
     currentRowIndex: number,
     currentColumnIndex: number,
     currentlyCollected: (string | number | number[])[],
-    tableName: string | undefined
+    tableName: string
   ): { listOfForeignKeys: number[]; continueIndexFrom: number } {
-    if (tableName) {
-      throw Error("The schema value was not found for the tablename");
+    if (!tableName) {
+      throw new Error("The schema value was not found for the tablename");
     }
     let index = currentRowIndex;
     if (index >= this.tableData!.table.length)
@@ -57,17 +67,27 @@ class NestedTableConverter implements ConversionStrategy {
       ++index
     )!;
     let indexCol: number = currentColumnIndex - 1;
-    if (this.compareRowsFromColumn(rowBelow, currentlyCollected, indexCol)) {
+    const isRowEqual = this.compareRowsFromColumn(
+      rowBelow,
+      currentlyCollected,
+      indexCol
+    );
+
+    if (isRowEqual) {
       const value = rowBelow.at(currentColumnIndex);
       if (typeof value === "number") {
         foreignKeys.push(value);
-        this.checkForDuplicateRow(
+        const result = this.checkForDuplicateRow(
           foreignKeys,
           index,
           currentColumnIndex,
           currentlyCollected,
           tableName
         );
+        return {
+          listOfForeignKeys: result.listOfForeignKeys,
+          continueIndexFrom: result.continueIndexFrom,
+        };
       } else throw new Error("Table Schema Value inconsistent");
     }
     return {
@@ -81,12 +101,16 @@ class NestedTableConverter implements ConversionStrategy {
     rowToCompare: (string | number | number[])[],
     startColumnIndex: number
   ): boolean {
-    for (let i = startColumnIndex; i >= 0; i--) {
+    if (!currentRow || !rowToCompare) {
+      return false;
+    }
+
+    for (let i = startColumnIndex; i >= 1; i--) {
       const currentElement = currentRow[i];
       const compareElement = rowToCompare[i];
 
       if (Array.isArray(currentElement) && Array.isArray(compareElement)) {
-        if (!this.areArraysEqual(currentElement, compareElement)) {
+        if (!areArraysEqual(currentElement, compareElement)) {
           return false;
         }
       } else if (currentElement !== compareElement) {
@@ -96,16 +120,36 @@ class NestedTableConverter implements ConversionStrategy {
     return true;
   }
 
-  private areArraysEqual(arr1: number[], arr2: number[]): boolean {
-    if (arr1.length !== arr2.length) {
-      return false;
-    }
-    for (let i = 0; i < arr1.length; i++) {
-      if (arr1[i] !== arr2[i]) {
-        return false;
+  private async convertToTableView(
+    tableStruct: TableStruct
+  ): Promise<TableView> {
+    const result: TableView = {
+      type: "TableView",
+      schema: tableStruct.schema,
+      table: [],
+    };
+    for (const value of tableStruct.table) {
+      const row: (string | number | TableData)[] = [];
+      for (const [index, column] of value.entries()) {
+        if (Array.isArray(column)) {
+          const tableName = tableStruct.schema[index];
+          const from: FromId = getMinMax(column);
+          const table: TableData = await window.electronAPI.getTableData(
+            from,
+            tableName
+          );
+          const createdTable: TableData = {
+            schema: table.schema,
+            table: table.table,
+          };
+          row.push(createdTable);
+        } else {
+          row.push(column);
+        }
       }
+      result.table.push(row);
     }
-    return true;
+    return result;
   }
 }
 

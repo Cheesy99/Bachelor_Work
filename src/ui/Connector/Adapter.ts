@@ -1,14 +1,15 @@
-import TableView from "./Interface/TableView";
 import Converter from "./Converter";
 import NestedTableConverter from "./NestedTableConverter";
 import OneTableConverter from "./OneTableConverter";
 import { translateUmlauts } from "./Utils";
+import { ViewSetting } from "./Enum/Setting";
 class Adapter {
   private static instance: Adapter;
   private static converter: Converter;
   private setTableData: React.Dispatch<
     React.SetStateAction<Table | null>
   > | null = null;
+  private viewSetting: ViewSetting = ViewSetting.NESTEDTABLES;
 
   public static getInstance(): Adapter {
     if (!Adapter.instance) {
@@ -42,17 +43,15 @@ class Adapter {
     }
   }
 
-  async getData(
-    fromID: FromId,
-    tableName: string,
-    tableView: ViewSetting
-  ): Promise<TableView | TableData> {
-    const tableDataCollection: TableData =
-      await window.electronAPI.getTableData(fromID, tableName);
-    if (tableView === ViewSetting.NESTEDTABLES)
+  public setViewSetting(viewSetting: ViewSetting): void {
+    this.viewSetting = viewSetting;
+  }
+
+  public convert(tableData: TableData, tableView: ViewSetting): Table {
+    if (this.viewSetting === ViewSetting.NESTEDTABLES)
       Adapter.converter.setStrategy(new NestedTableConverter());
     else Adapter.converter.setStrategy(new OneTableConverter());
-    return Adapter.converter.convert(tableDataCollection);
+    return Adapter.converter.convert(tableData);
   }
 
   public setTableDataSetter(
@@ -66,10 +65,11 @@ class Adapter {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists) {
       const fromID: FromId = { startId: 1, endId: 100 };
-      const data: Table = await window.electronAPI.getTableData(
+      const data: TableData = await window.electronAPI.getTableData(
         fromID,
         "main_table"
       );
+      this.convert(data, ViewSetting.NESTEDTABLES);
       if (this.setTableData) this.setTableData(data);
     } else {
       console.log("Database does not exist.");
@@ -79,9 +79,15 @@ class Adapter {
   public setupDatabaseChangeListener() {
     window.electronAPI.onDatabaseChange((data: TableData) => {
       if (this.setTableData) {
+        const convertedData = this.convert(data, this.viewSetting);
         this.setTableData(data);
       }
     });
+  }
+
+  public async getSchema(tableName: string): Promise<string[]> {
+    const result = await window.electronAPI.getTableSchema(tableName);
+    return result;
   }
 }
 

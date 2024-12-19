@@ -2,6 +2,7 @@ import "./App.css";
 import BigSidePanel from "./components/BigSidePanel/BigSidePanel";
 import MainWindow from "./components/MainWindow/MainWindow";
 import SmallSidePanel from "./components/SmallSidePanel/SmallSidePanel";
+import { ViewSetting } from "./Connector/Enum/Setting";
 import React, { useState, useEffect } from "react";
 import Adapter from "./Connector/Adapter";
 
@@ -13,6 +14,7 @@ type ContextType = [
 export const Context = React.createContext<ContextType | undefined>(undefined);
 const adpater = Adapter.getInstance();
 function App() {
+  const setting: ViewSetting = ViewSetting.ONETABLE;
   const [tableData, setTableData] = useState<Table | null>(null);
   const [showSqlInput, setShowSqlInput] = useState(false);
   const [selectedColumnValues, setSelectedColumnValues] = useState<
@@ -22,10 +24,7 @@ function App() {
   useEffect(() => {
     adpater.setTableDataSetter(setTableData);
     adpater.checkDatabaseAndFetchData();
-
-    window.electronAPI.onDatabaseChange((data: TableData) => {
-      setTableData(data);
-    });
+    adpater.setupDatabaseChangeListener();
   }, []);
 
   const toggleSqlInput = () => {

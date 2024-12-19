@@ -1,5 +1,4 @@
 import ConversionStrategy from "./Interface/ConversionStrategy";
-import TableView from "./Interface/TableView";
 import OneTableConverter from "./OneTableConverter";
 
 class Converter {

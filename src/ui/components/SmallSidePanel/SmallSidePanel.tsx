@@ -3,10 +3,20 @@ import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
 import Adapter from "../../Connector/Adapter";
+import SettingsModal from "./Settings/Settings";
+import React from "react";
+import { ViewSetting } from "../../Connector/Enum/Setting";
+import Modal from "react-modal";
+
+Modal.setAppElement("#root");
 
 function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
   const context = useContext(Context);
   const adapter = Adapter.getInstance();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewType, setViewType] = useState<ViewSetting>(
+    ViewSetting.NESTEDTABLES
+  );
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
@@ -15,13 +25,26 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
     // await window.electronAPI.exportToExcel();
   };
 
+  const openSettings = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeSettings = () => {
+    console.log("closeSettings called");
+    setIsModalOpen(false);
+  };
+
+  const handleViewChange = (
+    view: ViewSetting.NESTEDTABLES | ViewSetting.ONETABLE
+  ) => {
+    setViewType(view);
+    adapter.setViewSetting(view); // Inform the adapter of the selected view setting
+  };
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     adapter.insertJsonData(event);
   };
-
-  const openSettings = () => {};
 
   return (
     <div className="small_panel">
@@ -31,8 +54,15 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
         onClick={openSettings}
         title="Settings"
       >
-        <i className="fas fa-cog icon"></i> {/* Font Awesome settings icon */}
+        <i className="fas fa-cog icon"></i>
       </label>
+      <SettingsModal
+        isOpen={isModalOpen}
+        onRequestClose={closeSettings}
+        onViewChange={handleViewChange}
+        currentView={viewType}
+      />
+
       <label
         htmlFor="excelUpload"
         className="excel-icon-label"

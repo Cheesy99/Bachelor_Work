@@ -5,6 +5,12 @@ type TableData = {
   table: (string | number)[][];
 };
 
+type TableView = {
+  type: "TableView";
+  schema: string[];
+  table: (string | number | TableData)[][];
+};
+
 type FromId = {
   startId: number;
   endId: number;
