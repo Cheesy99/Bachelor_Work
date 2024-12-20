@@ -2,15 +2,18 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
-import Adapter from "../../Connector/Adapter";
+import Adapter from "../../Connector/UiManager";
 import SettingsModal from "./Settings/Settings";
 import React from "react";
 import { ViewSetting } from "../../Connector/Enum/Setting";
 import Modal from "react-modal";
 
 Modal.setAppElement("#root");
-
-function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
+interface SmallSidePanelProps {
+  toggleSqlInput: () => void;
+  onViewChange: (view: ViewSetting) => void;
+}
+function SmallSidePanel({ toggleSqlInput, onViewChange }: SmallSidePanelProps) {
   const context = useContext(Context);
   const adapter = Adapter.getInstance();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,17 +32,16 @@ function SmallSidePanel({ toggleSqlInput }: { toggleSqlInput: () => void }) {
     setIsModalOpen(true);
   };
 
+  const handleViewChange = (view: ViewSetting) => {
+    setViewType(view);
+    onViewChange(view);
+  };
+
   const closeSettings = () => {
     console.log("closeSettings called");
     setIsModalOpen(false);
   };
 
-  const handleViewChange = (
-    view: ViewSetting.NESTEDTABLES | ViewSetting.ONETABLE
-  ) => {
-    setViewType(view);
-    adapter.setViewSetting(view); // Inform the adapter of the selected view setting
-  };
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {

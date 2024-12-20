@@ -29,3 +29,18 @@ export const getMinMax = (values: number[]): FromId => {
   const max = Math.max(...values);
   return { startId: min, endId: max };
 };
+
+export const checkSchemaName = (
+  schema1: string[],
+  schema2: string[]
+): string[] => {
+  const result = [...schema1];
+
+  schema2.forEach((str) => {
+    if (!schema1.includes(str)) {
+      result.push(str);
+    }
+  });
+
+  return result;
+};

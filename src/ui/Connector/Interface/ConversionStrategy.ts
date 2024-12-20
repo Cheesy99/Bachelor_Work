@@ -1,5 +1,5 @@
 interface ConversionStrategy {
-  convert(data: TableData): Promise<TableData | TableView>;
+  convert(data: TableStruct): Promise<TableData | TableView>;
 }
 
 export default ConversionStrategy;

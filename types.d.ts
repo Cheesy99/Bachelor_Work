@@ -5,8 +5,12 @@ type TableData = {
   table: (string | number)[][];
 };
 
+type TableStruct = {
+  schema: string[];
+  table: (string | number | number[])[][];
+};
+
 type TableView = {
-  type: "TableView";
   schema: string[];
   table: (string | number | TableData)[][];
 };

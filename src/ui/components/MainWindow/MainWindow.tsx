@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
-import Adapter from "../../Connector/Adapter";
+import Adapter from "../../Connector/UiManager";
 
 interface MainWindowProps {
   showSqlInput: boolean;
@@ -34,8 +34,6 @@ function MainWindow({
       schema: tableData!.schema,
       table: newTableData,
     };
-
-    setTableData(updatedTableData);
   };
 
   return (

@@ -7,7 +7,7 @@ class Adapter {
   private static instance: Adapter;
   private static converter: Converter;
   private setTableData: React.Dispatch<
-    React.SetStateAction<Promise<Table> | null>
+    React.SetStateAction<Table | null>
   > | null = null;
   private viewSetting: ViewSetting = ViewSetting.NESTEDTABLES;
   private observers: ((data: Table, tableType: string) => void)[] = [];
@@ -21,18 +21,7 @@ class Adapter {
   private constructor(converter: Converter) {
     Adapter.converter = converter;
   }
-  // Observer Pattern
-  subscribe(observer: (data: Table, tableType: string) => void) {
-    this.observers.push(observer);
-  }
 
-  unsubscribe(observer: (data: Table, tableType: string) => void) {
-    this.observers = this.observers.filter((obs) => obs !== observer);
-  }
-
-  notify(data: Table, tableType: string) {
-    this.observers.forEach((observer) => observer(data, tableType));
-  }
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
 
@@ -69,7 +58,7 @@ class Adapter {
   }
 
   public setTableDataSetter(
-    setter: React.Dispatch<React.SetStateAction<Promise<Table> | null>>
+    setter: React.Dispatch<React.SetStateAction<Table | null>>
   ): this {
     this.setTableData = setter;
     return this;
@@ -83,7 +72,7 @@ class Adapter {
         fromID,
         "main_table"
       );
-      const result = this.convert(data, ViewSetting.NESTEDTABLES);
+      const result = await this.convert(data, ViewSetting.NESTEDTABLES);
       if (this.setTableData) this.setTableData(result);
     } else {
       console.log("Database does not exist.");
@@ -91,9 +80,9 @@ class Adapter {
   }
 
   public setupDatabaseChangeListener() {
-    window.electronAPI.onDatabaseChange((data: TableData) => {
+    window.electronAPI.onDatabaseChange(async (data: TableData) => {
       if (this.setTableData) {
-        const convertedData = this.convert(data, this.viewSetting);
+        const convertedData = await this.convert(data, this.viewSetting);
         this.setTableData(convertedData);
       }
     });
