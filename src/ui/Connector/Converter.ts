@@ -1,12 +1,12 @@
 import ConversionStrategy from "./Interface/ConversionStrategy";
-import OneTableConverter from "./OneTableConverter";
+import NestedTableConverter from "./NestedTableConverter";
+// import OneTableConverter from "./OneTableConverter";
 import { areArraysEqual, getMinMax } from "./Utils";
 
 class Converter {
   private strategy: ConversionStrategy;
-  private tableData?: TableData;
   constructor() {
-    this.strategy = new OneTableConverter();
+    this.strategy = new NestedTableConverter();
   }
 
   public setStrategy(strategy: ConversionStrategy) {
@@ -15,27 +15,29 @@ class Converter {
 
   public convert(data: TableData): Promise<Table> {
     const tableStruct = this.createTableStruct(data);
+    console.log(tableStruct);
     return this.strategy.convert(tableStruct);
   }
 
-  private createTableStruct(data: Table): TableStruct {
+  private createTableStruct(data: TableData): TableStruct {
     const resultTable: (string | number | number[])[][] = [];
     const result: TableStruct = { schema: data.schema, table: [] };
-    if (!this.tableData) {
+    if (!data) {
       throw new Error("TableData is not initialized");
     }
-    for (let rowIndex = 0; rowIndex < this.tableData.table.length; ++rowIndex) {
+    for (let rowIndex = 0; rowIndex < data.table.length; ++rowIndex) {
       let inputRow: (string | number | number[])[] = [];
-      this.tableData.table[rowIndex].forEach((value, columnIndex) => {
+      data.table[rowIndex].forEach((value, columnIndex) => {
         if (columnIndex === 0) {
           inputRow.push(value);
         } else if (typeof value === "number") {
           let result = this.checkForDuplicateRow(
+            data,
             [value],
             rowIndex,
             columnIndex,
             inputRow,
-            this.tableData!.schema[columnIndex]
+            data!.schema[columnIndex]
           );
 
           inputRow.push(result.listOfForeignKeys);
@@ -49,6 +51,7 @@ class Converter {
   }
 
   private checkForDuplicateRow(
+    data: TableData,
     foreignKeys: number[],
     currentRowIndex: number,
     currentColumnIndex: number,
@@ -59,14 +62,12 @@ class Converter {
       throw new Error("The schema value was not found for the tablename");
     }
     let index = currentRowIndex;
-    if (index >= this.tableData!.table.length)
+    if (index >= data!.table.length)
       return {
         listOfForeignKeys: foreignKeys,
         continueIndexFrom: currentRowIndex,
       };
-    let rowBelow: (string | number | number[])[] = this.tableData?.table.at(
-      ++index
-    )!;
+    let rowBelow: (string | number | number[])[] = data?.table.at(++index)!;
     let indexCol: number = currentColumnIndex - 1;
     const isRowEqual = this.compareRowsFromColumn(
       rowBelow,
@@ -79,6 +80,7 @@ class Converter {
       if (typeof value === "number") {
         foreignKeys.push(value);
         const result = this.checkForDuplicateRow(
+          data,
           foreignKeys,
           index,
           currentColumnIndex,

@@ -44,3 +44,9 @@ export const checkSchemaName = (
 
   return result;
 };
+
+export const removeId = (
+  table: (string | number)[][]
+): (string | number)[][] => {
+  return table.map((row) => row.slice(1));
+};

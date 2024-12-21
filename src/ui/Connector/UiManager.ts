@@ -1,6 +1,6 @@
 import Converter from "./Converter";
 import NestedTableConverter from "./NestedTableConverter";
-import OneTableConverter from "./OneTableConverter";
+// import OneTableConverter from "./OneTableConverter";
 import { translateUmlauts } from "./Utils";
 import { ViewSetting } from "./Enum/Setting";
 class Adapter {
@@ -51,9 +51,9 @@ class Adapter {
     tableData: TableData,
     tableView: ViewSetting
   ): Promise<Table> {
-    if (this.viewSetting === ViewSetting.NESTEDTABLES)
-      Adapter.converter.setStrategy(new NestedTableConverter());
-    else Adapter.converter.setStrategy(new OneTableConverter());
+    // if (this.viewSetting === ViewSetting.NESTEDTABLES)
+    Adapter.converter.setStrategy(new NestedTableConverter());
+    // else Adapter.converter.setStrategy(new OneTableConverter());
     return await Adapter.converter.convert(tableData);
   }
 
