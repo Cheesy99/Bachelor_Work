@@ -57,7 +57,7 @@ class UiManager {
     return this;
   }
 
-  public async checkDatabaseAndFetchData() {
+  public async checkDatabaseAndFetchData(tableView: ViewSetting) {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists) {
       const fromID: FromId = { startId: 1, endId: 100 };
@@ -65,7 +65,7 @@ class UiManager {
         fromID,
         "main_table"
       );
-      const result = await this.convert(data, ViewSetting.NESTEDTABLES);
+      const result = await this.convert(data, tableView);
       if (this.setTableData) this.setTableData(result);
     } else {
       console.log("Database does not exist.");

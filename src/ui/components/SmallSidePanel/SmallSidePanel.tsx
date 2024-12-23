@@ -17,12 +17,11 @@ function SmallSidePanel({ toggleSqlInput, onViewChange }: SmallSidePanelProps) {
   const context = useContext(Context);
   const adapter = UiManager.getInstance();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewType, setViewType] = useState<ViewSetting>(
-    ViewSetting.NESTEDTABLES
-  );
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
+
+  const [_, viewType] = context;
 
   const exportToExcel = async () => {
     // await window.electronAPI.exportToExcel();

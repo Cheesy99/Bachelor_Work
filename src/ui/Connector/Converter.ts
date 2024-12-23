@@ -6,7 +6,7 @@ import { areArraysEqual, getMinMax } from "./Utils";
 class Converter {
   private strategy: ConversionStrategy;
   constructor() {
-    this.strategy = new NestedTableConverter();
+    this.strategy = new OneTableConverter();
   }
 
   public setStrategy(strategy: ConversionStrategy) {

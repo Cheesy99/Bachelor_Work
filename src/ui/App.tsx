@@ -20,7 +20,7 @@ function App() {
 
   useEffect(() => {
     adpater.setTableDataSetter(setTableData);
-    adpater.checkDatabaseAndFetchData();
+    adpater.checkDatabaseAndFetchData(tableType);
     adpater.setupDatabaseChangeListener(tableType);
   }, []);
 
