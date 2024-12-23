@@ -2,7 +2,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
-import Adapter from "../../Connector/UiManager";
+import UiManager from "../../Connector/UiManager";
 import SettingsModal from "./Settings/Settings";
 import React from "react";
 import { ViewSetting } from "../../Connector/Enum/Setting";
@@ -15,7 +15,7 @@ interface SmallSidePanelProps {
 }
 function SmallSidePanel({ toggleSqlInput, onViewChange }: SmallSidePanelProps) {
   const context = useContext(Context);
-  const adapter = Adapter.getInstance();
+  const adapter = UiManager.getInstance();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewType, setViewType] = useState<ViewSetting>(
     ViewSetting.NESTEDTABLES
@@ -30,11 +30,6 @@ function SmallSidePanel({ toggleSqlInput, onViewChange }: SmallSidePanelProps) {
 
   const openSettings = () => {
     setIsModalOpen(true);
-  };
-
-  const handleViewChange = (view: ViewSetting) => {
-    setViewType(view);
-    onViewChange(view);
   };
 
   const closeSettings = () => {
@@ -61,7 +56,7 @@ function SmallSidePanel({ toggleSqlInput, onViewChange }: SmallSidePanelProps) {
       <SettingsModal
         isOpen={isModalOpen}
         onRequestClose={closeSettings}
-        onViewChange={handleViewChange}
+        onViewChange={onViewChange}
         currentView={viewType}
       />
 

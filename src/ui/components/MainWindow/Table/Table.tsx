@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import "./Table.css";
-import Adapter from "../../../Connector/UiManager";
+import UiManager from "../../../Connector/UiManager";
+import { ViewSetting } from "../../../Connector/Enum/Setting";
 
 interface TableProps {
   data: Table;
+  viewSetting: ViewSetting;
   onHeaderClick: (column: (string | number)[]) => void;
 }
 
-function Table({ data, onHeaderClick }: TableProps) {
-  const [tableData, setTableData] = useState<Table>();
-  let tableType: string = "TableData";
+function Table({ data, viewSetting, onHeaderClick }: TableProps) {
+  console.log("Table component received data:", data);
+  console.log("Table component received viewSetting:", viewSetting);
 
-  const isTableData = (data: TableData | TableView): data is TableData => {
-    return "type" in data;
+  const isOneTable = (viewSetting: ViewSetting): boolean => {
+    return viewSetting === ViewSetting.ONETABLE ? true : false;
   };
 
   if (!data) {
@@ -20,7 +22,7 @@ function Table({ data, onHeaderClick }: TableProps) {
   }
 
   const renderTableData = (data: TableData) => (
-    <>
+    <table>
       <thead>
         <tr>
           {data.schema.map((item, index) => (
@@ -37,7 +39,7 @@ function Table({ data, onHeaderClick }: TableProps) {
           </tr>
         ))}
       </tbody>
-    </>
+    </table>
   );
 
   const renderTableView = (data: TableView) => (
@@ -70,7 +72,9 @@ function Table({ data, onHeaderClick }: TableProps) {
   return (
     <div>
       <table>
-        {isTableData(data) ? renderTableData(data) : renderTableView(data)}
+        {isOneTable(viewSetting)
+          ? renderTableData(data as TableData)
+          : renderTableView(data as TableView)}
       </table>
     </div>
   );

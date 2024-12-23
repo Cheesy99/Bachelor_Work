@@ -2,25 +2,26 @@ import { useContext, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
-import Adapter from "../../Connector/UiManager";
+import { ViewSetting } from "../../Connector/Enum/Setting";
 
 interface MainWindowProps {
   showSqlInput: boolean;
   setSelectedColumnValues: (values: (string | number)[]) => void;
 }
 
+type ContextType = [Table | null, ViewSetting];
+
 function MainWindow({
   showSqlInput,
   setSelectedColumnValues,
 }: MainWindowProps) {
-  const context = useContext(Context);
-  const adapter = Adapter.getInstance();
+  const context: ContextType | undefined = useContext(Context);
   const [sqlCommand, setSqlCommand] = useState("");
 
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-  const [tableData, setTableData] = context;
+  const [tableData, tableType] = context;
 
   const handleHeaderClick = (columnValues: (string | number)[]) => {
     setSelectedColumnValues(columnValues);
@@ -39,7 +40,13 @@ function MainWindow({
   return (
     <div className="main-window">
       <div className="stage" style={{ marginTop: showSqlInput ? "20px" : "0" }}>
-        <Table data={tableData!} onHeaderClick={handleHeaderClick} />
+        {tableData && (
+          <Table
+            data={tableData}
+            viewSetting={tableType}
+            onHeaderClick={handleHeaderClick}
+          />
+        )}
       </div>
       {showSqlInput && (
         <div className="sql-input">

@@ -30,19 +30,26 @@ export const getMinMax = (values: number[]): FromId => {
   return { startId: min, endId: max };
 };
 
-export const checkSchemaName = (
-  schema1: string[],
-  schema2: string[]
+export const createJoinedSchemaName = (
+  mainSchema: string[],
+  foreignTableName_columnName: string,
+  foreignSchema: string[]
 ): string[] => {
-  const result = [...schema1];
+  const joinedSchema = [...mainSchema];
+  const columnIndex = joinedSchema.indexOf(foreignTableName_columnName);
 
-  schema2.forEach((str) => {
-    if (!schema1.includes(str)) {
-      result.push(str);
+  if (columnIndex !== -1) {
+    joinedSchema.splice(columnIndex, 1);
+    for (const columnName of foreignSchema) {
+      if (columnName !== "id") {
+        joinedSchema.push(`${foreignTableName_columnName}.${columnName}`);
+      }
     }
-  });
+  } else {
+    throw new Error("ForeignTable name does not match a column name in parent");
+  }
 
-  return result;
+  return joinedSchema;
 };
 
 export const removeId = (

@@ -4,18 +4,15 @@ import MainWindow from "./components/MainWindow/MainWindow";
 import SmallSidePanel from "./components/SmallSidePanel/SmallSidePanel";
 import { ViewSetting } from "./Connector/Enum/Setting";
 import React, { useState, useEffect } from "react";
-import Adapter from "./Connector/UiManager";
+import UiManager from "./Connector/UiManager";
 
 type ContextType = [Table | null, ViewSetting];
 
 export const Context = React.createContext<ContextType | undefined>(undefined);
-const adpater = Adapter.getInstance();
+const adpater = UiManager.getInstance();
 function App() {
-  const setting: ViewSetting = ViewSetting.ONETABLE;
   const [tableData, setTableData] = useState<Table | null>(null);
-  const [tableType, setTableType] = useState<ViewSetting>(
-    ViewSetting.NESTEDTABLES
-  );
+  const [tableType, setTableType] = useState<ViewSetting>(ViewSetting.ONETABLE);
   const [showSqlInput, setShowSqlInput] = useState(false);
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
@@ -24,8 +21,13 @@ function App() {
   useEffect(() => {
     adpater.setTableDataSetter(setTableData);
     adpater.checkDatabaseAndFetchData();
-    adpater.setupDatabaseChangeListener();
+    adpater.setupDatabaseChangeListener(tableType);
   }, []);
+
+  const handleViewChange = (viewSetting: ViewSetting) => {
+    setTableType(viewSetting);
+    UiManager.setStrategyByViewSetting(viewSetting);
+  };
 
   const toggleSqlInput = () => {
     setShowSqlInput((prev) => !prev);
@@ -35,7 +37,7 @@ function App() {
       <div className="app-container">
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}
-          onViewChange={setTableType}
+          onViewChange={handleViewChange}
         />
         <BigSidePanel columnValues={selectedColumnValues} />
         <MainWindow

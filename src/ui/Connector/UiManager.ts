@@ -1,25 +1,23 @@
 import Converter from "./Converter";
 import NestedTableConverter from "./NestedTableConverter";
-// import OneTableConverter from "./OneTableConverter";
+import OneTableConverter from "./OneTableConverter";
 import { translateUmlauts } from "./Utils";
 import { ViewSetting } from "./Enum/Setting";
-class Adapter {
-  private static instance: Adapter;
+class UiManager {
+  private static instance: UiManager;
   private static converter: Converter;
   private setTableData: React.Dispatch<
     React.SetStateAction<Table | null>
   > | null = null;
-  private viewSetting: ViewSetting = ViewSetting.NESTEDTABLES;
-  private observers: ((data: Table, tableType: string) => void)[] = [];
-  public static getInstance(): Adapter {
-    if (!Adapter.instance) {
-      Adapter.instance = new Adapter(new Converter());
+  public static getInstance(): UiManager {
+    if (!UiManager.instance) {
+      UiManager.instance = new UiManager(new Converter());
     }
-    return Adapter.instance;
+    return UiManager.instance;
   }
 
   private constructor(converter: Converter) {
-    Adapter.converter = converter;
+    UiManager.converter = converter;
   }
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -43,18 +41,13 @@ class Adapter {
     }
   }
 
-  public setViewSetting(viewSetting: ViewSetting): void {
-    this.viewSetting = viewSetting;
-  }
   // Stragtegy Pattern
   public async convert(
     tableData: TableData,
     tableView: ViewSetting
   ): Promise<Table> {
-    // if (this.viewSetting === ViewSetting.NESTEDTABLES)
-    Adapter.converter.setStrategy(new NestedTableConverter());
-    // else Adapter.converter.setStrategy(new OneTableConverter());
-    return await Adapter.converter.convert(tableData);
+    UiManager.setStrategyByViewSetting(tableView);
+    return await UiManager.converter.convert(tableData);
   }
 
   public setTableDataSetter(
@@ -79,10 +72,10 @@ class Adapter {
     }
   }
 
-  public setupDatabaseChangeListener() {
+  public setupDatabaseChangeListener(viewSetting: ViewSetting) {
     window.electronAPI.onDatabaseChange(async (data: TableData) => {
       if (this.setTableData) {
-        const convertedData = await this.convert(data, this.viewSetting);
+        const convertedData = await this.convert(data, viewSetting);
         this.setTableData(convertedData);
       }
     });
@@ -92,6 +85,14 @@ class Adapter {
     const result = await window.electronAPI.getTableSchema(tableName);
     return result;
   }
+
+  public static setStrategyByViewSetting(viewSetting: ViewSetting) {
+    if (viewSetting === ViewSetting.NESTEDTABLES) {
+      UiManager.converter.setStrategy(new NestedTableConverter());
+    } else {
+      UiManager.converter.setStrategy(new OneTableConverter());
+    }
+  }
 }
 
-export default Adapter;
+export default UiManager;

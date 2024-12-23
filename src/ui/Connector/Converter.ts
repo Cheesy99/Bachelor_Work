@@ -1,6 +1,6 @@
 import ConversionStrategy from "./Interface/ConversionStrategy";
 import NestedTableConverter from "./NestedTableConverter";
-// import OneTableConverter from "./OneTableConverter";
+import OneTableConverter from "./OneTableConverter";
 import { areArraysEqual, getMinMax } from "./Utils";
 
 class Converter {
@@ -15,8 +15,10 @@ class Converter {
 
   public convert(data: TableData): Promise<Table> {
     const tableStruct = this.createTableStruct(data);
-    console.log(tableStruct);
-    return this.strategy.convert(tableStruct);
+    if (this.strategy instanceof NestedTableConverter) {
+      return this.strategy.convert(tableStruct);
+    }
+    return this.strategy.convert(tableStruct, data);
   }
 
   private createTableStruct(data: TableData): TableStruct {
