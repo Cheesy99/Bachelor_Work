@@ -95,6 +95,10 @@ class MainManager {
     const result = await this.dataBase.sqlCommandWithReponse(query);
     return result[0].count;
   }
+
+  public async insertBig(fileData: any): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 }
 
 export default MainManager;
