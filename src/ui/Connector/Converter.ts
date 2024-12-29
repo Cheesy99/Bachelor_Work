@@ -4,10 +4,7 @@ import OneTableConverter from "./OneTableConverter";
 import { areArraysEqual, getMinMax } from "./Utils";
 
 class Converter {
-  private strategy: ConversionStrategy;
-  constructor() {
-    this.strategy = new OneTableConverter();
-  }
+  private strategy?: ConversionStrategy;
 
   public setStrategy(strategy: ConversionStrategy) {
     this.strategy = strategy;
@@ -18,7 +15,7 @@ class Converter {
     if (this.strategy instanceof NestedTableConverter) {
       return this.strategy.convert(tableStruct);
     }
-    return this.strategy.convert(tableStruct, data);
+    return this.strategy!.convert(tableStruct, data);
   }
 
   private createTableStruct(data: TableData): TableStruct {
@@ -123,6 +120,77 @@ class Converter {
       }
     }
     return true;
+  }
+  // This is Wrong
+  public convertNestedToTableData(table: NestedTable): Promise<Table> {
+    this.setStrategy(new OneTableConverter());
+    const result: TableData = {
+      schema: table.schema,
+      table: [],
+    };
+
+    for (const row of table.table) {
+      let newRows: (string | number)[][] = [[]];
+
+      for (const [index, column] of row.entries()) {
+        if (
+          typeof column === "object" &&
+          column !== null &&
+          "schema" in column &&
+          "table" in column
+        ) {
+          const nestedTableData = column as TableData;
+          const idIndex = nestedTableData.schema.indexOf("id");
+          if (idIndex === -1) continue;
+
+          const ids = nestedTableData.table.map(
+            (nestedRow) => nestedRow[idIndex]
+          );
+          const newRowsWithIds: (string | number)[][] = [];
+
+          for (const id of ids) {
+            for (const newRow of newRows) {
+              const newRowCopy = [...newRow];
+              newRowCopy[index] = id;
+              newRowsWithIds.push(newRowCopy);
+            }
+          }
+
+          newRows = newRowsWithIds;
+        } else {
+          for (const newRow of newRows) {
+            newRow[index] = column;
+          }
+        }
+      }
+
+      result.table.push(...newRows);
+    }
+
+    return this.convert(result);
+  }
+
+  public convertOneToNested(table: TableData): Promise<Table> {
+    this.setStrategy(new NestedTableConverter());
+    const filteredSchema = table.schema.filter(
+      (column) => !column.includes(".")
+    );
+
+    const indicesToKeep: number[] = table.schema
+      .map((column, index) => (!column.includes(".") ? index : -1))
+      .filter((index) => index !== -1);
+
+    // Filter the table data to keep only the columns that do not contain a dot (.)
+    const filteredTable: (string | number)[][] = table.table.map((row) =>
+      indicesToKeep.map((index) => row[index])
+    );
+
+    let result: TableData = {
+      schema: filteredSchema,
+      table: filteredTable,
+    };
+
+    return this.convert(result);
   }
 }
 

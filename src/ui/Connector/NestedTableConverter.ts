@@ -2,24 +2,22 @@ import ConversionStrategy from "./Interface/ConversionStrategy";
 import { getMinMax } from "./Utils";
 
 class NestedTableConverter implements ConversionStrategy {
-  public async convert(data: TableStruct): Promise<TableView> {
+  public async convert(data: TableStruct): Promise<NestedTable> {
     const result = await this.convertToNestedView(data);
-    console.log(result);
     return result;
   }
 
   private async convertToNestedView(
     tableStruct: TableStruct
-  ): Promise<TableView> {
+  ): Promise<NestedTable> {
     const final = await this.convertToTableView(tableStruct);
     return final;
   }
 
   private async convertToTableView(
     tableStruct: TableStruct
-  ): Promise<TableView> {
-    console.log(tableStruct);
-    const result: TableView = {
+  ): Promise<NestedTable> {
+    const result: NestedTable = {
       schema: tableStruct.schema,
       table: [],
     };
@@ -44,6 +42,7 @@ class NestedTableConverter implements ConversionStrategy {
       }
       result.table.push(row);
     }
+
     return result;
   }
 }

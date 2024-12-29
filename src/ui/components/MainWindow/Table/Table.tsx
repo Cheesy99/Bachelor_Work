@@ -10,72 +10,81 @@ interface TableProps {
 }
 
 function Table({ data, viewSetting, onHeaderClick }: TableProps) {
-  console.log("Table component received data:", data);
-  console.log("Table component received viewSetting:", viewSetting);
-
   const isOneTable = (viewSetting: ViewSetting): boolean => {
     return viewSetting === ViewSetting.ONETABLE ? true : false;
   };
 
   if (!data) {
-    return <div>No data available</div>; // Handle the case where data is null
+    return <div>No data available</div>;
   }
 
-  const renderTableData = (data: TableData) => (
-    <table>
-      <thead>
-        <tr>
-          {data.schema.map((item, index) => (
-            <th key={index}>{item}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.table.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((cell, cellIndex) => (
-              <td key={cellIndex}>{cell}</td>
+  const renderTableData = (data: TableData) => {
+    return (
+      <>
+        <table>
+          <thead>
+            <tr>
+              {data.schema.map((item, index) => (
+                <th key={index}>{item}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.table.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.map((cell, cellIndex) => (
+                  <td key={cellIndex}>{cell}</td>
+                ))}
+              </tr>
             ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+          </tbody>
+        </table>
+      </>
+    );
+  };
 
-  const renderTableView = (data: TableView) => (
-    <>
-      <thead>
-        <tr>
-          {data.schema.map((column, index) => (
-            <th key={index}>{column}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.table.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {Array.isArray(row) ? (
-              row.map((cell, cellIndex) => (
-                <td key={cellIndex}>
-                  {typeof cell === "object" ? renderTableData(cell) : cell}
-                </td>
-              ))
-            ) : (
-              <td colSpan={data.schema.length}>{row}</td>
-            )}
-          </tr>
-        ))}
-      </tbody>
-    </>
-  );
+  const renderNestedTable = (data: NestedTable) => {
+    console.log("I was called");
+    return (
+      <>
+        <table>
+          <thead>
+            <tr>
+              {data.schema.map((column, index) => (
+                <th key={index}>{column}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.table.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {Array.isArray(row) ? (
+                  row.map((cell, cellIndex) => (
+                    <td key={cellIndex}>
+                      {typeof cell === "object" &&
+                      cell !== null &&
+                      "schema" in cell &&
+                      "table" in cell
+                        ? renderNestedTable(cell)
+                        : cell}
+                    </td>
+                  ))
+                ) : (
+                  <td colSpan={data.schema.length}>{row}</td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    );
+  };
 
   return (
     <div>
-      <table>
-        {isOneTable(viewSetting)
-          ? renderTableData(data as TableData)
-          : renderTableView(data as TableView)}
-      </table>
+      {isOneTable(viewSetting)
+        ? renderTableData(data as TableData)
+        : renderNestedTable(data as NestedTable)}
     </div>
   );
 }

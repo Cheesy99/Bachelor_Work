@@ -1,4 +1,4 @@
-type Table = TableData | TableView;
+type Table = TableData | NestedTable;
 
 type TableData = {
   schema: string[];
@@ -10,7 +10,7 @@ type TableStruct = {
   table: (string | number | number[])[][];
 };
 
-type TableView = {
+type NestedTable = {
   schema: string[];
   table: (string | number | TableData)[][];
 };

@@ -72,6 +72,16 @@ class UiManager {
     }
   }
 
+  public static async convertNestedToOne(table: NestedTable): Promise<Table> {
+    let result = this.converter.convertNestedToTableData(table);
+    console.log("I am confused", result);
+    return result;
+  }
+
+  public static async convertOneToNested(table: TableData): Promise<Table> {
+    return this.converter.convertOneToNested(table);
+  }
+
   public setupDatabaseChangeListener(viewSetting: ViewSetting) {
     window.electronAPI.onDatabaseChange(async (data: TableData) => {
       if (this.setTableData) {
