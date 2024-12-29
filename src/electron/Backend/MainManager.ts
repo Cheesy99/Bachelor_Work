@@ -2,6 +2,7 @@ import DataBaseConnector from "./DataBaseConnector.js";
 import ExcelExporter from "./ExcelExporter.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import SqlBuilder from "./SqlBuilder.js";
+import DataCleaner from "./Utils/DataCleaner.js";
 
 class MainManager {
   private static instance: MainManager;
@@ -27,7 +28,12 @@ class MainManager {
   }
 
   public async insertJson(json: string): Promise<void> {
-    const jsonObject: JsonObject[] = JSON.parse(json);
+    const cleanedJson = json.replace(/"([^"]+)":/g, (match, p1) => {
+      const cleanedKey = DataCleaner.cleanName(p1);
+      return `"${cleanedKey}":`;
+    });
+
+    const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
     let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(jsonObject);
     await this.dataBase.sqlCommand(schemaSqlCommand);
     let inputDataSqlCommand = this.sqlBuilder.getData(jsonObject);
@@ -87,7 +93,6 @@ class MainManager {
   public async amountOfRows(tableName: string): Promise<number> {
     const query = `SELECT COUNT(*) as count FROM ${tableName}`;
     const result = await this.dataBase.sqlCommandWithReponse(query);
-    console.log(result[0].count);
     return result[0].count;
   }
 }

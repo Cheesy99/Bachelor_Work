@@ -20,7 +20,6 @@ class SqlTextGenerator {
     columns: string[],
     tables: TableSchema
   ) => {
-    console.log("tables", tables);
     let stack: string[] = [];
     let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY ,\n`;
 

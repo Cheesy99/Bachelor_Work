@@ -39,7 +39,12 @@ function MainWindow({
 
   return (
     <div className="main-window">
-      <div className="stage" style={{ marginTop: showSqlInput ? "20px" : "0" }}>
+      <div
+        className={`stage ${
+          tableType === ViewSetting.ONETABLE ? "one-table" : "nested-table"
+        }`}
+        style={{ marginTop: showSqlInput ? "20px" : "0" }}
+      >
         {loading ? (
           <div>Loading...</div>
         ) : (

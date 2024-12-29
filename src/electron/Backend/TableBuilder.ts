@@ -89,9 +89,8 @@ class TableBuilder {
     const schemaKeys = tableData.schema[row[0].tableName];
     const rowData: (string | number)[] = schemaKeys.map((key) => {
       const cell = row.find((r) => r.key === key);
-      return cell ? cell.value : "";
+      return cell ? cell.value : "bugg";
     });
-
     tableData.table.push(rowData);
   }
 
@@ -99,8 +98,6 @@ class TableBuilder {
     let idIndex = this.tableDate[0].schema["main_table"].findIndex(
       (value) => value === "id"
     );
-
-    console.log("mainTable", idIndex);
 
     this.tableDate[0].table.forEach((row) => {
       row[idIndex] = this.mainTableIndex++;

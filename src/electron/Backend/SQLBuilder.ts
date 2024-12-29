@@ -39,7 +39,6 @@ class SQLBuilder {
       json,
       this.tableSchema!
     );
-
     return this.sqlTextBuilder.createInputDataText(tableData);
   }
 }
