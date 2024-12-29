@@ -22,6 +22,7 @@ class UiManager {
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    const fileSize = file?.size;
 
     if (file) {
       const databaseExists = await window.electronAPI.databaseExists();
@@ -30,6 +31,18 @@ class UiManager {
         return;
       }
       const reader = new FileReader();
+      if (fileSize !== undefined && fileSize > 3 * 1024 * 1024) {
+        console.log("File size is larger than 3 MB. Inserting into web nodes.");
+
+        reader.onload = async () => {
+          let fileData = reader.result as string;
+          fileData = translateUmlauts(fileData);
+          await window.electronAPI.insertUsingWorkerNodes(fileData);
+        };
+        reader.readAsText(file);
+        return;
+      }
+
       reader.onload = () => {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);

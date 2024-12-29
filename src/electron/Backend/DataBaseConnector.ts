@@ -2,6 +2,7 @@ import sqlite3 from "sqlite3";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { isDev } from "../util.js";
+import { Readable } from "stream";
 
 class DataBaseConnector {
   private static instance: DataBaseConnector;
@@ -61,7 +62,9 @@ class DataBaseConnector {
     return new Promise((resolve, reject) => {
       this.dataBase.serialize(() => {
         this.dataBase.run("BEGIN TRANSACTION");
-        sqlCommand.forEach((command) => {
+
+        const stream = Readable.from(sqlCommand);
+        stream.on("data", (command) => {
           this.dataBase.run(command, (err) => {
             if (err) {
               console.error("Error executing SQL command:", err.message, err);
@@ -73,14 +76,21 @@ class DataBaseConnector {
           });
         });
 
-        this.dataBase.run("COMMIT", (err) => {
-          if (err) {
-            console.error("Error committing transaction:", err.message, err);
-            reject(err);
-            process.exit(1);
-          } else {
-            resolve();
-          }
+        stream.on("end", () => {
+          this.dataBase.run("COMMIT", (err) => {
+            if (err) {
+              console.error("Error committing transaction:", err.message, err);
+              reject(err);
+              process.exit(1);
+            } else {
+              resolve();
+            }
+          });
+        });
+
+        stream.on("error", (err) => {
+          console.error("Error reading stream:", err.message, err);
+          reject(err);
         });
       });
     });
