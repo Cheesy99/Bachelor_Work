@@ -3,12 +3,16 @@ import ExcelExporter from "./ExcelExporter.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import SqlBuilder from "./SqlBuilder.js";
 import DataCleaner from "./Utils/DataCleaner.js";
+import WorkerPool from "./MultiThreading/WorkerPool.js";
+import * as os from "os";
+import TableSchema from "./Interfaces/TableSchema.js";
 
 class MainManager {
   private static instance: MainManager;
   private dataBase: DataBaseConnector;
   private sqlBuilder: SqlBuilder;
   private excelExporter: ExcelExporter;
+  private workerPool: WorkerPool;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager();
@@ -21,6 +25,10 @@ class MainManager {
     // Factory pattern
     this.sqlBuilder = SqlBuilder.createSqlBuilder();
     this.excelExporter = new ExcelExporter();
+
+    const numCores = os.cpus().length;
+    const numWorkers = Math.max(1, Math.floor(numCores / 2));
+    this.workerPool = new WorkerPool(numWorkers);
   }
 
   get dataBaseExist() {
@@ -28,7 +36,7 @@ class MainManager {
   }
 
   public async insertJson(json: string): Promise<void> {
-    const cleanedJson = json.replace(/"([^"]+)":/g, (match, p1) => {
+    const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
       const cleanedKey = DataCleaner.cleanName(p1);
       return `"${cleanedKey}":`;
     });
@@ -96,8 +104,30 @@ class MainManager {
     return result[0].count;
   }
 
-  public async insertBig(fileData: any): Promise<void> {
-    throw new Error("Method not implemented.");
+  public async insertBig(json: string): Promise<void> {
+    const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
+      const cleanedKey = DataCleaner.cleanName(p1);
+      return `"${cleanedKey}":`;
+    });
+
+    const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
+    const tableSchemas: TableSchema[] = [];
+
+    this.workerPool.chunkAndRunTask(jsonObject, (error, result) => {
+      if (error) {
+        console.error("Worker error:", error);
+        return;
+      }
+      if (result) {
+        tableSchemas.push(result);
+      }
+
+      // Check if all tasks are completed
+      if (tableSchemas.length === this.workerPool.maxWorker) {
+        console.log("Merged Schema:", tableSchemas);
+        // Further processing with mergedSchema
+      }
+    });
   }
 }
 

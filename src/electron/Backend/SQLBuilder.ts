@@ -5,7 +5,7 @@ import TableBuilder from "./TableBuilder.js";
 import DataCleaner from "./Utils/DataCleaner.js";
 import TableData from "./Interfaces/TableData.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
-class SQLBuilder {
+class SqlBuilder {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private sqlTextBuilder: SqlTextGenerator;
@@ -20,8 +20,8 @@ class SQLBuilder {
     this.sqlTextBuilder = sqlTextBuilder;
   }
   //Factory pattern
-  public static createSqlBuilder(): SQLBuilder {
-    return new SQLBuilder(
+  public static createSqlBuilder(): SqlBuilder {
+    return new SqlBuilder(
       new SchemaBuilder(),
       new TableBuilder(),
       new SqlTextGenerator()
@@ -43,4 +43,4 @@ class SQLBuilder {
   }
 }
 
-export default SQLBuilder;
+export default SqlBuilder;

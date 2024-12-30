@@ -81,4 +81,8 @@ app.on("ready", () => {
   ipcMain.handle("getSavedResult", async (_) => {
     return await dbManager.getSavedResult();
   });
+
+  ipcMain.handle("insertBig", async(_, fileData) => {
+    return await dbManager.insertBig(fileData);
+  })
 });
