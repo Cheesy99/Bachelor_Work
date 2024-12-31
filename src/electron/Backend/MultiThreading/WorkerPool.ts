@@ -3,19 +3,21 @@ import path from "path";
 import { fileURLToPath } from "url";
 import JsonObject from "../Interfaces/JsonObject.js";
 import TableSchema from "../Interfaces/TableSchema.js";
-
-interface ExtendedWorker extends Worker {
-  callback?: (error: Error | null, result?: any) => void;
-}
+import SqlBuilder from "../SqlBuilder.js";
+import { Task, Parcel, Type } from "./Interfaces.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+interface ExtendedWorker extends Worker {
+  callback?: (error: Error | null, result?: Parcel) => void;
+}
 class WorkerPool {
   private workers: ExtendedWorker[] = [];
-  private tasks: any[] = [];
+  private tasks: {
+    task: Task;
+    callback: (error: Error | null, result?: Parcel) => void;
+  }[] = [];
   private maxWorkers: number;
-
   constructor(maxWorkers: number) {
     this.maxWorkers = maxWorkers;
   }
@@ -43,7 +45,6 @@ class WorkerPool {
       }
       this.runNextTask(worker);
     });
-
     worker.on("exit", (code) => {
       if (code !== 0) {
         console.error(`Worker stopped with exit code ${code}`);
@@ -55,7 +56,7 @@ class WorkerPool {
 
   private runNextTask(worker: ExtendedWorker) {
     if (this.tasks.length > 0) {
-      const { task, callback } = this.tasks.shift();
+      const { task, callback } = this.tasks.shift()!;
       worker.callback = callback;
       worker.postMessage(task);
     } else {
@@ -64,31 +65,57 @@ class WorkerPool {
   }
 
   private runTask(
-    json: string,
-    callback: (error: Error | null, result?: any) => void
+    task: Task,
+    callback: (error: Error | null, result?: Parcel) => void
   ) {
     const availableWorker = this.workers.find((worker) => !worker.callback);
     if (availableWorker) {
       availableWorker.callback = callback;
-      availableWorker.postMessage(json);
+      availableWorker.postMessage(task);
     } else if (this.workers.length < this.maxWorkers) {
       this.createWorker();
-      this.runTask(json, callback);
+      this.runTask(task, callback);
     } else {
-      this.tasks.push({ json, callback });
+      this.tasks.push({ task, callback });
     }
   }
 
-  public chunkAndRunTask(
+  public createSchema(
     jsonObject: JsonObject[],
-    callback: (error: Error | null, result?: TableSchema) => void
-  ) {
+    callback: (error: Error | null, result?: Parcel) => void
+  ): void {
     const chunkSize = Math.ceil(jsonObject.length / this.maxWorkers);
     const chunks = this.chunkArray(jsonObject, chunkSize);
 
     for (const chunk of chunks) {
       const chunkJson = JSON.stringify(chunk);
-      this.runTask(chunkJson, callback);
+      const schemaTask: Task = {
+        type: Type.schema,
+        payload: chunkJson,
+      };
+      this.runTask(schemaTask, callback);
+    }
+  }
+
+  public createTable(
+    jsonObject: JsonObject[],
+    schema: TableSchema,
+    callback: (error: Error | null, result?: Parcel) => void
+  ): void {
+    const chunkSize = Math.ceil(jsonObject.length / this.maxWorkers);
+    const chunks = this.chunkArray(jsonObject, chunkSize);
+
+    for (const chunk of chunks) {
+      const chunkJson = JSON.stringify(chunk);
+      const pay: { payload: string; schema: TableSchema } = {
+        payload: chunkJson,
+        schema: schema,
+      };
+      const schemaTask: Task = {
+        type: Type.table,
+        payload: pay,
+      };
+      this.runTask(schemaTask, callback);
     }
   }
 

@@ -1,4 +1,4 @@
-import TableData from "./Interfaces/TableData.js";
+import TableDataBackend from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import DataCleaner from "./Utils/DataCleaner.js";
 class SqlTextGenerator {
@@ -45,7 +45,7 @@ class SqlTextGenerator {
     return tableSQL;
   };
 
-  public createInputDataText(tableData: TableData[]): string[] {
+  public createInputDataText(tableData: TableDataBackend[]): string[] {
     const returnCommandQueue: string[] = [];
     tableData.reverse().forEach((tableData) => {
       let key = Object.keys(tableData.schema)[0];

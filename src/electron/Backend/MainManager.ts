@@ -6,6 +6,7 @@ import DataCleaner from "./Utils/DataCleaner.js";
 import WorkerPool from "./MultiThreading/WorkerPool.js";
 import * as os from "os";
 import TableSchema from "./Interfaces/TableSchema.js";
+import TableDataBackend from "./Interfaces/TableData.js";
 
 class MainManager {
   private static instance: MainManager;
@@ -42,9 +43,15 @@ class MainManager {
     });
 
     const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-    let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(jsonObject);
-    await this.dataBase.sqlCommand(schemaSqlCommand);
-    let inputDataSqlCommand = this.sqlBuilder.getData(jsonObject);
+    let schemaResult: {
+      command: string[];
+      tableSchema: TableSchema;
+    } = this.sqlBuilder.getSchema(jsonObject);
+    await this.dataBase.sqlCommand(schemaResult.command);
+    let inputDataSqlCommand: string[] = this.sqlBuilder.getTableInputCommand(
+      jsonObject,
+      schemaResult.tableSchema
+    );
     await this.dataBase.sqlCommand(inputDataSqlCommand);
   }
 
@@ -104,28 +111,43 @@ class MainManager {
     return result[0].count;
   }
 
-  public async insertBig(json: string): Promise<void> {
+  public insertBig(json: string): void {
     const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
       const cleanedKey = DataCleaner.cleanName(p1);
       return `"${cleanedKey}":`;
     });
+    let tableCollector: TableDataBackend[][] = [];
 
     const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-    const tableSchemas: TableSchema[] = [];
+    const tableSchemaCollector: TableSchema[] = [];
+    let tableSchema: TableSchema;
 
-    this.workerPool.chunkAndRunTask(jsonObject, (error, result) => {
+    this.workerPool.createSchema(jsonObject, (error, result) => {
       if (error) {
         console.error("Worker error:", error);
         return;
       }
       if (result) {
-        tableSchemas.push(result);
+        const payload = result.payload as TableSchema;
+        tableSchemaCollector.push(payload);
       }
+      if (tableSchemaCollector.length === this.workerPool.maxWorker) {
+        tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
+        console.log("command", tableSchema);
+      }
+    });
 
-      // Check if all tasks are completed
-      if (tableSchemas.length === this.workerPool.maxWorker) {
-        console.log("Merged Schema:", tableSchemas);
-        // Further processing with mergedSchema
+    this.workerPool.createTable(jsonObject, tableSchema!, (error, result) => {
+      if (error) {
+        console.error("Worker error:", error);
+        return;
+      }
+      if (result) {
+        const payload = result.payload as TableDataBackend[];
+        tableCollector.push(payload);
+      }
+      if (tableSchemaCollector.length === this.workerPool.maxWorker) {
+        console.log("table", tableCollector);
       }
     });
   }

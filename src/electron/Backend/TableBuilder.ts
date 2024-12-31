@@ -1,13 +1,16 @@
-import TableData from "./Interfaces/TableData.js";
+import TableDataBackend from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import Row from "./Interfaces/Row.js";
 class TableBuilder {
-  private tableDate: TableData[] = [];
+  private tableDate: TableDataBackend[] = [];
   private foreignIndex: number = 0;
   private shiftingStack: Row[] = [];
   private mainTableIndex: number = 0;
-  public build(json: JsonObject[], tableSchema: TableSchema): TableData[] {
+  public build(
+    json: JsonObject[],
+    tableSchema: TableSchema
+  ): TableDataBackend[] {
     Object.keys(tableSchema).forEach((key: string) => {
       tableSchema[key].push("id");
       this.tableDate.push({

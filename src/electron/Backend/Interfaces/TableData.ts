@@ -1,8 +1,8 @@
 import TableSchema from "./TableSchema.js";
 
-interface TableData {
+interface TableDataBackend {
   schema: TableSchema;
   table: (string | number)[][];
 }
 
-export default TableData;
+export default TableDataBackend;
