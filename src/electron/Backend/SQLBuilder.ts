@@ -9,7 +9,7 @@ class SqlBuilder {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private sqlTextBuilder: SqlTextGenerator;
-  private constructor(
+  public constructor(
     schemaBuilder: SchemaBuilder,
     tableBuilder: TableBuilder,
     sqlTextBuilder: SqlTextGenerator
@@ -17,14 +17,6 @@ class SqlBuilder {
     this.schemaBuilder = schemaBuilder;
     this.tableBuilder = tableBuilder;
     this.sqlTextBuilder = sqlTextBuilder;
-  }
-  //Factory pattern
-  public static createSqlBuilder(): SqlBuilder {
-    return new SqlBuilder(
-      new SchemaBuilder(),
-      new TableBuilder(),
-      new SqlTextGenerator()
-    );
   }
 
   public getSchema(json: JsonObject[]): {

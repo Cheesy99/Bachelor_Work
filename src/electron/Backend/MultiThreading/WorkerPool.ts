@@ -20,6 +20,9 @@ class WorkerPool {
   private maxWorkers: number;
   constructor(maxWorkers: number) {
     this.maxWorkers = maxWorkers;
+    for (let i = 0; i < maxWorkers; i++) {
+      this.createWorker();
+    }
   }
 
   private createWorker() {
@@ -100,9 +103,15 @@ class WorkerPool {
   public createTable(
     jsonObject: JsonObject[],
     schema: TableSchema,
-    callback: (error: Error | null, result?: Parcel) => void
+    callback: (error: Error | null, result?: Parcel) => void,
+    desiredChunkSize: number = 10
   ): void {
-    const chunkSize = Math.ceil(jsonObject.length / this.maxWorkers);
+    const chunkSize = Math.min(
+      desiredChunkSize,
+      Math.ceil(jsonObject.length / this.maxWorkers)
+    );
+    console.log("chunk size", chunkSize);
+    console.log("jsonsize", jsonObject.length);
     const chunks = this.chunkArray(jsonObject, chunkSize);
 
     for (const chunk of chunks) {

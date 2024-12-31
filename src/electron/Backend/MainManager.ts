@@ -7,6 +7,9 @@ import WorkerPool from "./MultiThreading/WorkerPool.js";
 import * as os from "os";
 import TableSchema from "./Interfaces/TableSchema.js";
 import TableDataBackend from "./Interfaces/TableData.js";
+import SchemaBuilder from "./SchemaBuilder.js";
+import TableBuilder from "./TableBuilder.js";
+import SqlTextGenerator from "./SqlTextGenerator.js";
 
 class MainManager {
   private static instance: MainManager;
@@ -14,6 +17,9 @@ class MainManager {
   private sqlBuilder: SqlBuilder;
   private excelExporter: ExcelExporter;
   private workerPool: WorkerPool;
+  private schemaBuilder: SchemaBuilder;
+  private tableBuilder: TableBuilder;
+  private sqlTextBuilder: SqlTextGenerator;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager();
@@ -23,8 +29,14 @@ class MainManager {
 
   private constructor() {
     this.dataBase = DataBaseConnector.getInstance();
-    // Factory pattern
-    this.sqlBuilder = SqlBuilder.createSqlBuilder();
+    this.tableBuilder = new TableBuilder();
+    this.sqlTextBuilder = new SqlTextGenerator();
+    this.schemaBuilder = new SchemaBuilder();
+    this.sqlBuilder = new SqlBuilder(
+      this.schemaBuilder,
+      this.tableBuilder,
+      this.sqlTextBuilder
+    );
     this.excelExporter = new ExcelExporter();
 
     const numCores = os.cpus().length;
@@ -116,7 +128,7 @@ class MainManager {
       const cleanedKey = DataCleaner.cleanName(p1);
       return `"${cleanedKey}":`;
     });
-    let tableCollector: TableDataBackend[][] = [];
+    const tableCollector: TableDataBackend[][] = [];
 
     const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
     const tableSchemaCollector: TableSchema[] = [];
@@ -133,21 +145,22 @@ class MainManager {
       }
       if (tableSchemaCollector.length === this.workerPool.maxWorker) {
         tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
-        console.log("command", tableSchema);
-      }
-    });
-
-    this.workerPool.createTable(jsonObject, tableSchema!, (error, result) => {
-      if (error) {
-        console.error("Worker error:", error);
-        return;
-      }
-      if (result) {
-        const payload = result.payload as TableDataBackend[];
-        tableCollector.push(payload);
-      }
-      if (tableSchemaCollector.length === this.workerPool.maxWorker) {
-        console.log("table", tableCollector);
+        let command = this.sqlTextBuilder.createSchemaText(tableSchema);
+        this.dataBase.sqlCommand(DataCleaner.cleanSqlCommand(command));
+        this.workerPool.createTable(
+          jsonObject,
+          tableSchema!,
+          (error, result) => {
+            if (error) {
+              console.error("Worker error:", error);
+              return;
+            }
+            if (result) {
+              const payload = result.payload as TableDataBackend[];
+              tableCollector.push(payload);
+            }
+          }
+        );
       }
     });
   }

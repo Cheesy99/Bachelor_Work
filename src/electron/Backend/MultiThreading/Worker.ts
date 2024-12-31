@@ -35,6 +35,9 @@ class Worker {
       } else {
         parentPort?.postMessage({ error: "An unknown error occurred" });
       }
+    } finally {
+      // Clear memory after task completion
+      this.clearMemory();
     }
   }
 
@@ -72,7 +75,10 @@ class Worker {
     };
     return result;
   }
+
+  private clearMemory() {
+    this.tableBuilder = new TableBuilder();
+  }
 }
 
-// Instantiate the worker class to start listening for messages
 new Worker();
