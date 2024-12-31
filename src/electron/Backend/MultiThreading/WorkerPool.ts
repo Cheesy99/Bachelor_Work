@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import JsonObject from "../Interfaces/JsonObject.js";
 import TableSchema from "../Interfaces/TableSchema.js";
-import SqlBuilder from "../SqlBuilder.js";
+import { EventEmitter } from "events";
 import { Task, Parcel, Type } from "./Interfaces.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 interface ExtendedWorker extends Worker {
   callback?: (error: Error | null, result?: Parcel) => void;
 }
-class WorkerPool {
+class WorkerPool extends EventEmitter {
   private workers: ExtendedWorker[] = [];
   private tasks: {
     task: Task;
@@ -19,6 +19,7 @@ class WorkerPool {
   }[] = [];
   private maxWorkers: number;
   constructor(maxWorkers: number) {
+    super();
     this.maxWorkers = maxWorkers;
     for (let i = 0; i < maxWorkers; i++) {
       this.createWorker();
@@ -64,6 +65,7 @@ class WorkerPool {
       worker.postMessage(task);
     } else {
       worker.callback = undefined;
+      this.emit("allTasksCompleted");
     }
   }
 

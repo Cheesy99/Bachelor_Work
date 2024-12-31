@@ -20,6 +20,7 @@ class MainManager {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private sqlTextBuilder: SqlTextGenerator;
+  private resolveAllTasks: (() => void) | null = null;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager();
@@ -42,6 +43,10 @@ class MainManager {
     const numCores = os.cpus().length;
     const numWorkers = Math.max(1, Math.floor(numCores / 2));
     this.workerPool = new WorkerPool(numWorkers);
+    this.workerPool.on(
+      "allTasksCompleted",
+      this.handleAllTasksCompleted.bind(this)
+    );
   }
 
   get dataBaseExist() {
@@ -123,46 +128,69 @@ class MainManager {
     return result[0].count;
   }
 
-  public insertBig(json: string): void {
+  public async insertBig(json: string): Promise<void> {
     const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
       const cleanedKey = DataCleaner.cleanName(p1);
       return `"${cleanedKey}":`;
     });
-    const tableCollector: TableDataBackend[][] = [];
 
     const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
     const tableSchemaCollector: TableSchema[] = [];
     let tableSchema: TableSchema;
+    let command1: string[] = [];
 
-    this.workerPool.createSchema(jsonObject, (error, result) => {
-      if (error) {
-        console.error("Worker error:", error);
-        return;
-      }
-      if (result) {
-        const payload = result.payload as TableSchema;
-        tableSchemaCollector.push(payload);
-      }
-      if (tableSchemaCollector.length === this.workerPool.maxWorker) {
-        tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
-        let command = this.sqlTextBuilder.createSchemaText(tableSchema);
-        this.dataBase.sqlCommand(DataCleaner.cleanSqlCommand(command));
-        this.workerPool.createTable(
-          jsonObject,
-          tableSchema!,
-          (error, result) => {
-            if (error) {
-              console.error("Worker error:", error);
-              return;
-            }
-            if (result) {
-              const payload = result.payload as TableDataBackend[];
-              tableCollector.push(payload);
-            }
-          }
-        );
-      }
+    const schemaPromise = new Promise<void>((resolve, reject) => {
+      this.resolveAllTasks = resolve;
+      this.workerPool.createSchema(jsonObject, (error, result) => {
+        if (error) {
+          console.error("Worker error:", error);
+          reject(error);
+          return;
+        }
+        if (result) {
+          const payload = result.payload as TableSchema;
+          tableSchemaCollector.push(payload);
+        }
+        if (tableSchemaCollector.length === this.workerPool.maxWorker) {
+        }
+      });
     });
+
+    await schemaPromise;
+
+    tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
+    let command = this.sqlTextBuilder.createSchemaText(tableSchema);
+    await this.dataBase.sqlCommand(DataCleaner.cleanSqlCommand(command));
+
+    const tablePromise = new Promise<void>((resolve, reject) => {
+      this.resolveAllTasks = resolve;
+
+      this.workerPool.createTable(jsonObject, tableSchema!, (error, result) => {
+        if (error) {
+          console.error("Worker error:", error);
+          reject(error);
+          return;
+        }
+        if (result) {
+          const payload = result.payload as TableDataBackend[];
+          command1.push(...this.sqlTextBuilder.createInputDataText(payload));
+        }
+      });
+    });
+
+    await tablePromise;
+
+    await this.dataBase.sqlCommand(command1);
+
+    console.log("test", command1.length);
+  }
+
+  private handleAllTasksCompleted() {
+    console.log("All tasks have been completed.");
+    if (this.resolveAllTasks) {
+      this.resolveAllTasks();
+      this.resolveAllTasks = null;
+    }
   }
 }
 
