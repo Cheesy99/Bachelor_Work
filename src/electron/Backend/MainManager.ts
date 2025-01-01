@@ -137,7 +137,7 @@ class MainManager {
     const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
     const tableSchemaCollector: TableSchema[] = [];
     let tableSchema: TableSchema;
-    let command1: string[] = [];
+    const tableDataCollector: TableDataBackend[][] = [];
 
     const schemaPromise = new Promise<void>((resolve, reject) => {
       this.resolveAllTasks = resolve;
@@ -150,8 +150,6 @@ class MainManager {
         if (result) {
           const payload = result.payload as TableSchema;
           tableSchemaCollector.push(payload);
-        }
-        if (tableSchemaCollector.length === this.workerPool.maxWorker) {
         }
       });
     });
@@ -173,16 +171,16 @@ class MainManager {
         }
         if (result) {
           const payload = result.payload as TableDataBackend[];
-          command1.push(...this.sqlTextBuilder.createInputDataText(payload));
+          tableDataCollector.push(payload);
         }
       });
     });
 
     await tablePromise;
-
-    await this.dataBase.sqlCommand(command1);
-
-    console.log("test", command1.length);
+    const tableData: TableDataBackend[] =
+      DataCleaner.mergeTables(tableDataCollector);
+    let commandTableData = this.sqlTextBuilder.createInputDataText(tableData);
+    await this.dataBase.sqlCommand(commandTableData);
   }
 
   private handleAllTasksCompleted() {

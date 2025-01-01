@@ -65,7 +65,9 @@ class WorkerPool extends EventEmitter {
       worker.postMessage(task);
     } else {
       worker.callback = undefined;
-      this.emit("allTasksCompleted");
+      if (this.workers.every((worker) => !worker.callback)) {
+        this.emit("allTasksCompleted");
+      }
     }
   }
 

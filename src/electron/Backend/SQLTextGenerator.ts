@@ -55,7 +55,7 @@ class SqlTextGenerator {
 
       tableData.table.forEach((row) => {
         const escapedRow = row.map((value) =>
-          typeof value === "string" ? `'${value.replace(/'/g, "''")}'` : value
+          typeof value === "string" ? `'${value.replace(/'/g, "bugg")}'` : value
         );
         sqlCommand += `( ${escapedRow.join(", ")} ),`;
       });

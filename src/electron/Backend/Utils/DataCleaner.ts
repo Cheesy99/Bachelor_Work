@@ -1,3 +1,4 @@
+import TableDataBackend from "../Interfaces/TableData.js";
 import TableSchema from "../Interfaces/TableSchema.js";
 
 class DataCleaner {
@@ -39,6 +40,39 @@ class DataCleaner {
     });
 
     return result;
+  };
+
+  static mergeTables = (
+    tableDataCollector: TableDataBackend[][]
+  ): TableDataBackend[] => {
+    const schema: TableSchema[] = tableDataCollector
+      .map((tableDataArray) =>
+        tableDataArray.map((tableData) => tableData.schema)
+      )
+      .flat();
+
+    let tablesSchema: TableSchema = this.mergeSchemas(schema);
+    const newTable: TableDataBackend[] = new Array(
+      Object.keys(tablesSchema).length
+    ).fill({ schema: {} });
+
+    Object.keys(tablesSchema).forEach((key, index) => {
+      newTable[index].schema = { [key]: tablesSchema[key] };
+    });
+
+    tableDataCollector.forEach((tableDataArray: TableDataBackend[]) => {
+      tableDataArray.forEach((tableData: TableDataBackend) => {
+        Object.keys(tableData.schema).forEach((key) => {
+          const index = Object.keys(tablesSchema).indexOf(key);
+          if (index !== -1) {
+            newTable[index].table = (newTable[index].table || []).concat(
+              tableData.table
+            );
+          }
+        });
+      });
+    });
+    return newTable;
   };
 }
 
