@@ -1,0 +1,482 @@
+[
+  {
+    "Nummer": "EV-12-INF-005",
+    "Systemtext": "AG Komusiewicz",
+    "Veranstaltungsart": "interne Veranstaltung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "18.04.2023 - 18.04.2023",
+        "Raum": "3060/+5/D09"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "17.05.2023 - 17.05.2023",
+        "Raum": "3060/+5/D09"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mo",
+        "Von - Bis": "14:00 - 18:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "17.07.2023 - 17.07.2023",
+        "Raum": "3071/+5/0010"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "11:00 - 14:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "19.07.2023 - 19.07.2023",
+        "Raum": "3060/+4/A30"
+      }
+    ]
+  },
+  {
+    "Nummer": "EV-12-INF-011",
+    "Systemtext": "AG Heider",
+    "Veranstaltungsart": "interne Veranstaltung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "17:00 - 20:00",
+        "Rhythmus": "jeder 3. Wochentag im Monat",
+        "Startdatum - Enddatum": "21.03.2023 - 18.07.2023",
+        "Raum": ""
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "17:00 - 20:00",
+        "Rhythmus": "jeder 3. Wochentag im Monat",
+        "Startdatum - Enddatum": "11.04.2023 - 11.07.2023",
+        "Raum": "3071/+5/0010"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "17:00 - 20:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "21.03.2023 - 21.03.2023",
+        "Raum": "3071/+5/0010"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "17:00 - 20:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "18.07.2023 - 18.07.2023",
+        "Raum": "3060/+4/A30"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "09:00 - 17:00",
+        "Rhythmus": "Block",
+        "Startdatum - Enddatum": "28.09.2023 - 29.09.2023",
+        "Raum": "3071/+5/0010"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mo",
+        "Von - Bis": "09:00 - 17:00",
+        "Rhythmus": "Block",
+        "Startdatum - Enddatum": "25.09.2023 - 26.09.2023",
+        "Raum": "2472/00/2080"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "09:00 - 17:00",
+        "Rhythmus": "Block",
+        "Startdatum - Enddatum": "28.09.2023 - 29.09.2023",
+        "Raum": "3071/+5/0030"
+      }
+    ]
+  },
+  {
+    "Nummer": "EV-12_MAT-248",
+    "Systemtext": "AG Goertsches",
+    "Veranstaltungsart": "interne Veranstaltung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "14:00 - 20:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "11.04.2023 - 11.04.2023",
+        "Raum": "3060/+5/D01"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-002",
+    "Systemtext": "Einführung in die Didaktik der Informatik",
+    "Veranstaltungsart": "Vorlesung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "08:00 - 09:30",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "13.04.2023 - 13.07.2023",
+        "Raum": "3060/+5/D09"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-004",
+    "Systemtext": "Übungen zu Datenbanksysteme / Recitation in Database Systems",
+    "Veranstaltungsart": "Übung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mo",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "17.04.2023 - 10.07.2023",
+        "Raum": "3060/+3/C45"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "11.04.2023 - 11.07.2023",
+        "Raum": "3060/+3/C45"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "16:00 - 18:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "11.04.2023 - 11.07.2023",
+        "Raum": "3060/+3/C45"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "12.04.2023 - 12.07.2023",
+        "Raum": "3060/+3/C52"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "16:00 - 18:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "12.04.2023 - 12.07.2023",
+        "Raum": "3060/+3/C52"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-005",
+    "Systemtext": "Datenbanksysteme / Database Systems",
+    "Veranstaltungsart": "Vorlesung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "09:00 - 15:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "09.06.2023",
+        "Raum": "3060/+3/A19"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "09:00 - 15:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "09.06.2023",
+        "Raum": "3060/+4/A24"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "09:00 - 15:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "09.06.2023",
+        "Raum": "3060/+3/D25"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "14:00 - 17:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "19.09.2023 - 19.09.2023",
+        "Raum": "2100/+2/0050"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "10:00 - 14:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "14.04.2023 - 14.07.2023",
+        "Raum": "2370/00/0070"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-008",
+    "Systemtext": "Fachdidaktische Ergänzung Seminar",
+    "Veranstaltungsart": "Haupt-/Oberseminar",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "08:00 - 10:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "14.04.2023 - 14.07.2023",
+        "Raum": "3060/+5/D09"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-009",
+    "Systemtext": "Übungen zu Software-Praktikum / Recitation in Software Lab",
+    "Veranstaltungsart": "Übung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "13.04.2023 - 13.07.2023",
+        "Raum": "3060/+4/A24"
+      },
+      {
+        "parallelgruppe": "2. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "13.04.2023 - 13.07.2023",
+        "Raum": "3060/+3/A21"
+      },
+      {
+        "parallelgruppe": "3. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "10:00 - 13:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "11.04.2023 - 11.07.2023",
+        "Raum": "3060/+3/A10"
+      },
+      {
+        "parallelgruppe": "4. PG",
+        "Wochentag": "Mo",
+        "Von - Bis": "14:00 - 17:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "17.04.2023 - 10.07.2023",
+        "Raum": "3060/+4/A24"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-010",
+    "Systemtext": "Software-Praktikum",
+    "Veranstaltungsart": "Vorlesung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "12:00 - 14:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "13.04.2023 - 13.07.2023",
+        "Raum": "3071/+2/0050"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "10:00 - 17:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "20.07.2023 - 20.07.2023",
+        "Raum": "3060/+4/A24"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-017",
+    "Systemtext": "Algorithmen und Datenstrukturen / Algorithms and Data Structures",
+    "Veranstaltungsart": "Vorlesung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "10:00 - 12:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "12.04.2023 - 12.07.2023",
+        "Raum": "2370/00/0030"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "13:00 - 17:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "29.09.2023 - 29.09.2023",
+        "Raum": "2371/00/0010"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mo",
+        "Von - Bis": "10:00 - 12:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "17.04.2023 - 10.07.2023",
+        "Raum": "3071/+5/0030"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "11:00 - 15:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "26.07.2023 - 26.07.2023",
+        "Raum": "2370/+2/0010"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "13:00 - 17:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "29.09.2023 - 29.09.2023",
+        "Raum": ""
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-018",
+    "Systemtext": "Übungen zu Algorithmen und Datenstrukturen / Recitation in Algorithms and Data Structures",
+    "Veranstaltungsart": "Übung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "10:00 - 12:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "11.04.2023 - 11.07.2023",
+        "Raum": "3060/+3/A11"
+      },
+      {
+        "parallelgruppe": "2. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "12.04.2023 - 12.07.2023",
+        "Raum": "3060/+3/A11"
+      },
+      {
+        "parallelgruppe": "3. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "18:15 - 19:45",
+        "Rhythmus": "14tägl",
+        "Startdatum - Enddatum": "19.04.2023 - 12.07.2023",
+        "Raum": ""
+      },
+      {
+        "parallelgruppe": "4. PG",
+        "Wochentag": "Mi",
+        "Von - Bis": "16:00 - 18:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "12.04.2023 - 12.07.2023",
+        "Raum": "3060/+3/A11"
+      },
+      {
+        "parallelgruppe": "5. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "12:00 - 14:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "13.04.2023 - 13.07.2023",
+        "Raum": "3060/+3/A10"
+      },
+      {
+        "parallelgruppe": "6. PG",
+        "Wochentag": "Fr",
+        "Von - Bis": "10:00 - 12:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "14.04.2023 - 14.07.2023",
+        "Raum": "3060/+3/A10"
+      },
+      {
+        "parallelgruppe": "7. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "12:00 - 14:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "11.04.2023 - 11.07.2023",
+        "Raum": "3060/+3/A11"
+      },
+      {
+        "parallelgruppe": "8. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "13.04.2023 - 13.07.2023",
+        "Raum": "3060/+3/A11"
+      },
+      {
+        "parallelgruppe": "9. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "13.04.2023 - 13.07.2023",
+        "Raum": "3060/+5/D09"
+      }
+    ]
+  },
+  {
+    "Nummer": "LV-12-079-020",
+    "Systemtext": "Algorithmische Bioinformatik / Algorythms in Bioinformatics",
+    "Veranstaltungsart": "Vorlesung",
+    "term": "SoSe 2023",
+    "termine": [
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "14:00 - 16:00",
+        "Rhythmus": "woch",
+        "Startdatum - Enddatum": "11.04.2023 - 11.07.2023",
+        "Raum": "3060/+4/C37"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "10:00 - 12:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "11.07.2023 - 11.07.2023",
+        "Raum": "3060/+4/C01"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Di",
+        "Von - Bis": "12:00 - 14:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "11.07.2023 - 11.07.2023",
+        "Raum": "3060/+4/C37"
+      },
+      {
+        "parallelgruppe": "1. PG",
+        "Wochentag": "Do",
+        "Von - Bis": "15:00 - 17:00",
+        "Rhythmus": "Einzel",
+        "Startdatum - Enddatum": "20.07.2023 - 20.07.2023",
+        "Raum": "3060/+4/C37"
+      }
+    ]
+  }
+]
