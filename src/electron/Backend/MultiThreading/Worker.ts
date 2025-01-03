@@ -1,9 +1,7 @@
 import { parentPort } from "worker_threads";
-import SqlTextGenerator from "../SqlTextGenerator.js";
 import DataCleaner from "../Utils/DataCleaner.js";
 import JsonObject from "../Interfaces/JsonObject.js";
 import SchemaBuilder from "../SchemaBuilder.js";
-import SqlBuilder from "../SqlBuilder.js";
 import { Parcel, Task, Type } from "./Interfaces.js";
 import TableSchema from "../Interfaces/TableSchema.js";
 import TableBuilder from "../TableBuilder.js";

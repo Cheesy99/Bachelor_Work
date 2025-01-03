@@ -25,4 +25,6 @@ dist-electron
 *.sw?
 /package.json
 *.json
+*.db
+*.msg
 !test.json
