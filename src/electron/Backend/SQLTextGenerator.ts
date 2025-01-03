@@ -1,4 +1,4 @@
-import TableData from "./Interfaces/TableData.js";
+import TableDataBackend from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import DataCleaner from "./Utils/DataCleaner.js";
 class SqlTextGenerator {
@@ -20,7 +20,6 @@ class SqlTextGenerator {
     columns: string[],
     tables: TableSchema
   ) => {
-    console.log("tables", tables);
     let stack: string[] = [];
     let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY ,\n`;
 
@@ -46,7 +45,7 @@ class SqlTextGenerator {
     return tableSQL;
   };
 
-  public createInputDataText(tableData: TableData[]): string[] {
+  public createInputDataText(tableData: TableDataBackend[]): string[] {
     const returnCommandQueue: string[] = [];
     tableData.reverse().forEach((tableData) => {
       let key = Object.keys(tableData.schema)[0];
@@ -56,7 +55,7 @@ class SqlTextGenerator {
 
       tableData.table.forEach((row) => {
         const escapedRow = row.map((value) =>
-          typeof value === "string" ? `'${value.replace(/'/g, "''")}'` : value
+          typeof value === "string" ? `'${value.replace(/'/g, "bugg")}'` : value
         );
         sqlCommand += `( ${escapedRow.join(", ")} ),`;
       });

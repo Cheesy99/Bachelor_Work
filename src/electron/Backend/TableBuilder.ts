@@ -1,13 +1,16 @@
-import TableData from "./Interfaces/TableData.js";
+import TableDataBackend from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import Row from "./Interfaces/Row.js";
 class TableBuilder {
-  private tableDate: TableData[] = [];
+  private tableDate: TableDataBackend[] = [];
   private foreignIndex: number = 0;
   private shiftingStack: Row[] = [];
   private mainTableIndex: number = 0;
-  public build(json: JsonObject[], tableSchema: TableSchema): TableData[] {
+  public build(
+    json: JsonObject[],
+    tableSchema: TableSchema
+  ): TableDataBackend[] {
     Object.keys(tableSchema).forEach((key: string) => {
       tableSchema[key].push("id");
       this.tableDate.push({
@@ -89,9 +92,8 @@ class TableBuilder {
     const schemaKeys = tableData.schema[row[0].tableName];
     const rowData: (string | number)[] = schemaKeys.map((key) => {
       const cell = row.find((r) => r.key === key);
-      return cell ? cell.value : "";
+      return cell ? cell.value : "bugg";
     });
-
     tableData.table.push(rowData);
   }
 
@@ -99,8 +101,6 @@ class TableBuilder {
     let idIndex = this.tableDate[0].schema["main_table"].findIndex(
       (value) => value === "id"
     );
-
-    console.log("mainTable", idIndex);
 
     this.tableDate[0].table.forEach((row) => {
       row[idIndex] = this.mainTableIndex++;

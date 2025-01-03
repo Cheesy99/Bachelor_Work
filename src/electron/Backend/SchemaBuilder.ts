@@ -1,8 +1,6 @@
 import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
-import DataCleaner from "./Utils/DataCleaner.js";
 class SchemaBuilder {
-  private tableSchemaArray?: TableSchema[];
   public build(json: JsonObject[]): TableSchema {
     let result: TableSchema[] = [];
     if (Array.isArray(json)) {
@@ -44,7 +42,7 @@ class SchemaBuilder {
           mergedSchema[key] = new Set();
         }
         schema[key].forEach((value: string) => {
-          mergedSchema[key].add(DataCleaner.cleanName(value));
+          mergedSchema[key].add(value);
         });
       });
     });

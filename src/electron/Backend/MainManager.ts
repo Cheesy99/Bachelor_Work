@@ -2,12 +2,25 @@ import DataBaseConnector from "./DataBaseConnector.js";
 import ExcelExporter from "./ExcelExporter.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import SqlBuilder from "./SqlBuilder.js";
+import DataCleaner from "./Utils/DataCleaner.js";
+import WorkerPool from "./MultiThreading/WorkerPool.js";
+import * as os from "os";
+import TableSchema from "./Interfaces/TableSchema.js";
+import TableDataBackend from "./Interfaces/TableData.js";
+import SchemaBuilder from "./SchemaBuilder.js";
+import TableBuilder from "./TableBuilder.js";
+import SqlTextGenerator from "./SqlTextGenerator.js";
 
 class MainManager {
   private static instance: MainManager;
   private dataBase: DataBaseConnector;
   private sqlBuilder: SqlBuilder;
   private excelExporter: ExcelExporter;
+  private workerPool: WorkerPool;
+  private schemaBuilder: SchemaBuilder;
+  private tableBuilder: TableBuilder;
+  private sqlTextBuilder: SqlTextGenerator;
+  private resolveAllTasks: (() => void) | null = null;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager();
@@ -17,9 +30,23 @@ class MainManager {
 
   private constructor() {
     this.dataBase = DataBaseConnector.getInstance();
-    // Factory pattern
-    this.sqlBuilder = SqlBuilder.createSqlBuilder();
+    this.tableBuilder = new TableBuilder();
+    this.sqlTextBuilder = new SqlTextGenerator();
+    this.schemaBuilder = new SchemaBuilder();
+    this.sqlBuilder = new SqlBuilder(
+      this.schemaBuilder,
+      this.tableBuilder,
+      this.sqlTextBuilder
+    );
     this.excelExporter = new ExcelExporter();
+
+    const numCores = os.cpus().length;
+    const numWorkers = Math.max(1, Math.floor(numCores / 2));
+    this.workerPool = new WorkerPool(numWorkers);
+    this.workerPool.on(
+      "allTasksCompleted",
+      this.handleAllTasksCompleted.bind(this)
+    );
   }
 
   get dataBaseExist() {
@@ -27,10 +54,21 @@ class MainManager {
   }
 
   public async insertJson(json: string): Promise<void> {
-    const jsonObject: JsonObject[] = JSON.parse(json);
-    let schemaSqlCommand: string[] = this.sqlBuilder.getSchema(jsonObject);
-    await this.dataBase.sqlCommand(schemaSqlCommand);
-    let inputDataSqlCommand = this.sqlBuilder.getData(jsonObject);
+    const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
+      const cleanedKey = DataCleaner.cleanName(p1);
+      return `"${cleanedKey}":`;
+    });
+
+    const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
+    let schemaResult: {
+      command: string[];
+      tableSchema: TableSchema;
+    } = this.sqlBuilder.getSchema(jsonObject);
+    await this.dataBase.sqlCommand(schemaResult.command);
+    let inputDataSqlCommand: string[] = this.sqlBuilder.getTableInputCommand(
+      jsonObject,
+      schemaResult.tableSchema
+    );
     await this.dataBase.sqlCommand(inputDataSqlCommand);
   }
 
@@ -87,8 +125,70 @@ class MainManager {
   public async amountOfRows(tableName: string): Promise<number> {
     const query = `SELECT COUNT(*) as count FROM ${tableName}`;
     const result = await this.dataBase.sqlCommandWithReponse(query);
-    console.log(result[0].count);
     return result[0].count;
+  }
+
+  public async insertBig(json: string): Promise<void> {
+    const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
+      const cleanedKey = DataCleaner.cleanName(p1);
+      return `"${cleanedKey}":`;
+    });
+
+    const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
+    const tableSchemaCollector: TableSchema[] = [];
+    let tableSchema: TableSchema;
+    const tableDataCollector: TableDataBackend[][] = [];
+
+    const schemaPromise = new Promise<void>((resolve, reject) => {
+      this.resolveAllTasks = resolve;
+      this.workerPool.createSchema(jsonObject, (error, result) => {
+        if (error) {
+          console.error("Worker error:", error);
+          reject(error);
+          return;
+        }
+        if (result) {
+          const payload = result.payload as TableSchema;
+          tableSchemaCollector.push(payload);
+        }
+      });
+    });
+
+    await schemaPromise;
+
+    tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
+    let command = this.sqlTextBuilder.createSchemaText(tableSchema);
+    await this.dataBase.sqlCommand(DataCleaner.cleanSqlCommand(command));
+
+    const tablePromise = new Promise<void>((resolve, reject) => {
+      this.resolveAllTasks = resolve;
+
+      this.workerPool.createTable(jsonObject, tableSchema!, (error, result) => {
+        if (error) {
+          console.error("Worker error:", error);
+          reject(error);
+          return;
+        }
+        if (result) {
+          const payload = result.payload as TableDataBackend[];
+          tableDataCollector.push(payload);
+        }
+      });
+    });
+
+    await tablePromise;
+    const tableData: TableDataBackend[] =
+      DataCleaner.mergeTables(tableDataCollector);
+    let commandTableData = this.sqlTextBuilder.createInputDataText(tableData);
+    await this.dataBase.sqlCommand(commandTableData);
+  }
+
+  private handleAllTasksCompleted() {
+    console.log("All tasks have been completed.");
+    if (this.resolveAllTasks) {
+      this.resolveAllTasks();
+      this.resolveAllTasks = null;
+    }
   }
 }
 

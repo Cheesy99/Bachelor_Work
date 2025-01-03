@@ -13,9 +13,17 @@
   background-color: rgb(185, 185, 185);
   border-radius: 1%;
   height: 95%;
-  width: 89%;
   margin-right: auto;
   margin-left: 10px;
+  overflow-x: auto;
+}
+
+.stage.one-table {
+  width: 75%; /* Width for one-table view */
+}
+
+.stage.nested-table {
+  width: 89%; /* Width for nested-table view */
 }
 
 .sql-input {
@@ -24,7 +32,8 @@
   align-items: center;
   margin-top: 20px;
   width: 80%;
-  margin-right: 115px;
+  margin-left: 60px;
+  margin-right: auto;
 }
 
 .sql-input input {

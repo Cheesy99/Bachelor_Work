@@ -22,6 +22,7 @@ class UiManager {
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    const fileSize = file?.size;
 
     if (file) {
       const databaseExists = await window.electronAPI.databaseExists();
@@ -30,14 +31,27 @@ class UiManager {
         return;
       }
       const reader = new FileReader();
-      reader.onload = () => {
-        let fileData = reader.result as string;
-        fileData = translateUmlauts(fileData);
-        window.electronAPI.sendJsonFile(fileData);
-      };
-      reader.readAsText(file);
-    } else {
-      alert("Invalid file type. Please select a .json file.");
+      // fileSize !== undefined && fileSize > 3 * 1024 * 1024
+      if (true) {
+        console.log("File size is larger than 3 MB. Inserting into web nodes.");
+
+        reader.onload = async () => {
+          let fileData = reader.result as string;
+          fileData = translateUmlauts(fileData);
+          await window.electronAPI.insertUsingWorkerNodes(fileData);
+        };
+        reader.readAsText(file);
+        return;
+      }
+
+      // reader.onload = () => {
+      //   let fileData = reader.result as string;
+      //   fileData = translateUmlauts(fileData);
+      //   window.electronAPI.sendJsonFile(fileData);
+      // };
+      // reader.readAsText(file);
+      // } else {
+      //   alert("Invalid file type. Please select a .json file.");
     }
   }
 
@@ -57,7 +71,7 @@ class UiManager {
     return this;
   }
 
-  public async checkDatabaseAndFetchData() {
+  public async checkDatabaseAndFetchData(tableView: ViewSetting) {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists) {
       const fromID: FromId = { startId: 1, endId: 100 };
@@ -65,11 +79,21 @@ class UiManager {
         fromID,
         "main_table"
       );
-      const result = await this.convert(data, ViewSetting.NESTEDTABLES);
+      const result = await this.convert(data, tableView);
       if (this.setTableData) this.setTableData(result);
     } else {
       console.log("Database does not exist.");
     }
+  }
+
+  public static async convertNestedToOne(table: NestedTable): Promise<Table> {
+    let result = this.converter.convertNestedToTableData(table);
+    console.log("I am confused", result);
+    return result;
+  }
+
+  public static async convertOneToNested(table: TableData): Promise<Table> {
+    return this.converter.convertOneToNested(table);
   }
 
   public setupDatabaseChangeListener(viewSetting: ViewSetting) {

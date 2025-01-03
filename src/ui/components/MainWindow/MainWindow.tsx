@@ -9,7 +9,7 @@ interface MainWindowProps {
   setSelectedColumnValues: (values: (string | number)[]) => void;
 }
 
-type ContextType = [Table | null, ViewSetting];
+type ContextType = [Table | null, ViewSetting, boolean];
 
 function MainWindow({
   showSqlInput,
@@ -21,7 +21,7 @@ function MainWindow({
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-  const [tableData, tableType] = context;
+  const [tableData, tableType, loading] = context;
 
   const handleHeaderClick = (columnValues: (string | number)[]) => {
     setSelectedColumnValues(columnValues);
@@ -39,13 +39,22 @@ function MainWindow({
 
   return (
     <div className="main-window">
-      <div className="stage" style={{ marginTop: showSqlInput ? "20px" : "0" }}>
-        {tableData && (
-          <Table
-            data={tableData}
-            viewSetting={tableType}
-            onHeaderClick={handleHeaderClick}
-          />
+      <div
+        className={`stage ${
+          tableType === ViewSetting.ONETABLE ? "one-table" : "nested-table"
+        }`}
+        style={{ marginTop: showSqlInput ? "20px" : "0" }}
+      >
+        {loading ? (
+          <div>Loading...</div>
+        ) : (
+          tableData && (
+            <Table
+              data={tableData}
+              viewSetting={tableType}
+              onHeaderClick={handleHeaderClick}
+            />
+          )
         )}
       </div>
       {showSqlInput && (

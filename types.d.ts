@@ -1,4 +1,4 @@
-type Table = TableData | TableView;
+type Table = TableData | NestedTable;
 
 type TableData = {
   schema: string[];
@@ -10,7 +10,7 @@ type TableStruct = {
   table: (string | number | number[])[][];
 };
 
-type TableView = {
+type NestedTable = {
   schema: string[];
   table: (string | number | TableData)[][];
 };
@@ -37,5 +37,6 @@ interface Window {
     howManyRows: (tableName: string) => Promise<number>;
     saveResult: (tableData: TableData) => Promise<void>;
     getSaveResult: () => Promise<TableData | boolean>;
+    insertUsingWorkerNodes: (fileData: string) => Promise<void>;
   };
 }
