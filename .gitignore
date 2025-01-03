@@ -26,5 +26,5 @@ dist-electron
 /package.json
 *.json
 *.db
-*.msg
+vite.config.*
 !test.json
