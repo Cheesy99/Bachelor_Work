@@ -28,3 +28,4 @@ dist-electron
 *.db
 vite.config.*
 !test.json
+!SoSe23FromXLS.json

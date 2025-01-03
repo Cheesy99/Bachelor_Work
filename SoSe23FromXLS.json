@@ -1,0 +1,2970 @@
+[
+   {
+      "Nummer":"EV-12-INF-005",
+      "Systemtext":"AG Komusiewicz",
+      "Veranstaltungsart":"interne Veranstaltung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"18.04.2023 - 18.04.2023",
+            "Raum":"3060/+5/D09"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"17.05.2023 - 17.05.2023",
+            "Raum":"3060/+5/D09"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"17.07.2023 - 17.07.2023",
+            "Raum":"3071/+5/0010"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"11:00 - 14:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"19.07.2023 - 19.07.2023",
+            "Raum":"3060/+4/A30"
+         }
+      ]
+   },
+   {
+      "Nummer":"EV-12-INF-011",
+      "Systemtext":"AG Heider",
+      "Veranstaltungsart":"interne Veranstaltung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"17:00 - 20:00",
+            "Rhythmus":"jeder 3. Wochentag im Monat",
+            "Startdatum - Enddatum":"21.03.2023 - 18.07.2023",
+            "Raum":""
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"17:00 - 20:00",
+            "Rhythmus":"jeder 3. Wochentag im Monat",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3071/+5/0010"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"17:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"21.03.2023 - 21.03.2023",
+            "Raum":"3071/+5/0010"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"17:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"18.07.2023 - 18.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"09:00 - 17:00",
+            "Rhythmus":"Block",
+            "Startdatum - Enddatum":"28.09.2023 - 29.09.2023",
+            "Raum":"3071/+5/0010"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"09:00 - 17:00",
+            "Rhythmus":"Block",
+            "Startdatum - Enddatum":"25.09.2023 - 26.09.2023",
+            "Raum":"2472/00/2080"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"09:00 - 17:00",
+            "Rhythmus":"Block",
+            "Startdatum - Enddatum":"28.09.2023 - 29.09.2023",
+            "Raum":"3071/+5/0030"
+         }
+      ]
+   },
+   {
+      "Nummer":"EV-12_MAT-248",
+      "Systemtext":"AG Goertsches",
+      "Veranstaltungsart":"interne Veranstaltung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"11.04.2023 - 11.04.2023",
+            "Raum":"3060/+5/D01"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-002",
+      "Systemtext":"Einführung in die Didaktik der Informatik",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"08:00 - 09:30",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-004",
+      "Systemtext":"Übungen zu Datenbanksysteme / Recitation in Database Systems",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/C45"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/C45"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/C45"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/C52"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/C52"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-005",
+      "Systemtext":"Datenbanksysteme / Database Systems",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"09:00 - 15:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"09.06.2023",
+            "Raum":"3060/+3/A19"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"09:00 - 15:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"09.06.2023",
+            "Raum":"3060/+4/A24"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"09:00 - 15:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"09.06.2023",
+            "Raum":"3060/+3/D25"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"19.09.2023 - 19.09.2023",
+            "Raum":"2100/+2/0050"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"10:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"2370/00/0070"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-008",
+      "Systemtext":"Fachdidaktische Ergänzung Seminar",
+      "Veranstaltungsart":"Haupt-/Oberseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-009",
+      "Systemtext":"Übungen zu Software-Praktikum / Recitation in Software Lab",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+4/A24"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 13:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 17:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/A24"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-010",
+      "Systemtext":"Software-Praktikum",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3071/+2/0050"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"20.07.2023 - 20.07.2023",
+            "Raum":"3060/+4/A24"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-017",
+      "Systemtext":"Algorithmen und Datenstrukturen / Algorithms and Data Structures",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"2370/00/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"13:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"29.09.2023 - 29.09.2023",
+            "Raum":"2371/00/0010"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3071/+5/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"11:00 - 15:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"26.07.2023 - 26.07.2023",
+            "Raum":"2370/+2/0010"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"13:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"29.09.2023 - 29.09.2023",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-018",
+      "Systemtext":"Übungen zu Algorithmen und Datenstrukturen / Recitation in Algorithms and Data Structures",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"18:15 - 19:45",
+            "Rhythmus":"14tägl",
+            "Startdatum - Enddatum":"19.04.2023 - 12.07.2023",
+            "Raum":""
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"5. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"6. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"7. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"8. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"9. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-020",
+      "Systemtext":"Algorithmische Bioinformatik / Algorythms in Bioinformatics",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+4/C37"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"11.07.2023 - 11.07.2023",
+            "Raum":"3060/+4/C01"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"11.07.2023 - 11.07.2023",
+            "Raum":"3060/+4/C37"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"15:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"20.07.2023 - 20.07.2023",
+            "Raum":"3060/+4/C37"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-021",
+      "Systemtext":"Übungen zu Algorithmische Bioinformatik /Recitation in Algrithms in Bioinformatics",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/C45"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-026",
+      "Systemtext":"Bildsynthese / Image Synthesis",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A14"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-027",
+      "Systemtext":"Übungen zu Bildsynthese",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-034",
+      "Systemtext":"Datenintegration / Data Integration",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 13:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"18.07.2023 - 18.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"31.07.2023 - 31.07.2023",
+            "Raum":"3060/+3/A20"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"08:30 - 12:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"20.09.2023 - 20.09.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"09:00 - 11:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-035",
+      "Systemtext":"Übungen zu Datenintegration / Recitation in Data Integration",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"11:00 - 13:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-036",
+      "Systemtext":"Deklarative Programmierung / Declarative Programming",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:15 - 17:45",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3071/+5/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3071/+5/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 13:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"17.07.2023 - 17.07.2023",
+            "Raum":"2370/00/0020"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 13:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"17.07.2023 - 17.07.2023",
+            "Raum":"2370/00/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 13:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"17.07.2023 - 17.07.2023",
+            "Raum":"2370/+1/0050"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 13:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"18.09.2023 - 18.09.2023",
+            "Raum":"2371/00/0010"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-037",
+      "Systemtext":"Übungen zu Deklarative Programmierung / Recitation in Declarative Programming",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/C52"
+         },
+         {
+            "parallelgruppe":"5. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"6. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"7. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"8. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"9. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"18:15 - 19:45",
+            "Rhythmus":"14tägl",
+            "Startdatum - Enddatum":"26.04.2023 - 12.07.2023",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-055",
+      "Systemtext":"Grundlagen der Analysis / Basic real Analysis",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3071/+5/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"2370/+2/0010"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-056",
+      "Systemtext":"Übungen zu Grundlagen der Analysis / Recitation in Basic Real Analysis",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/C51"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/C45"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"5. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"6. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"7. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A14"
+         },
+         {
+            "parallelgruppe":"8. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/C45"
+         },
+         {
+            "parallelgruppe":"9. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"10. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A11"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-067",
+      "Systemtext":"IT-Sicherheit / IT Security",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/C37"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"24.07.2023 - 24.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"13:00 - 16:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"26.09.2023 - 26.09.2023",
+            "Raum":"3060/+4/A23"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-068",
+      "Systemtext":"Übungen zu IT-Sicherheit / Recitation in IT-Security",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/C51"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-070",
+      "Systemtext":"Fortgeschrittenenpraktikum / Advanced Software Lab",
+      "Veranstaltungsart":"Projektseminar/Forschungsseminar/Forschungsprojekt",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 11:45",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"20.04.2023 - 20.04.2023",
+            "Raum":"3060/+4/A30"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-090",
+      "Systemtext":"Multimediale Signalverarbeitung / Multimedia Signal Processing",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A14"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-091",
+      "Systemtext":"Übungen zu Multimediale Signalverarbeitung / Recitation in Multimedia Signal Processing",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-104",
+      "Systemtext":"Programmverifikation und -synthese / Program Verification and Synthesis",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+5/D09"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+4/A23"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-105",
+      "Systemtext":"Übungen zu Programmverifikation und -synthese / Recitation in Program Verification and Synthesis",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+4/A23"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-108",
+      "Systemtext":"Programmierpraktikum / Programming Lab",
+      "Veranstaltungsart":"Praktikum",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"09:00 - 16:00",
+            "Rhythmus":"Block",
+            "Startdatum - Enddatum":"21.08.2023 - 08.09.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"09:00 - 17:00",
+            "Rhythmus":"Block",
+            "Startdatum - Enddatum":"21.08.2023 - 08.09.2023",
+            "Raum":"3060/+3/D25"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-110",
+      "Systemtext":"Projektarbeit für Studierende der Informatik, Wirtschaftsinformatik und Data Science",
+      "Veranstaltungsart":"Projektseminar/Forschungsseminar/Forschungsprojekt",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 11:45",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"13.04.2023 - 13.04.2023",
+            "Raum":"3060/+4/A30"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-129",
+      "Systemtext":"Systemsoftware und Rechnerkommunikation",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3071/+5/0010"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3071/+5/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"12:00 - 15:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"11.07.2023 - 11.07.2023",
+            "Raum":"3071/+5/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"15:15 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.09.2023 - 22.09.2023",
+            "Raum":"3071/+5/0030"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-130",
+      "Systemtext":"Übungen zu Systemsoftware und Rechnerkommunikation",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/C51"
+         },
+         {
+            "parallelgruppe":"5. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"6. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A11"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-147",
+      "Systemtext":"Übungen zu Zustandsbasierte Systeme",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/C51"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-153",
+      "Systemtext":"Webdesign und Multimedia",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"12:00 - 15:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-157",
+      "Systemtext":"Webdesign und Multimedia",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-180",
+      "Systemtext":"Agiles und klassisches Requirements-Engineering",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:30",
+            "Rhythmus":"14tägl",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/C01"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"09:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"28.07.2023 - 28.07.2023",
+            "Raum":"3060/+4/C01"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-181",
+      "Systemtext":"Übungen zu Agiles und klassisches Requirements-Engineering",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"13:30 - 16:00",
+            "Rhythmus":"14tägl",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/C52"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-200",
+      "Systemtext":"Formale Methoden in der Softwaretechnik  Formal Methods in Software Engineering",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+4/C37"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+4/C37"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-201",
+      "Systemtext":"Übungen zu Formale Methoden in der Softwaretechnik / Recitation in Formal Methods in Software Engineering",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/C45"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-207",
+      "Systemtext":"Software as a Medical Device",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"09:00 - 13:00",
+            "Rhythmus":"14tägl",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+4/C37"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-208",
+      "Systemtext":"Übungen zu Software as a Medical Device / Recitation in Software as a Medical Device",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"13:00 - 17:00",
+            "Rhythmus":"14tägl",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+4/C37"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-307",
+      "Systemtext":"Rechtskunde und Wirtschaftspolitik für Informatiker",
+      "Veranstaltungsart":"Blockveranstaltung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"18:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.05.2023 - 22.05.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"18:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"29.05.2023 - 29.05.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"18:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"12.06.2023 - 12.06.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"18:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"19.06.2023 - 19.06.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"18:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"26.06.2023 - 26.06.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"18:00 - 20:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"03.07.2023 - 03.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"12:00 - 15:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"28.07.2023 - 28.07.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"13:00 - 15:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"28.07.2023 - 28.07.2023",
+            "Raum":"3060/+3/A20"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"13:00 - 16:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.09.2023 - 22.09.2023",
+            "Raum":"3060/+4/A30"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-319",
+      "Systemtext":"Einführungsveranstaltung für Studenten der Studiengänge Master: Data Science – Wirtschaftsinformatik – Informatik",
+      "Veranstaltungsart":"Veranstaltung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"09:00 - 10:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"17.04.2023 - 17.04.2023",
+            "Raum":"3060/+4/A30"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-330",
+      "Systemtext":"NoSQL-Datenbanksysteme / NoSQL Database Systems",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-331",
+      "Systemtext":"Übung NoSQL-Datenbanksysteme / Recitation in NoSQL Database Systems",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-338",
+      "Systemtext":"ProfiWerk Informatik (CS 604)",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"14:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"28.07.2023 - 28.07.2023",
+            "Raum":"3060/+4/A23"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"20.09.2023 - 20.09.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"09:45 - 11:15",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A22"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-339",
+      "Systemtext":"Digitale Transformation – Gründung IT-basierter Unternehmen (engl. Specialization Module Digital Transformation)",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-340",
+      "Systemtext":"Übungen zu Digitale Transformation – Gründung IT-basierter Unternehmen",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-387",
+      "Systemtext":"Softwareentwicklungswerkzeuge für datenwissenschaftliche Anwendungen / Software Development Tools for Data Science Applications",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-388",
+      "Systemtext":"Übungen Softwareentwicklungswerkzeuge für datenwissenschaftliche Anwendungen / Recitation in Software Development Tools for Data Science Applications",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A19"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-395",
+      "Systemtext":"Deep Learning zur Analyse von Multimediadaten",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-396",
+      "Systemtext":"Praktikum zur Statistik / Internship Statistics",
+      "Veranstaltungsart":"Praktikum",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-397",
+      "Systemtext":"Einführung in Formale Sprachen und Compilerbau",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+4/C37"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-398",
+      "Systemtext":"Übungen zu Einführung in Formale Sprachen und Compilerbau",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+5/D09"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-399",
+      "Systemtext":"Computational methods for combating Infectious diseases",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-400",
+      "Systemtext":"Causal Data Science: Theoretical Foundations and Algorithms",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:15 - 11:45",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+4/C37"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-401",
+      "Systemtext":"Übungen zu Causal Data Science: Theoretical Foundations and Algorithms",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"13:15 - 14:45",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A22"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-079-402",
+      "Systemtext":"Spatio-Temporal Big Data Analytics",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-001",
+      "Systemtext":"Grundlagen der Mathematik / Foundations of Mathematics",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A11"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-004",
+      "Systemtext":"Analysis I / Analysis I",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3071/+5/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"2370/+2/0010"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3071/+5/0030"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-005",
+      "Systemtext":"Übungen zu Analysis I / Recitation in Analysis I",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":""
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3071/+2/0120"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/A23"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"2260/+1/020"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"5. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"5. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"2260/+1/020"
+         },
+         {
+            "parallelgruppe":"6. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"7. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/C51"
+         },
+         {
+            "parallelgruppe":"8. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"9. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         },
+         {
+            "parallelgruppe":"10. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-006",
+      "Systemtext":"Übungen zu Analysis I Schnittstellenübung",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-010",
+      "Systemtext":"Lineare Algebra II / Linear Algebra II",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"2460/+1/1090"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"2370/+1/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3071/+5/0010"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-011",
+      "Systemtext":"Übungen zu Lineare Algebra II / Recitation in Linear Algebra II",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A10"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-015",
+      "Systemtext":"Versicherungsmathematik I",
+      "Veranstaltungsart":"Vorlesung/Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 19:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"2370/+1/0030"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-042",
+      "Systemtext":"Didaktik der Algebra/ Mathematics Education: Teaching Algebra",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-048",
+      "Systemtext":"Differentialgeometrie II / Differential Geometry II",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"2260/+2/009"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"2260/+2/009"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-049",
+      "Systemtext":"Übungen zu Differentialgeometrie II / Recitation in Differential Geometry II",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"2260/+2/013"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-050",
+      "Systemtext":"Diskrete Mathematik / Discrete Mathematics",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3071/+5/0010"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-051",
+      "Systemtext":"Übungen zu Diskrete Mathematik / Recitation in Discrete Mathematics",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A22"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A21"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-076",
+      "Systemtext":"Funktionentheorie und Vektoranalysis / Complex Analysis and Vector Analysis",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"2370/+1/0010"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-077",
+      "Systemtext":"Übungen zu Funktionentheorie und Vektoranalysis / Recitation in Complex Analysis and Vector Analysis",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A10"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/C52"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-088",
+      "Systemtext":"Algebraische Topologie II / Algebraic Topology II",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A14"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A16"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-089",
+      "Systemtext":"Übungen zu Algebraische Topologie II / Recitation in Algebraic Topology II",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A22"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-107",
+      "Systemtext":"Übungen zu Grundlagen der Mathematik Zentralübung / Recitation on the basics of mathematics",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A16"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-144",
+      "Systemtext":"Maß- und Integrationstheorie / Measure and Integration Theory",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-145",
+      "Systemtext":"Übungen zu Maß- und Integrationstheorie / Recitation in Measure and Integration Theory",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/C45"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-158",
+      "Systemtext":"Nichtlineare Optimierung / Nonlinear Optimization",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A16"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-159",
+      "Systemtext":"Übungen zu Nichtlineare Optimierung / Recitation in Nonlinear Optimization",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-162",
+      "Systemtext":"Numerik (Numerische Basisverfahren) / Numerical Analysis",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A20"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A16"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-163",
+      "Systemtext":"Übungen zu Numerik (Numerische Basisverfahren) / Recitation in Numerical Analysis",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-168",
+      "Systemtext":"Numerische Behandlung elliptischer partieller Differentialgleichungen",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-169",
+      "Systemtext":"Übungen zu Numerische Behandlung elliptischer partieller Differentialgleichungen",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-177",
+      "Systemtext":"PraxisLab Mathematik",
+      "Veranstaltungsart":"Haupt-/Oberseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-180",
+      "Systemtext":"ProfiPraxis Mathematik",
+      "Veranstaltungsart":"Haupt-/Oberseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-218",
+      "Systemtext":"Algebren und Darstellungen / Algebras and their Representations",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A22"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-220",
+      "Systemtext":"Didaktik der Stochastik / Didactics of Stochastics",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-224",
+      "Systemtext":"Übungen zu Algebren und Darstellungen / Recitation in Algebras and their Representations",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A10"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-236",
+      "Systemtext":"Seminar über aktuelle Themen der Geometrie",
+      "Veranstaltungsart":"Haupt-/Oberseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-237",
+      "Systemtext":"Fourier-Integraloperatoren / Fourier Integral Operators",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-238",
+      "Systemtext":"Übungen zu Fourier-Integraloperatoren / Recitation in Fourier Integral Operators",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-258",
+      "Systemtext":"Übungen zu Geometrie für das Lehramt / Recitation in geometry for the teaching profession",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/C45"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-259",
+      "Systemtext":"ProfiWerk Mathematik Teil 1; Seminar 1",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A14"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-260",
+      "Systemtext":"Seminar 2: ProfiWerk Mathematik Teil 2",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"21.03.2023 - 21.03.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"21.03.2023 - 21.03.2023",
+            "Raum":"3060/+3/A22"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"21.03.2023 - 21.03.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"21.03.2023 - 21.03.2023",
+            "Raum":"3060/+4/A23"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"21.03.2023 - 21.03.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.03.2023 - 22.03.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.03.2023 - 22.03.2023",
+            "Raum":"3060/+4/A23"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.03.2023 - 22.03.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.03.2023 - 22.03.2023",
+            "Raum":"3060/+3/A22"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 14:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.03.2023 - 22.03.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"17:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"22.03.2023 - 22.03.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"27.03.2023 - 27.03.2023",
+            "Raum":"3060/+4/A30"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"27.03.2023 - 27.03.2023",
+            "Raum":"3060/+4/A23"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"27.03.2023 - 27.03.2023",
+            "Raum":"3060/+3/A16"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"27.03.2023 - 27.03.2023",
+            "Raum":"3060/+3/A22"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"27.03.2023 - 27.03.2023",
+            "Raum":"3060/+3/A21"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"28.03.2023 - 28.03.2023",
+            "Raum":"3060/+4/A30"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-276",
+      "Systemtext":"Geometrie für das Lehramt / Geometry for teaching profession",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3071/+5/0010"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-311",
+      "Systemtext":"Oberseminar zur Differentialgeometrie und Analysis",
+      "Veranstaltungsart":"Haupt-/Oberseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+4/A23"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"13:00 - 14:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"08.05.2023 - 08.05.2023",
+            "Raum":"3060/+4/A23"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-338",
+      "Systemtext":"Seminar zur Polynomialen Methode",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A10"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-339",
+      "Systemtext":"Kodierungstheorie",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/A30"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-340",
+      "Systemtext":"Übungen zu Kodierungstheorie",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"08:00 - 10:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/A11"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/C51"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-341",
+      "Systemtext":"Seminar zur Topologie",
+      "Veranstaltungsart":"Seminar/Mittelseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"14.04.2023 - 14.07.2023",
+            "Raum":"3060/+3/A21"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-342",
+      "Systemtext":"Einführung in die Algebraische Geometrie / Introduction to Algebraic Geometry",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"2370/+1/0010"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-343",
+      "Systemtext":"Übungen zu Einführung in die Algebraische Geometrie / Recitation in Introduction to Algebraic Geometry",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"3060/+3/A11"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-344",
+      "Systemtext":"Statistik (vertiefend)",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+4/A23"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+3/A20"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-345",
+      "Systemtext":"Übungen zu Statistik (vertiefend) / Recitation in Statistics",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"12.04.2023 - 12.07.2023",
+            "Raum":"3060/+4/A23"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-346",
+      "Systemtext":"Empirische Prozesse / Empirical processes",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"3060/+3/A21"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-105-347",
+      "Systemtext":"Übungen zu Empirische Prozesse / Recitation in Empirical processes",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"",
+            "Von - Bis":"  -  ",
+            "Rhythmus":"",
+            "Startdatum - Enddatum":"  -  ",
+            "Raum":""
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-126-001",
+      "Systemtext":"Mathematische und statistische Methoden für Pharmazeuten - Vorlesung",
+      "Veranstaltungsart":"Vorlesung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"2311/+1/003"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"13.04.2023 - 13.04.2023",
+            "Raum":"2670/+1/0240"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-126-002",
+      "Systemtext":"Mathematische und statistische Methoden für Pharmazeuten - Übungen",
+      "Veranstaltungsart":"Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"2311/+1/015"
+         },
+         {
+            "parallelgruppe":"2. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"12:00 - 14:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"2311/+1/015"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"2311/+1/015"
+         },
+         {
+            "parallelgruppe":"3. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"14:00 - 16:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"13.04.2023 - 13.04.2023",
+            "Raum":"2670/+1/0240"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"13.04.2023 - 13.07.2023",
+            "Raum":"2311/+1/015"
+         },
+         {
+            "parallelgruppe":"4. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"16:00 - 18:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"13.04.2023 - 13.04.2023",
+            "Raum":"2670/+1/0240"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-LMA-002",
+      "Systemtext":"Arbeiten mit Hochschulmathematik II (Proseminar)/Learning Academic Mathematics II",
+      "Veranstaltungsart":"Proseminar",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"14:00 - 18:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"17.04.2023 - 10.07.2023",
+            "Raum":"2370/00/0080"
+         }
+      ]
+   },
+   {
+      "Nummer":"LV-12-LMA-006",
+      "Systemtext":"Mathematisches Basiswissen I / Basic Mathematical Knowledge I",
+      "Veranstaltungsart":"Vorlesung/Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 12:00",
+            "Rhythmus":"woch",
+            "Startdatum - Enddatum":"11.04.2023 - 11.07.2023",
+            "Raum":"3060/+3/C52"
+         }
+      ]
+   },
+   {
+      "Nummer":" ",
+      "Systemtext":"Vorkurs Mathematik",
+      "Veranstaltungsart":"Vorlesung/Übung",
+      "term":"SoSe 2023",
+      "termine":[
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Di",
+            "Von - Bis":"10:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"28.03.2023 - 28.03.2023",
+            "Raum":"2370/00/0080"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mi",
+            "Von - Bis":"10:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"29.03.2023 - 29.03.2023",
+            "Raum":"2370/00/0080"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Do",
+            "Von - Bis":"10:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"30.03.2023 - 30.03.2023",
+            "Raum":"2370/+1/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Fr",
+            "Von - Bis":"10:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"31.03.2023 - 31.03.2023",
+            "Raum":"2370/+1/0030"
+         },
+         {
+            "parallelgruppe":"1. PG",
+            "Wochentag":"Mo",
+            "Von - Bis":"10:00 - 17:00",
+            "Rhythmus":"Einzel",
+            "Startdatum - Enddatum":"03.04.2023 - 03.04.2023",
+            "Raum":"2370/+1/0030"
+         }
+      ]
+   }
+]
