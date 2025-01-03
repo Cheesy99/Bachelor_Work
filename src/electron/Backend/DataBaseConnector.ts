@@ -67,7 +67,7 @@ class DataBaseConnector {
         stream.on("data", (command) => {
           this.dataBase.run(command, (err) => {
             if (err) {
-              console.error("Error executing SQL command:", err.message, err);
+              console.error(err.message, command);
               reject(err);
               process.exit(1);
             } else {

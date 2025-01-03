@@ -21,7 +21,7 @@ class SqlTextGenerator {
     tables: TableSchema
   ) => {
     let stack: string[] = [];
-    let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY ,\n`;
+    let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY AUTOINCREMENT ,\n`;
 
     columns.forEach((column) => {
       if (tables[column]) {
@@ -44,27 +44,6 @@ class SqlTextGenerator {
     tableSQL += `\n);\n\n`;
     return tableSQL;
   };
-
-  public createInputDataText(tableData: TableDataBackend[]): string[] {
-    const returnCommandQueue: string[] = [];
-    tableData.reverse().forEach((tableData) => {
-      let key = Object.keys(tableData.schema)[0];
-      let sqlCommand: string = `INSERT INTO ${key} (${tableData.schema[
-        key
-      ].join(", ")}) VALUES `;
-
-      tableData.table.forEach((row) => {
-        const escapedRow = row.map((value) =>
-          typeof value === "string" ? `'${value.replace(/'/g, "bugg")}'` : value
-        );
-        sqlCommand += `( ${escapedRow.join(", ")} ),`;
-      });
-
-      sqlCommand = sqlCommand.slice(0, -1) + ";";
-      returnCommandQueue.push(sqlCommand);
-    });
-    return returnCommandQueue;
-  }
 }
 
 export default SqlTextGenerator;

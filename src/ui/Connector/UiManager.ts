@@ -31,27 +31,27 @@ class UiManager {
         return;
       }
       const reader = new FileReader();
-      fileSize !== undefined && fileSize > 3 * 1024 * 1024;
-      if (true) {
-        console.log("File size is larger than 3 MB. Inserting into web nodes.");
+      //  fileSize !== undefined && fileSize > 3 * 1024 * 1024;
+      //    if (true) {
+      //        console.log("File size is larger than 3 MB. Inserting into web nodes.");
 
-        reader.onload = async () => {
-          let fileData = reader.result as string;
-          fileData = translateUmlauts(fileData);
-          await window.electronAPI.insertUsingWorkerNodes(fileData);
-        };
-        reader.readAsText(file);
-        return;
-      }
+      // reader.onload = async () => {
+      //  let fileData = reader.result as string;
+      // fileData = translateUmlauts(fileData);
+      // await window.electronAPI.insertUsingWorkerNodes(fileData);
+      // };
+      // reader.readAsText(file);
+      // return;
+      // }
 
-      //   reader.onload = () => {
-      //     let fileData = reader.result as string;
-      //     fileData = translateUmlauts(fileData);
-      //     window.electronAPI.sendJsonFile(fileData);
-      //   };
-      //   reader.readAsText(file);
-      // } else {
-      //   alert("Invalid file type. Please select a .json file.");
+      reader.onload = () => {
+        let fileData = reader.result as string;
+        fileData = translateUmlauts(fileData);
+        window.electronAPI.sendJsonFile(fileData);
+      };
+      reader.readAsText(file);
+    } else {
+      alert("Invalid file type. Please select a .json file.");
     }
   }
 

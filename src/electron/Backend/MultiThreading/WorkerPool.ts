@@ -108,7 +108,7 @@ class WorkerPool extends EventEmitter {
     jsonObject: JsonObject[],
     schema: TableSchema,
     callback: (error: Error | null, result?: Parcel) => void,
-    desiredChunkSize: number = 3
+    desiredChunkSize: number = 100
   ): void {
     const chunkSize = Math.min(
       desiredChunkSize,

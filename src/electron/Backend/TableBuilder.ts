@@ -1,110 +1,80 @@
 import TableDataBackend from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
-import Row from "./Interfaces/Row.js";
+import DataBaseConnector from "./DataBaseConnector.js";
 class TableBuilder {
-  private tableDate: TableDataBackend[] = [];
   private foreignIndex: number = 0;
-  private shiftingStack: Row[] = [];
-  private mainTableIndex: number = 0;
-  public build(
-    json: JsonObject[],
-    tableSchema: TableSchema
-  ): TableDataBackend[] {
-    Object.keys(tableSchema).forEach((key: string) => {
-      tableSchema[key].push("id");
-      this.tableDate.push({
-        schema: { [key]: tableSchema[key] },
-        table: [],
-      });
+  private databaseConnector: DataBaseConnector =
+    DataBaseConnector.getInstance();
+
+  public build(json: JsonObject[], tableSchema: TableSchema) {
+    json.forEach((object) => {
+      this.recursive(object, tableSchema, "main_table");
     });
-
-    json.forEach((object, index) => {
-      this.recursive(object, "main_table", index);
-    });
-
-    this.mainTableCleaner();
-
-    return this.tableDate;
   }
 
-  private recursive(json: JsonObject, tableName: string, id: number) {
-    let row: { key: string; value: string | number; tableName: string }[] = [];
-    row.push({ key: "id", value: id, tableName });
-    Object.keys(json).forEach((key) => {
-      if (Array.isArray(json[key])) {
-        json[key].forEach((values) => {
-          row.push({ key: key, value: this.foreignIndex, tableName });
-          this.recursive(values, key, this.foreignIndex++);
+  private recursive(
+    json: JsonObject,
+    tableSchema: TableSchema,
+    tableName: string
+  ): string {
+    const columnNames: string[] = tableSchema[tableName];
+    let totalRes: string[][] = [];
+    columnNames.forEach((columnName) => {
+      let value = json[columnName] ? json[columnName] : "not found";
+      if (Array.isArray(value)) {
+        const res: string[] = value.map((Innererow) => {
+          return this.recursive(Innererow, tableSchema, columnName);
         });
+        totalRes.push(res);
       } else {
-        row.push({ key: key, value: json[key], tableName: tableName });
+        columnNames.push(value);
       }
     });
-    this.insertRow(row!);
+    let baseString: string;
+    let result = this.transformGeneric(baseString, totalRes);
   }
 
-  private insertRow(row: Row[]) {
-    let duplicateKeys: Row[] = [];
-    let seenKeys: Set<string | number> = new Set();
+  private transformGeneric(
+    baseString: string,
+    foreignIds: string[][]
+  ): string[] {
+    const result: string[] = [];
 
-    const filteredRow = row.filter((value) => {
-      if (seenKeys.has(value.key)) {
-        duplicateKeys.push(value);
-        return false;
-      } else {
-        seenKeys.add(value.key);
-        return true;
+    function accumulator(current: string[], index: number) {
+      if (index === foreignIds.length) {
+        result.push(`${baseString}, ${current.join(", ")}`);
+        return;
       }
-    });
-    this.insertData(filteredRow);
-    duplicateKeys.forEach((row) => {
-      this.insertHelper(row, filteredRow);
-    });
-  }
 
-  private insertHelper(element: Row, row: Row[]) {
-    let index = row.findIndex((row) => row.key === element.key);
-    this.shiftingStack.push(row[index]);
-    row[index] = element;
-    this.insertData(row);
-    if (this.checkIfAnotherKeyTypeExists(element)) {
-      this.shiftingStack
-        .filter((row) => row.key !== element.key)
-        .forEach((element) => {
-          let index = row.findIndex((row) => row.key === element.key);
-          row[index] = element;
-          this.insertData(row);
-        });
+      for (const value of foreignIds[index]) {
+        accumulator([...current, value], index + 1);
+      }
     }
+
+    accumulator([], 0);
+    return result;
   }
 
-  private checkIfAnotherKeyTypeExists(row: Row): boolean {
-    return this.shiftingStack.some((element) => element.key === row.key);
-  }
+  public createInputDataText(tableData: TableDataBackend[]): string[] {
+    const returnCommandQueue: string[] = [];
+    tableData.reverse().forEach((tableData) => {
+      let key = Object.keys(tableData.schema)[0];
+      let sqlCommand: string = `INSERT INTO ${key} (${tableData.schema[
+        key
+      ].join(", ")}) VALUES `;
 
-  private insertData(row: Row[]) {
-    const tableData = this.tableDate.find((table) =>
-      table.schema.hasOwnProperty(row[0].tableName)
-    );
-    if (!tableData) throw new Error("Table schema doesn't have row tablename");
+      tableData.table.forEach((row) => {
+        const escapedRow = row.map((value) =>
+          typeof value === "string" ? `'${value.replace(/'/g, "bugg")}'` : value
+        );
+        sqlCommand += `( ${escapedRow.join(", ")} ),`;
+      });
 
-    const schemaKeys = tableData.schema[row[0].tableName];
-    const rowData: (string | number)[] = schemaKeys.map((key) => {
-      const cell = row.find((r) => r.key === key);
-      return cell ? cell.value : "bugg";
+      sqlCommand = sqlCommand.slice(0, -1) + ";";
+      returnCommandQueue.push(sqlCommand);
     });
-    tableData.table.push(rowData);
-  }
-
-  private mainTableCleaner() {
-    let idIndex = this.tableDate[0].schema["main_table"].findIndex(
-      (value) => value === "id"
-    );
-
-    this.tableDate[0].table.forEach((row) => {
-      row[idIndex] = this.mainTableIndex++;
-    });
+    return returnCommandQueue;
   }
 }
 export default TableBuilder;

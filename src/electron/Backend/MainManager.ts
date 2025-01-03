@@ -21,8 +21,9 @@ class MainManager {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private sqlTextBuilder: SqlTextGenerator;
+  private MultiThreadSchema?: TableSchema;
   //I need to resign all key of main and foreigntable as multithreading doesn't know which keys go where
-  private keyStorage: { tableName: string; givenKeys: Set<number> }[] = [];
+  private keyStorage?: { tableName: string; givenKeys: Set<number> }[];
   private resolveAllTasks: (() => void) | null = null;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
@@ -67,12 +68,13 @@ class MainManager {
       command: string[];
       tableSchema: TableSchema;
     } = this.sqlBuilder.getSchema(jsonObject);
+    console.log("table schema", schemaResult.tableSchema);
     await this.dataBase.sqlCommand(schemaResult.command);
-    let inputDataSqlCommand: string[] = this.sqlBuilder.getTableInputCommand(
-      jsonObject,
-      schemaResult.tableSchema
-    );
-    await this.dataBase.sqlCommand(inputDataSqlCommand);
+    // let inputDataSqlCommand: string[] = this.sqlBuilder.getTableInputCommand(
+    //   jsonObject,
+    //   schemaResult.tableSchema
+    // );
+    // await this.dataBase.sqlCommand(inputDataSqlCommand);
   }
 
   public async getTableData(
@@ -160,6 +162,7 @@ class MainManager {
     await schemaPromise;
 
     tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
+    this.MultiThreadSchema = tableSchema;
     let command = this.sqlTextBuilder.createSchemaText(tableSchema);
     await this.dataBase.sqlCommand(DataCleaner.cleanSqlCommand(command));
 
@@ -174,7 +177,7 @@ class MainManager {
         }
         if (result) {
           const payload = result.payload as TableDataBackend[];
-          tableDataCollector.push(this.keyManager(payload));
+          tableDataCollector.push(payload);
         }
       });
     });
@@ -199,8 +202,20 @@ class MainManager {
       this.resolveAllTasks = null;
     }
   }
-
-  private keyManager(table: TableDataBackend[]): TableDataBackend[] {}
+  private keyManager(table: TableDataBackend[]) {
+    const tableNames: string[] = Object.keys(this.MultiThreadSchema!);
+    if (!this.keyStorage) {
+      this.keyStorage = new Array(tableNames.length).fill({
+        tableName: "",
+        givenKeys: new Set<number>(),
+      });
+      tableNames.forEach((value, index) => {
+        this.keyStorage!.at(index)!.tableName = value;
+      });
+    }
+    table.forEach((tableFamily) => {});
+    return [];
+  }
 }
 
 export default MainManager;
