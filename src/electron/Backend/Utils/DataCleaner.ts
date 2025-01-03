@@ -65,15 +65,37 @@ class DataCleaner {
         Object.keys(tableData.schema).forEach((key) => {
           const index = Object.keys(tablesSchema).indexOf(key);
           if (index !== -1) {
-            newTable[index].table = (newTable[index].table || []).concat(
-              tableData.table
-            );
+            const cleanedRows = tableData.table.map((row) => {
+              if (typeof row === "object" && row !== null) {
+                return this.cleanRow(row, tablesSchema[key]);
+              } else {
+                console.error(`Invalid row structure: ${JSON.stringify(row)}`);
+                return null;
+              }
+            });
+            newTable[index].table = (newTable[index].table || [])
+              .concat
+              // cleanedRows
+              ();
           }
         });
       });
     });
+
+    console.log("table big size", newTable.length);
     return newTable;
   };
+
+  private static cleanRow(
+    row: (string | number)[],
+    schema: string[]
+  ): (string | number)[] {
+    // const cleanedRow: (string | number)[] = {};
+    // schema.forEach((column: any) => {
+    //   cleanedRow[column as string] = row[column] !== undefined ? row[column] : null;
+    // });
+    return [];
+  }
 }
 
 export default DataCleaner;
