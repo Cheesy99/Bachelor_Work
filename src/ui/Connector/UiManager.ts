@@ -31,7 +31,7 @@ class UiManager {
         return;
       }
       const reader = new FileReader();
-      // fileSize !== undefined && fileSize > 3 * 1024 * 1024
+      fileSize !== undefined && fileSize > 3 * 1024 * 1024;
       if (true) {
         console.log("File size is larger than 3 MB. Inserting into web nodes.");
 
@@ -44,12 +44,12 @@ class UiManager {
         return;
       }
 
-      // reader.onload = () => {
-      //   let fileData = reader.result as string;
-      //   fileData = translateUmlauts(fileData);
-      //   window.electronAPI.sendJsonFile(fileData);
-      // };
-      // reader.readAsText(file);
+      //   reader.onload = () => {
+      //     let fileData = reader.result as string;
+      //     fileData = translateUmlauts(fileData);
+      //     window.electronAPI.sendJsonFile(fileData);
+      //   };
+      //   reader.readAsText(file);
       // } else {
       //   alert("Invalid file type. Please select a .json file.");
     }

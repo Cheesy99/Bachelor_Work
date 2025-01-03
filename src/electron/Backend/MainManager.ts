@@ -10,6 +10,7 @@ import TableDataBackend from "./Interfaces/TableData.js";
 import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
+import fs from "fs";
 
 class MainManager {
   private static instance: MainManager;
@@ -20,6 +21,8 @@ class MainManager {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private sqlTextBuilder: SqlTextGenerator;
+  //I need to resign all key of main and foreigntable as multithreading doesn't know which keys go where
+  private keyStorage: { tableName: string; givenKeys: Set<number> }[] = [];
   private resolveAllTasks: (() => void) | null = null;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
@@ -171,16 +174,22 @@ class MainManager {
         }
         if (result) {
           const payload = result.payload as TableDataBackend[];
-          tableDataCollector.push(payload);
+          tableDataCollector.push(this.keyManager(payload));
         }
       });
     });
 
     await tablePromise;
+    fs.writeFileSync(
+      "payload.json",
+      JSON.stringify(tableDataCollector, null, 2),
+      "utf-8"
+    );
+    console.log("Payload written to payload.json");
     const tableData: TableDataBackend[] =
       DataCleaner.mergeTables(tableDataCollector);
-    let commandTableData = this.sqlTextBuilder.createInputDataText(tableData);
-    await this.dataBase.sqlCommand(commandTableData);
+    // let commandTableData = this.sqlTextBuilder.createInputDataText(tableData);
+    // await this.dataBase.sqlCommand(commandTableData);
   }
 
   private handleAllTasksCompleted() {
@@ -190,6 +199,8 @@ class MainManager {
       this.resolveAllTasks = null;
     }
   }
+
+  private keyManager(table: TableDataBackend[]): TableDataBackend[] {}
 }
 
 export default MainManager;
