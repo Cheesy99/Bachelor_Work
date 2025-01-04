@@ -1,7 +1,6 @@
 import DataBaseConnector from "./DataBaseConnector.js";
 import ExcelExporter from "./ExcelExporter.js";
 import JsonObject from "./Interfaces/JsonObject.js";
-import SqlBuilder from "./SqlBuilder.js";
 import DataCleaner from "./Utils/DataCleaner.js";
 import WorkerPool from "./MultiThreading/WorkerPool.js";
 import * as os from "os";
@@ -15,15 +14,10 @@ import fs from "fs";
 class MainManager {
   private static instance: MainManager;
   private dataBase: DataBaseConnector;
-  private sqlBuilder: SqlBuilder;
   private excelExporter: ExcelExporter;
   private workerPool: WorkerPool;
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
-  private sqlTextBuilder: SqlTextGenerator;
-  private MultiThreadSchema?: TableSchema;
-  //I need to resign all key of main and foreigntable as multithreading doesn't know which keys go where
-  private keyStorage?: { tableName: string; givenKeys: Set<number> }[];
   private resolveAllTasks: (() => void) | null = null;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
@@ -35,9 +29,8 @@ class MainManager {
   private constructor() {
     this.dataBase = DataBaseConnector.getInstance();
     this.tableBuilder = new TableBuilder();
-    this.sqlTextBuilder = new SqlTextGenerator();
-    this.schemaBuilder = new SchemaBuilder();
-    this.sqlBuilder = new SqlBuilder(this.schemaBuilder, this.sqlTextBuilder);
+    this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
+    this.tableBuilder = new TableBuilder();
     this.excelExporter = new ExcelExporter();
 
     const numCores = os.cpus().length;
@@ -63,7 +56,7 @@ class MainManager {
     let schemaResult: {
       command: string[];
       tableSchema: TableSchema;
-    } = this.sqlBuilder.getSchema(jsonObject);
+    } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
     await this.dataBase.sqlCommand(schemaResult.command);
     await this.tableBuilder.build(jsonObject, schemaResult.tableSchema);
   }
@@ -153,8 +146,7 @@ class MainManager {
     await schemaPromise;
 
     tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
-    this.MultiThreadSchema = tableSchema;
-    let command = this.sqlTextBuilder.createSchemaText(tableSchema);
+    let command = this.schemaBuilder.generateSchemaText(tableSchema);
     await this.dataBase.sqlCommand(DataCleaner.cleanSqlCommand(command));
 
     const tablePromise = new Promise<void>((resolve, reject) => {
@@ -174,16 +166,6 @@ class MainManager {
     });
 
     await tablePromise;
-    fs.writeFileSync(
-      "payload.json",
-      JSON.stringify(tableDataCollector, null, 2),
-      "utf-8"
-    );
-    console.log("Payload written to payload.json");
-    const tableData: TableDataBackend[] =
-      DataCleaner.mergeTables(tableDataCollector);
-    // let commandTableData = this.sqlTextBuilder.createInputDataText(tableData);
-    // await this.dataBase.sqlCommand(commandTableData);
   }
 
   private handleAllTasksCompleted() {

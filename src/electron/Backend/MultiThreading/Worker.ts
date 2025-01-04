@@ -46,7 +46,8 @@ class Worker {
     });
 
     const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-    const schema: TableSchema = this.schemaBuilder.build(jsonObject);
+    const schema: TableSchema =
+      this.schemaBuilder.generateTableSchema(jsonObject);
 
     const result: Parcel = { type: Type.schema, payload: schema };
     return result;

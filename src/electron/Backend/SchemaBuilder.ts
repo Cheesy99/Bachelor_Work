@@ -1,7 +1,27 @@
 import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
+import SqlTextGenerator from "./SqlTextGenerator.js";
+import DataCleaner from "./Utils/DataCleaner.js";
 class SchemaBuilder {
-  public build(json: JsonObject[]): TableSchema {
+  private sqlTextGenerator: SqlTextGenerator;
+
+  public constructor(sqlTextGenerator: SqlTextGenerator) {
+    this.sqlTextGenerator = sqlTextGenerator;
+  }
+  public generateSchemaText(tableSchema: TableSchema): string {
+    return this.sqlTextGenerator.createSchemaText(tableSchema);
+  }
+
+  public generateSchemaWithCommand(json: JsonObject[]): {
+    command: string[];
+    tableSchema: TableSchema;
+  } {
+    const tableSchema = this.generateTableSchema(json);
+    let command = this.generateSchemaText(tableSchema);
+    return { command: DataCleaner.cleanSqlCommand(command), tableSchema };
+  }
+
+  public generateTableSchema(json: JsonObject[]): TableSchema {
     let result: TableSchema[] = [];
     if (Array.isArray(json)) {
       json.forEach((obj) =>
