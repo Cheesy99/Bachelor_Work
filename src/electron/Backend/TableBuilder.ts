@@ -7,74 +7,88 @@ class TableBuilder {
   private databaseConnector: DataBaseConnector =
     DataBaseConnector.getInstance();
 
-  public build(json: JsonObject[], tableSchema: TableSchema) {
-    json.forEach((object) => {
-      this.recursive(object, tableSchema, "main_table");
-    });
+  public async build(
+    json: JsonObject[],
+    tableSchema: TableSchema
+  ): Promise<void> {
+    console.log("Processing");
+    await Promise.all(
+      json.map(async (object) => {
+        await this.recursive(object, tableSchema, "main_table");
+      })
+    );
+    console.log("done");
   }
 
-  private recursive(
+  private async recursive(
     json: JsonObject,
     tableSchema: TableSchema,
     tableName: string
-  ): string {
+  ): Promise<number> {
     const columnNames: string[] = tableSchema[tableName];
-    let totalRes: string[][] = [];
-    columnNames.forEach((columnName) => {
+    const insertValues: string[] = [];
+    let totalRes: Promise<number>[][] = [];
+    columnNames.forEach(async (columnName) => {
       let value = json[columnName] ? json[columnName] : "not found";
       if (Array.isArray(value)) {
-        const res: string[] = value.map((Innererow) => {
-          return this.recursive(Innererow, tableSchema, columnName);
+        const res: Promise<number>[] = value.map(async (Innererow) => {
+          return await this.recursive(Innererow, tableSchema, columnName);
         });
         totalRes.push(res);
       } else {
-        columnNames.push(value);
+        typeof value === "string"
+          ? (value = `'${value.replace(/'/g, "''")}'`)
+          : value;
+
+        insertValues.push(value);
       }
     });
-    let baseString: string;
-    let result = this.transformGeneric(baseString, totalRes);
+    const columnsString = columnNames.join(", ");
+
+    let result: any[][] = [];
+    if (totalRes.length !== 0) {
+      const resolvedTotalRes = await Promise.all(
+        totalRes.map((res) => Promise.all(res))
+      );
+      result = this.joinCrossProduct(insertValues, resolvedTotalRes);
+      await Promise.all(
+        result.map(async (statement) => {
+          const insertStatement: any = `INSERT INTO ${tableName} (${columnsString}) VALUES (${statement.join(
+            ", "
+          )});`;
+          console.log("inserting in main", insertStatement);
+          return await this.insertWithIdReponse(insertStatement);
+        })
+      );
+    } else {
+      const baseString: string = insertValues.join(", ");
+      const insertBase = `INSERT INTO ${tableName} (${columnsString}) VALUES (${baseString});`;
+      return await this.insertWithIdReponse(insertBase);
+    }
+
+    return -1;
   }
 
-  private transformGeneric(
-    baseString: string,
-    foreignIds: string[][]
-  ): string[] {
-    const result: string[] = [];
+  private async insertWithIdReponse(statment: any): Promise<number> {
+    return await this.databaseConnector.sqlCommandWithIdResponse(statment);
+  }
 
-    function accumulator(current: string[], index: number) {
+  private joinCrossProduct(baseArray: any[], foreignIds: any[][]): any[][] {
+    const result: any[][] = [];
+
+    function accumulator(current: any[], index: number) {
       if (index === foreignIds.length) {
-        result.push(`${baseString}, ${current.join(", ")}`);
+        result.push([...baseArray, ...current]);
         return;
       }
 
-      for (const value of foreignIds[index]) {
-        accumulator([...current, value], index + 1);
+      for (const foreignKeys of foreignIds[index]) {
+        accumulator([...current, foreignKeys], index + 1);
       }
     }
 
     accumulator([], 0);
     return result;
-  }
-
-  public createInputDataText(tableData: TableDataBackend[]): string[] {
-    const returnCommandQueue: string[] = [];
-    tableData.reverse().forEach((tableData) => {
-      let key = Object.keys(tableData.schema)[0];
-      let sqlCommand: string = `INSERT INTO ${key} (${tableData.schema[
-        key
-      ].join(", ")}) VALUES `;
-
-      tableData.table.forEach((row) => {
-        const escapedRow = row.map((value) =>
-          typeof value === "string" ? `'${value.replace(/'/g, "bugg")}'` : value
-        );
-        sqlCommand += `( ${escapedRow.join(", ")} ),`;
-      });
-
-      sqlCommand = sqlCommand.slice(0, -1) + ";";
-      returnCommandQueue.push(sqlCommand);
-    });
-    return returnCommandQueue;
   }
 }
 export default TableBuilder;

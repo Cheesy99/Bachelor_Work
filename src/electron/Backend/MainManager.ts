@@ -37,11 +37,7 @@ class MainManager {
     this.tableBuilder = new TableBuilder();
     this.sqlTextBuilder = new SqlTextGenerator();
     this.schemaBuilder = new SchemaBuilder();
-    this.sqlBuilder = new SqlBuilder(
-      this.schemaBuilder,
-      this.tableBuilder,
-      this.sqlTextBuilder
-    );
+    this.sqlBuilder = new SqlBuilder(this.schemaBuilder, this.sqlTextBuilder);
     this.excelExporter = new ExcelExporter();
 
     const numCores = os.cpus().length;
@@ -68,13 +64,8 @@ class MainManager {
       command: string[];
       tableSchema: TableSchema;
     } = this.sqlBuilder.getSchema(jsonObject);
-    console.log("table schema", schemaResult.tableSchema);
     await this.dataBase.sqlCommand(schemaResult.command);
-    // let inputDataSqlCommand: string[] = this.sqlBuilder.getTableInputCommand(
-    //   jsonObject,
-    //   schemaResult.tableSchema
-    // );
-    // await this.dataBase.sqlCommand(inputDataSqlCommand);
+    await this.tableBuilder.build(jsonObject, schemaResult.tableSchema);
   }
 
   public async getTableData(
@@ -201,20 +192,6 @@ class MainManager {
       this.resolveAllTasks();
       this.resolveAllTasks = null;
     }
-  }
-  private keyManager(table: TableDataBackend[]) {
-    const tableNames: string[] = Object.keys(this.MultiThreadSchema!);
-    if (!this.keyStorage) {
-      this.keyStorage = new Array(tableNames.length).fill({
-        tableName: "",
-        givenKeys: new Set<number>(),
-      });
-      tableNames.forEach((value, index) => {
-        this.keyStorage!.at(index)!.tableName = value;
-      });
-    }
-    table.forEach((tableFamily) => {});
-    return [];
   }
 }
 

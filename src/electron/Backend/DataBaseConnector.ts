@@ -95,6 +95,19 @@ class DataBaseConnector {
       });
     });
   }
+
+  public sqlCommandWithIdResponse(sqlCommand: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.dataBase.run(sqlCommand, function (err) {
+        if (err) {
+          console.error("Error executing SQL command:", err.message, err);
+          reject(err);
+        } else {
+          resolve(this.lastID);
+        }
+      });
+    });
+  }
 }
 
 export default DataBaseConnector;

@@ -1,4 +1,3 @@
-import TableDataBackend from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import DataCleaner from "./Utils/DataCleaner.js";
 class SqlTextGenerator {

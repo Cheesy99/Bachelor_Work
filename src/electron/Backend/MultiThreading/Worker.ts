@@ -63,13 +63,14 @@ class Worker {
 
     const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
     const tableSchema = payload.schema;
-    const command: TableDataBackend[] = this.tableBuilder.build(
-      jsonObject,
-      tableSchema
-    );
+    // const command: TableDataBackend[] = this.tableBuilder.build(
+    //   jsonObject,
+    //   tableSchema
+    // );
     const result: Parcel = {
       type: Type.table,
-      payload: command,
+      payload: [],
+      // payload: command,
     };
     return result;
   }
