@@ -12,7 +12,7 @@ Modal.setAppElement("#root");
 interface SmallSidePanelProps {
   toggleSqlInput: () => void;
   onViewChange: (view: ViewSetting) => void;
-  uiMananger: UiManager | null;
+  uiMananger: UiManager;
 }
 function SmallSidePanel({
   toggleSqlInput,
@@ -43,7 +43,7 @@ function SmallSidePanel({
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (uiMananger) uiMananger.insertJsonData(event);
+    uiMananger.insertJsonData(event);
   };
 
   return (

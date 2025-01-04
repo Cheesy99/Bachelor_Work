@@ -21,39 +21,30 @@ function App() {
     (string | number)[]
   >([]);
   const [loading, setLoading] = useState(false);
-  const uiManager = useRef<UiManager | null>(null);
-  useEffect(() => {
-    async function initializeUiManager() {
-      uiManager.current = await UiManager.create(
-        new Converter(),
-        setTableData,
-        setLoading
-      );
-    }
-    initializeUiManager();
-  }, []);
+
+  const uiManager = new UiManager(new Converter(), setTableData, setLoading);
 
   useEffect(() => {
-    if (uiManager.current) {
-      uiManager.current.setTableDataSetter(setTableData);
-      uiManager.current.checkDatabaseAndFetchData(tableType);
+    if (uiManager) {
+      uiManager.setTableDataSetter(setTableData);
+      uiManager.checkDatabaseAndFetchData(tableType);
     }
   }, [tableType]);
 
   const handleViewChange = async (viewSetting: ViewSetting) => {
     setLoading(true);
     setTableType(viewSetting);
-    if (uiManager.current) {
-      uiManager.current.setStrategyByViewSetting(viewSetting);
+    if (uiManager) {
+      uiManager.setStrategyByViewSetting(viewSetting);
       if (tableData) {
         let convertedData: Table | null = null;
         if (viewSetting === ViewSetting.ONETABLE) {
-          convertedData = await uiManager.current.convertNestedToOne(
+          convertedData = await uiManager.convertNestedToOne(
             tableData as NestedTable
           );
           console.log("THe result", convertedData);
         } else if (viewSetting === ViewSetting.NESTEDTABLES) {
-          convertedData = await uiManager.current.convertOneToNested(
+          convertedData = await uiManager.convertOneToNested(
             tableData as TableData
           );
         }
@@ -72,7 +63,7 @@ function App() {
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}
           onViewChange={handleViewChange}
-          uiMananger={uiManager.current}
+          uiMananger={uiManager}
         />
         <BigSidePanel columnValues={selectedColumnValues} />
         <MainWindow

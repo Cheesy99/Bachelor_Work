@@ -12,7 +12,7 @@ class UiManager {
     React.SetStateAction<Table | null>
   > | null;
 
-  private constructor(
+  public constructor(
     converter: Converter,
     tableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>
@@ -21,24 +21,14 @@ class UiManager {
     this.setTableData = tableRef;
     this.setLoading = setLoading;
   }
-  //Factroy pattern
-  public static async create(
-    converter: Converter,
-    tableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>
-  ): Promise<UiManager> {
-    const uiManager = new UiManager(converter, tableRef, setLoading);
-    await window.electronAPI.onDatabaseChange((tableData: TableData) => {
-      if (uiManager.setTableData) {
-        uiManager.setTableData(tableData);
-      }
-    });
-    return uiManager;
-  }
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-
+    await window.electronAPI.onDatabaseChange((tableData: TableData) => {
+      if (this.setTableData) {
+        this.setTableData(tableData);
+      }
+    });
     if (file) {
       const databaseExists = await window.electronAPI.databaseExists();
       if (databaseExists) {
