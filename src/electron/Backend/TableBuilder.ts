@@ -63,7 +63,6 @@ class TableBuilder {
           const insertStatement: any = `INSERT INTO ${tableName} (${insertColumnString}) VALUES (${statement.join(
             ", "
           )});`;
-
           return await this.insertWithIdReponse(insertStatement);
         })
       );

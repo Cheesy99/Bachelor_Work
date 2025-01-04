@@ -18,6 +18,7 @@ class MainManager {
   private workerPool: WorkerPool;
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
+  private listener?: (tableData: TableData) => void;
   private resolveAllTasks: (() => void) | null = null;
   public static getInstance(): MainManager {
     if (!MainManager.instance) {
@@ -41,6 +42,9 @@ class MainManager {
       this.handleAllTasksCompleted.bind(this)
     );
   }
+  setListener(callback: (tableData: TableData) => void): void {
+    this.listener = callback;
+  }
 
   get dataBaseExist() {
     return this.dataBase.databaseExists();
@@ -59,6 +63,15 @@ class MainManager {
     } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
     await this.dataBase.sqlCommand(schemaResult.command);
     await this.tableBuilder.build(jsonObject, schemaResult.tableSchema);
+    let fromID = {
+      startId: 0,
+      endId: 100,
+    };
+    if (this.listener) {
+      this.listener(await this.getTableData(fromID, "main_table"));
+    } else {
+      console.error("Listener is not set.");
+    }
   }
 
   public async getTableData(

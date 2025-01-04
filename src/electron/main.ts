@@ -20,19 +20,10 @@ app.on("ready", () => {
   ipcMain.handle("databaseExists", async () => {
     return dbManager.dataBaseExist;
   });
-  ipcMain.on("upload-json", async (_, fileData: string) => {
+  ipcMain.handle("upload-json", async (_, fileData: string) => {
     try {
-      if (dbManager && typeof dbManager.insertJson === "function") {
+      if (dbManager) {
         await dbManager.insertJson(fileData);
-        const tableIndex: FromId = await dbManager.getCurrentIndexRange(
-          "main_table"
-        );
-        if (tableIndex.endId > 100) tableIndex.endId = 100;
-        mainWindow.webContents.send(
-          "database-updated",
-          tableIndex,
-          "main_table"
-        );
       } else {
         console.error(
           "MainManager instance or insertJson method is not defined"
@@ -41,6 +32,10 @@ app.on("ready", () => {
     } catch (error) {
       console.error("Error handling upload-json event:", error);
     }
+  });
+
+  ipcMain.handle("subscribeListener", async (_, callback): Promise<void> => {
+    return dbManager.setListener(callback);
   });
 
   ipcMain.handle(
@@ -82,7 +77,7 @@ app.on("ready", () => {
     return await dbManager.getSavedResult();
   });
 
-  ipcMain.handle("insertBig", async(_, fileData) => {
+  ipcMain.handle("insertBig", async (_, fileData) => {
     return await dbManager.insertBig(fileData);
-  })
+  });
 });

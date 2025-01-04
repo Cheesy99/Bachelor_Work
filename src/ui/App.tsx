@@ -3,13 +3,14 @@ import BigSidePanel from "./components/BigSidePanel/BigSidePanel";
 import MainWindow from "./components/MainWindow/MainWindow";
 import SmallSidePanel from "./components/SmallSidePanel/SmallSidePanel";
 import { ViewSetting } from "./Connector/Enum/Setting";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UiManager from "./Connector/UiManager";
+import Converter from "./Connector/Converter";
 
 type ContextType = [Table | null, ViewSetting, boolean];
 
 export const Context = React.createContext<ContextType | undefined>(undefined);
-const adpater = UiManager.getInstance();
+
 function App() {
   const [tableData, setTableData] = useState<Table | null>(null);
   const [tableType, setTableType] = useState<ViewSetting>(
@@ -20,30 +21,44 @@ function App() {
     (string | number)[]
   >([]);
   const [loading, setLoading] = useState(false);
+  const uiManager = useRef<UiManager | null>(null);
+  useEffect(() => {
+    async function initializeUiManager() {
+      uiManager.current = await UiManager.create(
+        new Converter(),
+        setTableData,
+        setLoading
+      );
+    }
+    initializeUiManager();
+  }, []);
 
   useEffect(() => {
-    adpater.setTableDataSetter(setTableData);
-    adpater.checkDatabaseAndFetchData(tableType);
-    adpater.setupDatabaseChangeListener(tableType);
-  }, []);
+    if (uiManager.current) {
+      uiManager.current.setTableDataSetter(setTableData);
+      uiManager.current.checkDatabaseAndFetchData(tableType);
+    }
+  }, [tableType]);
 
   const handleViewChange = async (viewSetting: ViewSetting) => {
     setLoading(true);
     setTableType(viewSetting);
-    UiManager.setStrategyByViewSetting(viewSetting);
-    if (tableData) {
-      let convertedData: Table | null = null;
-      if (viewSetting === ViewSetting.ONETABLE) {
-        convertedData = await UiManager.convertNestedToOne(
-          tableData as NestedTable
-        );
-        console.log("THe result", convertedData);
-      } else if (viewSetting === ViewSetting.NESTEDTABLES) {
-        convertedData = await UiManager.convertOneToNested(
-          tableData as TableData
-        );
+    if (uiManager.current) {
+      uiManager.current.setStrategyByViewSetting(viewSetting);
+      if (tableData) {
+        let convertedData: Table | null = null;
+        if (viewSetting === ViewSetting.ONETABLE) {
+          convertedData = await uiManager.current.convertNestedToOne(
+            tableData as NestedTable
+          );
+          console.log("THe result", convertedData);
+        } else if (viewSetting === ViewSetting.NESTEDTABLES) {
+          convertedData = await uiManager.current.convertOneToNested(
+            tableData as TableData
+          );
+        }
+        setTableData(convertedData);
       }
-      setTableData(convertedData);
     }
     setLoading(false);
   };
@@ -57,6 +72,7 @@ function App() {
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}
           onViewChange={handleViewChange}
+          uiMananger={uiManager.current}
         />
         <BigSidePanel columnValues={selectedColumnValues} />
         <MainWindow

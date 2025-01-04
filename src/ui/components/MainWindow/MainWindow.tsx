@@ -31,10 +31,6 @@ function MainWindow({
     console.log("arrived here");
     let newTableData: (string | number)[][] =
       await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
-    const updatedTableData: TableData = {
-      schema: tableData!.schema,
-      table: newTableData,
-    };
   };
 
   return (
@@ -46,7 +42,7 @@ function MainWindow({
         style={{ marginTop: showSqlInput ? "20px" : "0" }}
       >
         {loading ? (
-          <div>Loading...</div>
+          <div className="loading-bar">Loading...</div>
         ) : (
           tableData && (
             <Table

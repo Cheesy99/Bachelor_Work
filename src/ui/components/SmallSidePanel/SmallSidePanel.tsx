@@ -12,10 +12,14 @@ Modal.setAppElement("#root");
 interface SmallSidePanelProps {
   toggleSqlInput: () => void;
   onViewChange: (view: ViewSetting) => void;
+  uiMananger: UiManager | null;
 }
-function SmallSidePanel({ toggleSqlInput, onViewChange }: SmallSidePanelProps) {
+function SmallSidePanel({
+  toggleSqlInput,
+  onViewChange,
+  uiMananger,
+}: SmallSidePanelProps) {
   const context = useContext(Context);
-  const adapter = UiManager.getInstance();
   const [isModalOpen, setIsModalOpen] = useState(false);
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
@@ -39,7 +43,7 @@ function SmallSidePanel({ toggleSqlInput, onViewChange }: SmallSidePanelProps) {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    adapter.insertJsonData(event);
+    if (uiMananger) uiMananger.insertJsonData(event);
   };
 
   return (
