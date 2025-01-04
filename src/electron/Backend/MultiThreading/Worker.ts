@@ -5,14 +5,14 @@ import SchemaBuilder from "../SchemaBuilder.js";
 import { Parcel, Task, Type } from "./Interfaces.js";
 import TableSchema from "../Interfaces/TableSchema.js";
 import TableBuilder from "../TableBuilder.js";
-import TableDataBackend from "../Interfaces/TableData.js";
+import SqlTextGenerator from "../SqlTextGenerator.js";
 
 class Worker {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   constructor() {
     parentPort?.on("message", this.handleMessage.bind(this));
-    this.schemaBuilder = new SchemaBuilder();
+    this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
     this.tableBuilder = new TableBuilder();
   }
 

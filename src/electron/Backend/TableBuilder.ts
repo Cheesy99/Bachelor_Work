@@ -3,7 +3,6 @@ import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import DataBaseConnector from "./DataBaseConnector.js";
 class TableBuilder {
-  private foreignIndex: number = 0;
   private databaseConnector: DataBaseConnector =
     DataBaseConnector.getInstance();
 

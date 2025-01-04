@@ -17,7 +17,7 @@ class SchemaBuilder {
     tableSchema: TableSchema;
   } {
     const tableSchema = this.generateTableSchema(json);
-    let command = this.generateSchemaText(tableSchema);
+    let command: string = this.generateSchemaText(tableSchema);
     return { command: DataCleaner.cleanSqlCommand(command), tableSchema };
   }
 
