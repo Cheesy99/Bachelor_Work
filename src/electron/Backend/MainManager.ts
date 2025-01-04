@@ -10,8 +10,10 @@ import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
 import fs from "fs";
+import { BrowserWindow } from "electron";
 
 class MainManager {
+  private browserWindow: BrowserWindow;
   private static instance: MainManager;
   private dataBase: DataBaseConnector;
   private excelExporter: ExcelExporter;
@@ -20,20 +22,20 @@ class MainManager {
   private tableBuilder: TableBuilder;
   private listener?: (tableData: TableData) => void;
   private resolveAllTasks: (() => void) | null = null;
-  public static getInstance(): MainManager {
+  public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
-      MainManager.instance = new MainManager();
+      MainManager.instance = new MainManager(browserWindow);
     }
     return MainManager.instance;
   }
 
-  private constructor() {
+  private constructor(browserWindow: BrowserWindow) {
     this.dataBase = DataBaseConnector.getInstance();
     this.tableBuilder = new TableBuilder();
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
     this.tableBuilder = new TableBuilder();
     this.excelExporter = new ExcelExporter();
-
+    this.browserWindow = browserWindow;
     const numCores = os.cpus().length;
     const numWorkers = Math.max(1, Math.floor(numCores / 2));
     this.workerPool = new WorkerPool(numWorkers);
@@ -42,6 +44,13 @@ class MainManager {
       this.handleAllTasksCompleted.bind(this)
     );
   }
+
+  private notifyTableDataChange(tableData: TableData) {
+    if (this.listener) {
+      this.listener(tableData);
+    }
+  }
+
   setListener(callback: (tableData: TableData) => void): void {
     this.listener = callback;
   }
@@ -63,15 +72,10 @@ class MainManager {
     } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
     await this.dataBase.sqlCommand(schemaResult.command);
     await this.tableBuilder.build(jsonObject, schemaResult.tableSchema);
-    let fromID = {
-      startId: 0,
-      endId: 100,
-    };
-    if (this.listener) {
-      this.listener(await this.getTableData(fromID, "main_table"));
-    } else {
-      console.error("Listener is not set.");
-    }
+
+    const fromID = { startId: 0, endId: 100 };
+    const tableData = await this.getTableData(fromID, "main_table");
+    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
   }
 
   public async getTableData(

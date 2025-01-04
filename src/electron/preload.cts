@@ -19,10 +19,10 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return result;
   },
 
-  onDatabaseChange: (
-    callback: (tableData: TableData) => void
-  ): Promise<void> => {
-    return ipcRenderer.invoke("subscribeListener", callback);
+  subscribeToListener: (callback: (tableData: TableData) => void) => {
+    ipcRenderer.on("tableDataFromBackend", (_, tableData) => {
+      callback(tableData);
+    });
   },
 
   databaseExists: () => {

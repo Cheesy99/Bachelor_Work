@@ -22,12 +22,15 @@ function App() {
   >([]);
   const [loading, setLoading] = useState(false);
 
-  const uiManager = new UiManager(new Converter(), setTableData, setLoading);
-
+  const uiManager = new UiManager(
+    new Converter(),
+    setTableData,
+    setLoading,
+    tableType
+  );
   useEffect(() => {
     if (uiManager) {
       uiManager.setTableDataSetter(setTableData);
-      uiManager.checkDatabaseAndFetchData(tableType);
     }
   }, [tableType]);
 

@@ -6,29 +6,31 @@ import { ViewSetting } from "./Enum/Setting";
 class UiManager {
   private converter: Converter;
   private setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  private amountOfRows?: number;
-  private amoutToCollect?: number;
   private setTableData: React.Dispatch<
     React.SetStateAction<Table | null>
   > | null;
+  private tableType: ViewSetting;
 
   public constructor(
     converter: Converter,
     tableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    tableType: ViewSetting
   ) {
     this.converter = converter;
     this.setTableData = tableRef;
     this.setLoading = setLoading;
-  }
-
-  async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    await window.electronAPI.onDatabaseChange((tableData: TableData) => {
+    this.tableType = tableType;
+    window.electronAPI.subscribeToListener((tableData: TableData) => {
       if (this.setTableData) {
         this.setTableData(tableData);
       }
     });
+  }
+
+  async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
     if (file) {
       const databaseExists = await window.electronAPI.databaseExists();
       if (databaseExists) {
@@ -42,8 +44,8 @@ class UiManager {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
         await window.electronAPI.sendJsonFile(fileData);
-        let amountOfRows = await window.electronAPI.howManyRows("main_table");
         this.setLoading(false);
+        // this.checkDatabaseAndFetchData(this.tableType);
       };
       reader.readAsText(file);
     } else {
@@ -67,20 +69,20 @@ class UiManager {
     return this;
   }
 
-  public async checkDatabaseAndFetchData(tableView: ViewSetting) {
-    const databaseExists = await window.electronAPI.databaseExists();
-    if (databaseExists) {
-      const fromID: FromId = { startId: 1, endId: 100 };
-      const data: TableData = await window.electronAPI.getTableData(
-        fromID,
-        "main_table"
-      );
-      const result = await this.convert(data, tableView);
-      if (this.setTableData) this.setTableData(result);
-    } else {
-      console.log("Database does not exist.");
-    }
-  }
+  // public async checkDatabaseAndFetchData(tableView: ViewSetting) {
+  //   const databaseExists = await window.electronAPI.databaseExists();
+  //   if (databaseExists) {
+  //     const fromID: FromId = { startId: 1, endId: 100 };
+  //     const data: TableData = await window.electronAPI.getTableData(
+  //       fromID,
+  //       "main_table"
+  //     );
+  //     const result = await this.convert(data, tableView);
+  //     if (this.setTableData) this.setTableData(result);
+  //   } else {
+  //     console.log("Database does not exist.");
+  //   }
+  // }
 
   public async convertNestedToOne(table: NestedTable): Promise<Table> {
     let result = this.converter.convertNestedToTableData(table);

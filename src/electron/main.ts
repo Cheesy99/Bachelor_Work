@@ -15,7 +15,7 @@ app.on("ready", () => {
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
-  const dbManager = MainManager.getInstance();
+  const dbManager = MainManager.getInstance(mainWindow);
 
   ipcMain.handle("databaseExists", async () => {
     return dbManager.dataBaseExist;
