@@ -18,8 +18,6 @@ class MainManager {
   private excelExporter: ExcelExporter;
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
-  private listener?: (tableData: TableData) => void;
-  private resolveAllTasks: (() => void) | null = null;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -34,12 +32,6 @@ class MainManager {
     this.tableBuilder = new TableBuilder();
     this.excelExporter = new ExcelExporter();
     this.browserWindow = browserWindow;
-    const numCores = os.cpus().length;
-    const numWorkers = Math.max(1, Math.floor(numCores / 2));
-  }
-
-  setListener(callback: (tableData: TableData) => void): void {
-    this.listener = callback;
   }
 
   get dataBaseExist() {
@@ -120,65 +112,6 @@ class MainManager {
     const result = await this.dataBase.sqlCommandWithReponse(query);
     return result[0].count;
   }
-
-  // public async insertBig(json: string): Promise<void> {
-  //   const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
-  //     const cleanedKey = DataCleaner.cleanName(p1);
-  //     return `"${cleanedKey}":`;
-  //   });
-
-  //   const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-  //   const tableSchemaCollector: TableSchema[] = [];
-  //   let tableSchema: TableSchema;
-  //   const tableDataCollector: TableDataBackend[][] = [];
-
-  //   const schemaPromise = new Promise<void>((resolve, reject) => {
-  //     this.resolveAllTasks = resolve;
-  //     this.workerPool.createSchema(jsonObject, (error, result) => {
-  //       if (error) {
-  //         console.error("Worker error:", error);
-  //         reject(error);
-  //         return;
-  //       }
-  //       if (result) {
-  //         const payload = result.payload as TableSchema;
-  //         tableSchemaCollector.push(payload);
-  //       }
-  //     });
-  //   });
-
-  //   await schemaPromise;
-
-  //   tableSchema = DataCleaner.mergeSchemas(tableSchemaCollector);
-  //   let command = this.schemaBuilder.generateSchemaText(tableSchema);
-  //   await this.dataBase.sqlCommand(DataCleaner.cleanSqlCommand(command));
-
-  //   const tablePromise = new Promise<void>((resolve, reject) => {
-  //     this.resolveAllTasks = resolve;
-
-  //     this.workerPool.createTable(jsonObject, tableSchema!, (error, result) => {
-  //       if (error) {
-  //         console.error("Worker error:", error);
-  //         reject(error);
-  //         return;
-  //       }
-  //       if (result) {
-  //         const payload = result.payload as TableDataBackend[];
-  //         tableDataCollector.push(payload);
-  //       }
-  //     });
-  //   });
-
-  //   await tablePromise;
-  // }
-
-  // private handleAllTasksCompleted() {
-  //   console.log("All tasks have been completed.");
-  //   if (this.resolveAllTasks) {
-  //     this.resolveAllTasks();
-  //     this.resolveAllTasks = null;
-  //   }
-  // }
 }
 
 export default MainManager;

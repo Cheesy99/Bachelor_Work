@@ -34,10 +34,6 @@ app.on("ready", () => {
     }
   });
 
-  ipcMain.handle("subscribeListener", async (_, callback): Promise<void> => {
-    return dbManager.setListener(callback);
-  });
-
   ipcMain.handle(
     "getTableData",
     async (_, fromID: FromId, tableName: string) => {
@@ -76,8 +72,4 @@ app.on("ready", () => {
   ipcMain.handle("getSavedResult", async (_) => {
     return await dbManager.getSavedResult();
   });
-
-  // ipcMain.handle("insertBig", async (_, fileData) => {
-  //   return await dbManager.insertBig(fileData);
-  // });
 });
