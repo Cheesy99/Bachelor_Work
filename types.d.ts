@@ -37,6 +37,6 @@ interface Window {
     howManyRows: (tableName: string) => Promise<number>;
     saveResult: (tableData: TableData) => Promise<void>;
     getSaveResult: () => Promise<TableData | boolean>;
-    insertUsingWorkerNodes: (fileData: string) => Promise<void>;
+    // insertUsingWorkerNodes: (fileData: string) => Promise<void>;
   };
 }

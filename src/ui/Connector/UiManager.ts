@@ -21,9 +21,9 @@ class UiManager {
     this.setTableData = tableRef;
     this.setLoading = setLoading;
     this.tableType = tableType;
-    window.electronAPI.subscribeToListener((tableData: TableData) => {
+    window.electronAPI.subscribeToListener(async (tableData: TableData) => {
       if (this.setTableData) {
-        this.setTableData(tableData);
+        this.setTableData(await this.convert(tableData, this.tableType));
       }
     });
   }
@@ -45,11 +45,22 @@ class UiManager {
         fileData = translateUmlauts(fileData);
         await window.electronAPI.sendJsonFile(fileData);
         this.setLoading(false);
-        // this.checkDatabaseAndFetchData(this.tableType);
       };
       reader.readAsText(file);
     } else {
       alert("Invalid file type. Please select a .json file.");
+    }
+  }
+
+  public async getInitTableData() {
+    const databaseExists = await window.electronAPI.databaseExists();
+    if (databaseExists && this.setTableData) {
+      const from: FromId = { startId: 0, endId: 100 };
+      const tableData = await window.electronAPI.getTableData(
+        from,
+        "main_table"
+      );
+      this.setTableData(await this.convert(tableData, this.tableType));
     }
   }
 
@@ -68,21 +79,6 @@ class UiManager {
     this.setTableData = setter;
     return this;
   }
-
-  // public async checkDatabaseAndFetchData(tableView: ViewSetting) {
-  //   const databaseExists = await window.electronAPI.databaseExists();
-  //   if (databaseExists) {
-  //     const fromID: FromId = { startId: 1, endId: 100 };
-  //     const data: TableData = await window.electronAPI.getTableData(
-  //       fromID,
-  //       "main_table"
-  //     );
-  //     const result = await this.convert(data, tableView);
-  //     if (this.setTableData) this.setTableData(result);
-  //   } else {
-  //     console.log("Database does not exist.");
-  //   }
-  // }
 
   public async convertNestedToOne(table: NestedTable): Promise<Table> {
     let result = this.converter.convertNestedToTableData(table);

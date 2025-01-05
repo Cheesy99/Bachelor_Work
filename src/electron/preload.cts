@@ -54,7 +54,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getSaveResult: () => {
     return ipcRenderer.invoke("getSaveResult");
   },
-  insertUsingWorkerNodes: (fileData: string) => {
-    return ipcRenderer.invoke("insertBig", fileData);
-  },
+  // insertUsingWorkerNodes: (fileData: string) => {
+  //   return ipcRenderer.invoke("insertBig", fileData);
+  // },
 } satisfies Window["electronAPI"]);

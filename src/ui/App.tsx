@@ -28,6 +28,9 @@ function App() {
     setLoading,
     tableType
   );
+
+  uiManager.getInitTableData();
+
   useEffect(() => {
     if (uiManager) {
       uiManager.setTableDataSetter(setTableData);
@@ -45,7 +48,6 @@ function App() {
           convertedData = await uiManager.convertNestedToOne(
             tableData as NestedTable
           );
-          console.log("THe result", convertedData);
         } else if (viewSetting === ViewSetting.NESTEDTABLES) {
           convertedData = await uiManager.convertOneToNested(
             tableData as TableData
