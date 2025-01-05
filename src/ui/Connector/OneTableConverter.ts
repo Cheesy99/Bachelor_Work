@@ -8,40 +8,11 @@ class OneTableConverter implements ConversionStrategy {
   private index: number = 0;
   //Collect all the foreignTable and create the schema and then add them to the table base on the id and the name
   //of the column which is there table name
-  public async convert(
-    dataStruct: TableStruct,
-    dataTable: TableData
-  ): Promise<TableData> {
-    await this.findForeignTable(dataStruct, dataTable);
-    return this.createTable(dataTable);
+  public async convert(dataStruct: TableStruct): Promise<TableData> {
+    return [];
   }
 
-  private createTable(tableData: TableData): TableData {
-    let result: TableData = tableData;
-
-    for (const foreignTable of this.foreignTables) {
-      const columnIndex = tableData.schema.indexOf(foreignTable.tableName);
-      if (columnIndex === -1) continue;
-
-      const foreignTableData = foreignTable.table;
-      for (const foreignRow of foreignTableData) {
-        const foreignId = foreignRow[0];
-        const foreignValues = foreignRow.slice(1);
-
-        for (const mainRow of result.table) {
-          if (mainRow[columnIndex] === foreignId) {
-            mainRow.push(...foreignValues);
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  private async findForeignTable(
-    tableStruct: TableStruct,
-    tableData: TableData
-  ): Promise<void> {
+  private async findForeignTable(tableStruct: TableStruct): Promise<void> {
     for (const value of tableStruct.table) {
       for (const [index, entry] of value.entries()) {
         if (Array.isArray(entry)) {
@@ -51,16 +22,17 @@ class OneTableConverter implements ConversionStrategy {
             from,
             tableName
           );
+
           let schemaResult = createJoinedSchemaName(
-            tableData.schema,
+            tableStruct.schema,
             tableName,
             tableResult.schema
           );
 
           // Update the schema with the new columns from the foreign table
           for (const column of schemaResult) {
-            if (!tableData.schema.includes(column)) {
-              tableData.schema.push(column);
+            if (!tableStruct.schema.includes(column)) {
+              tableStruct.schema.push(column);
             }
           }
           if (!this.foreignTables[this.index]) {

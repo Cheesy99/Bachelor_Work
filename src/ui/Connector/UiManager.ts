@@ -23,6 +23,7 @@ class UiManager {
     this.tableType = tableType;
     window.electronAPI.subscribeToListener(async (tableData: TableData) => {
       if (this.setTableData) {
+        console.log("this worked");
         this.setTableData(await this.convert(tableData, this.tableType));
       }
     });
@@ -70,7 +71,7 @@ class UiManager {
     tableView: ViewSetting
   ): Promise<Table> {
     this.setStrategyByViewSetting(tableView);
-    return await this.converter.convert(tableData);
+    return await this.converter.convertBackendData(tableData);
   }
 
   public setTableDataSetter(
@@ -80,15 +81,15 @@ class UiManager {
     return this;
   }
 
-  public async convertNestedToOne(table: NestedTable): Promise<Table> {
-    let result = this.converter.convertNestedToTableData(table);
-    console.log("I am confused", result);
-    return result;
-  }
+  // public async convertNestedToOne(table: NestedTable): Promise<Table> {
+  //   let result = this.converter.convertNestedToTableData(table);
+  //   console.log("I am confused", result);
+  //   return result;
+  // }
 
-  public async convertOneToNested(table: TableData): Promise<Table> {
-    return this.converter.convertOneToNested(table);
-  }
+  // public async convertOneToNested(table: TableData): Promise<Table> {
+  //   return this.converter.convertOneToNested(table);
+  // }
 
   public async getSchema(tableName: string): Promise<string[]> {
     const result = await window.electronAPI.getTableSchema(tableName);

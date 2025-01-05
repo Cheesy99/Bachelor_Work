@@ -44,7 +44,6 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
   };
 
   const renderNestedTable = (data: NestedTable) => {
-    console.log("I was called");
     return (
       <>
         <table>

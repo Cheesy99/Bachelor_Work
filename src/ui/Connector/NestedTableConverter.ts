@@ -10,7 +10,9 @@ class NestedTableConverter implements ConversionStrategy {
   private async convertToNestedView(
     tableStruct: TableStruct
   ): Promise<NestedTable> {
+    console.log(tableStruct);
     const final = await this.convertToTableView(tableStruct);
+    console.log(final);
     return final;
   }
 
