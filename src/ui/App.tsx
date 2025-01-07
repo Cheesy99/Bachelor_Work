@@ -6,7 +6,10 @@ import { ViewSetting } from "./Connector/Enum/Setting";
 import React, { useState, useEffect, useRef } from "react";
 import UiManager from "./Connector/UiManager";
 import Converter from "./Connector/Converter";
-
+enum IndexDirection {
+  RIGHT,
+  LEFT,
+}
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
 export const Context = React.createContext<ContextType | undefined>(undefined);
@@ -19,6 +22,10 @@ function App() {
     (string | number)[]
   >([]);
   const [loading, setLoading] = useState(false);
+  const [index, setIndex] = useState<{ startId: number; endId: number }>({
+    startId: 1,
+    endId: 100,
+  });
 
   const uiManager = new UiManager(
     new Converter(),
@@ -47,6 +54,27 @@ function App() {
     setLoading(false);
   };
 
+  const handleIndexChange = (direction: IndexDirection) => {
+    if (direction === IndexDirection.RIGHT) {
+      const newIdex = {
+        startId: index.startId + 100,
+        endId: index.endId + 100,
+      };
+      setIndex(newIdex);
+      uiManager.getTableData(newIdex, "main_table");
+    } else {
+      if (index.startId <= 0) {
+        console.log("start index is less then 0", index.startId);
+      } else {
+        const newIdex = {
+          startId: Math.max(0, index.startId - 100),
+          endId: Math.max(index.endId - 100, 100),
+        };
+        setIndex(newIdex);
+        uiManager.getTableData(newIdex, "main_table");
+      }
+    }
+  };
   const toggleSqlInput = () => {
     setShowSqlInput((prev) => !prev);
   };
@@ -55,12 +83,13 @@ function App() {
       <div className="app-container">
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}
-          onViewChange={handleViewChange}
+          handleViewChange={handleViewChange}
           uiManager={uiManager}
         />
         <BigSidePanel columnValues={selectedColumnValues} />
         <MainWindow
           showSqlInput={showSqlInput}
+          index={handleIndexChange}
           setSelectedColumnValues={setSelectedColumnValues}
         />
       </div>

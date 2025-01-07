@@ -7,14 +7,14 @@ import { Context } from "../../../App";
 interface SettingsModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  onViewChange: (view: ViewSetting) => void;
+  handleViewChange: (view: ViewSetting) => void;
   currentView: ViewSetting;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onRequestClose,
-  onViewChange,
+  handleViewChange,
   currentView,
 }) => {
   useContext(Context);
@@ -31,7 +31,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             type="radio"
             value="nested"
             checked={currentView === ViewSetting.NESTEDTABLES}
-            onChange={() => onViewChange(ViewSetting.NESTEDTABLES)}
+            onChange={() => handleViewChange(ViewSetting.NESTEDTABLES)}
           />
           Nested View
         </label>
@@ -40,7 +40,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             type="radio"
             value="one"
             checked={currentView === ViewSetting.ONETABLE}
-            onChange={() => onViewChange(ViewSetting.ONETABLE)}
+            onChange={() => handleViewChange(ViewSetting.ONETABLE)}
           />
           One View
         </label>

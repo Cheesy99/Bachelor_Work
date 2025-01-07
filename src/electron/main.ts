@@ -1,8 +1,10 @@
-import {app, BrowserWindow, ipcMain} from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import {isDev} from "./util.js";
-import {getPreloadPath} from "./pathResolver.js";
+import { isDev } from "./util.js";
+import { getPreloadPath } from "./pathResolver.js";
 import MainManager from "./Backend/MainManager.js";
+
+ipcMain.setMaxListeners(20);
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
@@ -42,12 +44,9 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle(
-    "sqlCommand",
-    async (_, command: string) => {
-      return await dbManager.sqlCommand(command);
-    }
-  );
+  ipcMain.handle("sqlCommand", async (_, command: string) => {
+    return await dbManager.sqlCommand(command);
+  });
 
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
     return await dbManager.getRow(id, tableName);

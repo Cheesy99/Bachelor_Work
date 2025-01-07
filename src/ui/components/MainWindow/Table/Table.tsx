@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "./Table.css";
-import UiManager from "../../../Connector/UiManager";
 import { ViewSetting } from "../../../Connector/Enum/Setting";
 
 interface TableProps {

@@ -97,16 +97,19 @@ class MainManager {
     });
   }
 
-  public async getTableData(
-    fromID: FromId,
-    tableName: string
-  ): Promise<TableData> {
+  public async getTableData(fromID: FromId, tableName: string): Promise<void> {
     const { startId, endId } = fromID;
+    console.log("Id range", JSON.stringify(fromID));
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
+    console.log(JSON.stringify(dataQuery));
     const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
-    return { schema, table };
+
+    this.browserWindow.webContents.send("tableDataFromBackend", {
+      schema,
+      table,
+    });
   }
 
   public async getCurrentIndexRange(tableName: string): Promise<FromId> {
@@ -120,7 +123,6 @@ class MainManager {
   }
   public async sqlCommand(sqlCommand: string): Promise<(string | number)[][]> {
     let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
-    console.log("result: ", result);
     const table = result.map((row: string | number) => Object.values(row));
     return table;
   }

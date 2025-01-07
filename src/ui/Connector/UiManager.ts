@@ -55,16 +55,15 @@ class UiManager {
     }
   }
 
+  public async getTableData(from: FromId, tableName: string) {
+    await window.electronAPI.getTableData(from, tableName);
+  }
+
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists && this.setTableData) {
       const from: FromId = { startId: 0, endId: 100 };
-      const tableData = await window.electronAPI.getTableData(
-        from,
-        "main_table"
-      );
-      sessionStorage.setItem("TableData", JSON.stringify(tableData));
-      this.setTableData(await this.convert(this.tableType));
+      await window.electronAPI.getTableData(from, "main_table");
     }
   }
 

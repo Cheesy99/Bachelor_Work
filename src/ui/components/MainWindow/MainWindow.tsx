@@ -4,9 +4,13 @@ import Table from "./Table/Table";
 import { Context } from "../../App";
 import { ViewSetting } from "../../Connector/Enum/Setting";
 import UiManager from "../../Connector/UiManager";
-
+enum IndexDirection {
+  RIGHT,
+  LEFT,
+}
 interface MainWindowProps {
   showSqlInput: boolean;
+  index: (direction: IndexDirection) => void;
   setSelectedColumnValues: (values: (string | number)[]) => void;
 }
 
@@ -14,6 +18,7 @@ type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
 function MainWindow({
   showSqlInput,
+  index,
   setSelectedColumnValues,
 }: MainWindowProps) {
   const context: ContextType | undefined = useContext(Context);
@@ -32,17 +37,18 @@ function MainWindow({
     let newTableData: (string | number)[][] =
       await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
   };
-  const handleNextRow = () => {
+  const handleRight = () => {
     if (tableData)
       if (currentRowIndex < tableData.table.length - 1) {
         setCurrentRowIndex(currentRowIndex + 1);
-        uiManager;
+        index(IndexDirection.RIGHT);
       }
   };
 
-  const handlePreviousRow = () => {
+  const handleLeft = () => {
     if (currentRowIndex > 0) {
       setCurrentRowIndex(currentRowIndex - 1);
+      index(IndexDirection.LEFT);
     }
   };
   return (
@@ -79,17 +85,8 @@ function MainWindow({
       )}
       {!showSqlInput && (
         <div className="bottom-row">
-          <button onClick={handlePreviousRow} disabled={currentRowIndex === 0}>
-            Previous
-          </button>
-          <button
-            onClick={handleNextRow}
-            disabled={
-              tableData ? currentRowIndex === tableData.table.length - 1 : false
-            }
-          >
-            Next
-          </button>
+          <button onClick={handleLeft}>Previous</button>
+          <button onClick={handleRight}>Next</button>
         </div>
       )}
     </div>

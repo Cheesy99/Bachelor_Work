@@ -11,12 +11,12 @@ import Modal from "react-modal";
 Modal.setAppElement("#root");
 interface SmallSidePanelProps {
   toggleSqlInput: () => void;
-  onViewChange: (view: ViewSetting) => void;
+  handleViewChange: (view: ViewSetting) => void;
   uiManager: UiManager;
 }
 function SmallSidePanel({
   toggleSqlInput,
-  onViewChange,
+  handleViewChange,
   uiManager,
 }: SmallSidePanelProps) {
   const context = useContext(Context);
@@ -58,7 +58,7 @@ function SmallSidePanel({
       <SettingsModal
         isOpen={isModalOpen}
         onRequestClose={closeSettings}
-        onViewChange={onViewChange}
+        handleViewChange={handleViewChange}
         currentView={viewType}
       />
 
