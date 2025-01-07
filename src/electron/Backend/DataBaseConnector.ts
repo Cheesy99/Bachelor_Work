@@ -58,7 +58,7 @@ class DataBaseConnector {
     });
   }
 
-  public sqlCommand(sqlCommand: string[]): Promise<void> {
+  public sqlCommand(sqlCommand: any[]): Promise<void> {
     return new Promise((resolve, reject) => {
       this.dataBase.serialize(() => {
         this.dataBase.run("BEGIN TRANSACTION");

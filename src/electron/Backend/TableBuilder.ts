@@ -1,20 +1,20 @@
-import TableDataBackend from "./Interfaces/TableData.js";
 import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import DataBaseConnector from "./DataBaseConnector.js";
 class TableBuilder {
   private databaseConnector: DataBaseConnector =
     DataBaseConnector.getInstance();
-
+  private collectMainInserts: any[] = [];
   public async build(
     json: JsonObject[],
     tableSchema: TableSchema
-  ): Promise<void> {
+  ): Promise<any[]> {
     await Promise.all(
       json.map(async (object) => {
         await this.recursive(object, tableSchema, "main_table");
       })
     );
+    return this.collectMainInserts;
   }
 
   private async recursive(
@@ -27,6 +27,7 @@ class TableBuilder {
     const insertOrderForeign: string[] = [];
     const insertValues: string[] = [];
     const totalRes: Promise<number>[][] = [];
+
     for (const columnName of columnNames) {
       let value = json[columnName] ? json[columnName] : "not found";
       if (Array.isArray(value)) {
@@ -61,7 +62,7 @@ class TableBuilder {
           const insertStatement: any = `INSERT INTO ${tableName} (${insertColumnString}) VALUES (${statement.join(
             ", "
           )});`;
-          return await this.insertWithIdReponse(insertStatement);
+          this.collectMainInserts.push(insertStatement);
         })
       );
     } else {

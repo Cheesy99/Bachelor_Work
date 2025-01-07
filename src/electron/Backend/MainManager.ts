@@ -2,13 +2,10 @@ import DataBaseConnector from "./DataBaseConnector.js";
 import ExcelExporter from "./ExcelExporter.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import DataCleaner from "./Utils/DataCleaner.js";
-import * as os from "os";
 import TableSchema from "./Interfaces/TableSchema.js";
-import TableDataBackend from "./Interfaces/TableData.js";
 import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
-import fs from "fs";
 import { BrowserWindow } from "electron";
 import { Worker } from "worker_threads";
 import { fileURLToPath } from "url";
@@ -34,7 +31,6 @@ class MainManager {
     this.dataBase = DataBaseConnector.getInstance();
     this.tableBuilder = new TableBuilder();
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
-    this.tableBuilder = new TableBuilder();
     this.excelExporter = new ExcelExporter();
     this.browserWindow = browserWindow;
   }
@@ -55,7 +51,11 @@ class MainManager {
       tableSchema: TableSchema;
     } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
     await this.dataBase.sqlCommand(schemaResult.command);
-    await this.insertDatabaseWithWorker(jsonObject, schemaResult.tableSchema);
+    const mainInsert: any[] = await this.tableBuilder.build(
+      jsonObject,
+      schemaResult.tableSchema
+    );
+    await this.dataBase.sqlCommand(mainInsert);
 
     const fromID = { startId: 0, endId: 100 };
     const tableData = await this.getTableData(fromID, "main_table");
