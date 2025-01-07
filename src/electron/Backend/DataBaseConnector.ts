@@ -7,7 +7,7 @@ import { Readable } from "stream";
 class DataBaseConnector {
   private static instance: DataBaseConnector;
   private dataBase: sqlite3.Database;
-  private dbPath: string;
+  private readonly dbPath: string;
   public static getInstance(): DataBaseConnector {
     if (!DataBaseConnector.instance) {
       DataBaseConnector.instance = new DataBaseConnector();

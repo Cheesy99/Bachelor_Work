@@ -28,7 +28,6 @@ function MainWindow({
   };
 
   const handleSqlSubmit = async () => {
-    console.log("arrived here");
     let newTableData: (string | number)[][] =
       await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
   };
@@ -46,6 +45,7 @@ function MainWindow({
   };
   return (
     <div className="main-window">
+      <h4 className="table-name">main_table</h4>
       <div
         className={`stage ${
           tableType === ViewSetting.ONETABLE ? "one-table" : "nested-table"

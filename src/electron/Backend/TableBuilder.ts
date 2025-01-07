@@ -10,13 +10,11 @@ class TableBuilder {
     json: JsonObject[],
     tableSchema: TableSchema
   ): Promise<void> {
-    console.log("Processing");
     await Promise.all(
       json.map(async (object) => {
         await this.recursive(object, tableSchema, "main_table");
       })
     );
-    console.log("done");
   }
 
   private async recursive(
@@ -28,8 +26,8 @@ class TableBuilder {
     const insertOrderMain: string[] = [];
     const insertOrderForeign: string[] = [];
     const insertValues: string[] = [];
-    let totalRes: Promise<number>[][] = [];
-    columnNames.forEach(async (columnName) => {
+    const totalRes: Promise<number>[][] = [];
+    for (const columnName of columnNames) {
       let value = json[columnName] ? json[columnName] : "not found";
       if (Array.isArray(value)) {
         const res: Promise<number>[] = value.map(async (Innererow) => {
@@ -44,7 +42,7 @@ class TableBuilder {
         insertOrderMain.push(columnName);
         insertValues.push(value);
       }
-    });
+    }
     let insertColumnString: string = insertOrderMain.join(", ");
 
     if (insertOrderForeign.length > 0) {

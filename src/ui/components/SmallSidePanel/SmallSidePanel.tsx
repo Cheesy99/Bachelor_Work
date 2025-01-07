@@ -12,12 +12,12 @@ Modal.setAppElement("#root");
 interface SmallSidePanelProps {
   toggleSqlInput: () => void;
   onViewChange: (view: ViewSetting) => void;
-  uiMananger: UiManager;
+  uiManager: UiManager;
 }
 function SmallSidePanel({
   toggleSqlInput,
   onViewChange,
-  uiMananger,
+  uiManager,
 }: SmallSidePanelProps) {
   const context = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,14 +36,13 @@ function SmallSidePanel({
   };
 
   const closeSettings = () => {
-    console.log("closeSettings called");
     setIsModalOpen(false);
   };
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    uiMananger.insertJsonData(event);
+    await uiManager.insertJsonData(event);
   };
 
   return (

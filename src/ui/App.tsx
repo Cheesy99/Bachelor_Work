@@ -9,6 +9,7 @@ import Converter from "./Connector/Converter";
 
 type ContextType = [Table | null, ViewSetting, boolean];
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const Context = React.createContext<ContextType | undefined>(undefined);
 
 function App() {
@@ -62,7 +63,7 @@ function App() {
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}
           onViewChange={handleViewChange}
-          uiMananger={uiManager}
+          uiManager={uiManager}
         />
         <BigSidePanel columnValues={selectedColumnValues} />
         <MainWindow

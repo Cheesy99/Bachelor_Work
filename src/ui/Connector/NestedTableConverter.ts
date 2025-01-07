@@ -1,11 +1,10 @@
 import ConversionStrategy from "./Interface/ConversionStrategy";
-import { getMinMax } from "./Utils";
+import {getMinMax} from "./Utils";
 
 class NestedTableConverter implements ConversionStrategy {
   public async convert(data: TableData): Promise<NestedTable> {
     const tableStruct = this.createTableStruct(data);
-    const result = await this.convertToNestedView(tableStruct);
-    return result;
+    return await this.convertToNestedView(tableStruct);
   }
 
   private createTableStruct(data: TableData): TableStruct {
@@ -16,11 +15,11 @@ class NestedTableConverter implements ConversionStrategy {
 
     for (let i = 0; i < data.table.length; i++) {
       const collectionRowWithId: (string | number[] | number)[] = [];
-      let row = data.table[i];
-      let id: number = row[0] as number;
+      const row = data.table[i];
+      const id: number = row[0] as number;
       //Starting at one to jump over id
       for (let k = 1; k < row.length; k++) {
-        let value = row[k];
+        const value = row[k];
 
         if (typeof value === "number") {
           collectionRowWithId.push([value]);
@@ -29,16 +28,16 @@ class NestedTableConverter implements ConversionStrategy {
 
       for (let j = i + 1; j < data.table.length; j++) {
         let deleteThisRow = true;
-        let rowToCheck: (string | number)[] = data.table[j];
+        const rowToCheck: (string | number)[] = data.table[j];
         //Starting at one to jump over id
         for (let index = 1; index < rowToCheck.length; index++) {
-          let valueToCheck = rowToCheck[index];
+          const valueToCheck = rowToCheck[index];
           if (typeof valueToCheck === "string") {
             if (valueToCheck !== row[index]) {
               deleteThisRow = false;
               break;
             }
-          } else if (typeof valueToCheck === "number") {
+          } else {
             (collectionRowWithId[index - 1] as number[]).push(valueToCheck);
           }
         }
@@ -58,9 +57,7 @@ class NestedTableConverter implements ConversionStrategy {
   private async convertToNestedView(
     tableStruct: TableStruct
   ): Promise<NestedTable> {
-    console.log(tableStruct);
-    const final = await this.convertToTableView(tableStruct);
-    return final;
+    return await this.convertToTableView(tableStruct);
   }
 
   private async convertToTableView(

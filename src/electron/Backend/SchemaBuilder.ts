@@ -17,12 +17,12 @@ class SchemaBuilder {
     tableSchema: TableSchema;
   } {
     const tableSchema = this.generateTableSchema(json);
-    let command: string = this.generateSchemaText(tableSchema);
+    const command: string = this.generateSchemaText(tableSchema);
     return { command: DataCleaner.cleanSqlCommand(command), tableSchema };
   }
 
   public generateTableSchema(json: JsonObject[]): TableSchema {
-    let result: TableSchema[] = [];
+    const result: TableSchema[] = [];
     if (Array.isArray(json)) {
       json.forEach((obj) =>
         result.push(...this.recursiveSchema(obj, "main_table"))
@@ -35,8 +35,8 @@ class SchemaBuilder {
     json: JsonObject,
     tableName: string | number
   ): TableSchema[] {
-    let keys = Object.keys(json);
-    let result = [{ [tableName]: keys }];
+    const keys = Object.keys(json);
+    const result = [{ [tableName]: keys }];
     keys.forEach((key) => {
       if (Array.isArray(json[key])) {
         json[key].forEach((obj) => {
@@ -54,7 +54,7 @@ class SchemaBuilder {
     //Here we need to make sure the we only have one table and all the columns types found for a
     //column are collected and are all add to the table
 
-    let mergedSchema: { [key: string]: Set<string> } = {};
+    const mergedSchema: { [key: string]: Set<string> } = {};
 
     tableSchema.forEach((schema) => {
       Object.keys(schema).forEach((key: string) => {
@@ -67,7 +67,7 @@ class SchemaBuilder {
       });
     });
 
-    let schemaArray = Object.keys(mergedSchema).map((key) => ({
+    const schemaArray = Object.keys(mergedSchema).map((key) => ({
       [key]: Array.from(mergedSchema[key]),
     }));
 

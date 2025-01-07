@@ -1,4 +1,4 @@
-import { ipcRenderer, IpcRendererEvent } from "electron";
+import {ipcRenderer} from "electron";
 
 const electron = require("electron");
 
@@ -14,9 +14,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     command: string,
     tableName: string
   ): Promise<(string | number)[][]> => {
-    let result = ipcRenderer.invoke("sqlCommand", command, tableName);
-    console.log(result);
-    return result;
+    return ipcRenderer.invoke("sqlCommand", command, tableName);
   },
 
   subscribeToListener: (callback: (tableData: TableData) => void) => {

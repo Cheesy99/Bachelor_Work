@@ -55,7 +55,7 @@ class MainManager {
       tableSchema: TableSchema;
     } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
     await this.dataBase.sqlCommand(schemaResult.command);
-    await this.tableBuilder.build(jsonObject, schemaResult.tableSchema);
+    await this.insertDatabaseWithWorker(jsonObject, schemaResult.tableSchema);
 
     const fromID = { startId: 0, endId: 100 };
     const tableData = await this.getTableData(fromID, "main_table");
@@ -67,12 +67,15 @@ class MainManager {
     fileName: string
   ): Promise<void> {
     return new Promise((resolve, reject) => {
-      const worker = new Worker(path.resolve(__dirname, "saveWorker.js"), {
-        workerData: {
-          filePath: path.resolve(__dirname, fileName),
-          content: tableData,
-        },
-      });
+      const worker = new Worker(
+        path.resolve(__dirname, "./Workers/saveWorker.js"),
+        {
+          workerData: {
+            filePath: path.resolve(__dirname, fileName),
+            content: tableData,
+          },
+        }
+      );
 
       worker.on("message", (message) => {
         if (message.status === "success") {
@@ -83,6 +86,44 @@ class MainManager {
       });
 
       worker.on("error", (error) => {
+        reject(error);
+      });
+
+      worker.on("exit", (code) => {
+        if (code !== 0) {
+          reject(new Error(`Worker stopped with exit code ${code}`));
+        }
+      });
+    });
+  }
+
+  public async insertDatabaseWithWorker(
+    jsonObject: JsonObject[],
+    tableSchema: TableSchema
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(
+        path.resolve(__dirname, "./Workers/InserterWorker.js"),
+        {
+          workerData: { content: jsonObject, tableSchema: tableSchema },
+        }
+      );
+
+      worker.on("online", () => {
+        console.log("Worker is online.");
+      });
+
+      worker.on("message", (message) => {
+        console.log("Message from worker:", message);
+        if (message.status === "success") {
+          resolve();
+        } else {
+          reject(new Error(message.error));
+        }
+      });
+
+      worker.on("error", (error) => {
+        console.error("Worker error:", error);
         reject(error);
       });
 
@@ -122,11 +163,10 @@ class MainManager {
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
-    console.log(tableName);
     const schemaQuery = `PRAGMA table_info(${tableName})`;
     const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
     const schema = schemaResult.map((row: any) => row.name);
-    console.log(schema);
+
     return schema;
   }
 
