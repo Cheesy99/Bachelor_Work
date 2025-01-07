@@ -85,9 +85,11 @@ class MainManager {
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
+    console.log(tableName);
     const schemaQuery = `PRAGMA table_info(${tableName})`;
     const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
     const schema = schemaResult.map((row: any) => row.name);
+    console.log(schema);
     return schema;
   }
 
@@ -111,6 +113,17 @@ class MainManager {
     const query = `SELECT COUNT(*) as count FROM ${tableName}`;
     const result = await this.dataBase.sqlCommandWithReponse(query);
     return result[0].count;
+  }
+
+  async getRow(id: number, tableName: string): Promise<(string | number)[]> {
+    const result = await this.sqlCommand(
+      `SELECT * FROM ${tableName} WHERE id = ${id}`
+    );
+
+    if (result.length === 0) {
+      throw new Error(`No row found with id ${id} in table ${tableName}`);
+    }
+    return result[0];
   }
 }
 

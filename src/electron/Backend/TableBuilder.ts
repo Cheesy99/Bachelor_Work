@@ -78,7 +78,6 @@ class TableBuilder {
   private async insertWithIdReponse(statment: any): Promise<number> {
     return await this.databaseConnector.sqlCommandWithIdResponse(statment);
   }
-  // This is worng and is corrupting my data
   private joinCrossProduct(baseArray: any[], foreignIds: any[][]): any[][] {
     const result: any[][] = [];
 

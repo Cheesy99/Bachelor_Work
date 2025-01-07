@@ -13,9 +13,7 @@ export const Context = React.createContext<ContextType | undefined>(undefined);
 
 function App() {
   const [tableData, setTableData] = useState<Table | null>(null);
-  const [tableType, setTableType] = useState<ViewSetting>(
-    ViewSetting.NESTEDTABLES
-  );
+  const [tableType, setTableType] = useState<ViewSetting>(ViewSetting.ONETABLE);
   const [showSqlInput, setShowSqlInput] = useState(false);
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
@@ -57,7 +55,7 @@ function App() {
     //     setTableData(convertedData);
     //   }
     // }
-    setLoading(false);
+    // setLoading(false);
   };
 
   const toggleSqlInput = () => {

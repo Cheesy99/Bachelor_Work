@@ -33,11 +33,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.send("exportToExcel");
   },
   getTableSchema: (tableName: string) => {
-    return ipcRenderer.invoke("getTableSchema");
+    return ipcRenderer.invoke("getTableSchema", tableName);
   },
 
   getRow: (id: number, tableName: string) => {
-    return ipcRenderer.invoke("getRow");
+    return ipcRenderer.invoke("getRow", id, tableName);
   },
 
   checkIfColumnIsTable: (tableName: string) => {
@@ -54,7 +54,4 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getSaveResult: () => {
     return ipcRenderer.invoke("getSaveResult");
   },
-  // insertUsingWorkerNodes: (fileData: string) => {
-  //   return ipcRenderer.invoke("insertBig", fileData);
-  // },
 } satisfies Window["electronAPI"]);
