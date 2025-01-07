@@ -23,8 +23,8 @@ class UiManager {
     this.tableType = tableType;
     window.electronAPI.subscribeToListener(async (tableData: TableData) => {
       if (this.setTableData) {
-        console.log("this worked");
-        this.setTableData(await this.convert(tableData, this.tableType));
+        sessionStorage.setItem("TableData", JSON.stringify(tableData));
+        this.setTableData(await this.convert(this.tableType));
       }
     });
   }
@@ -61,17 +61,17 @@ class UiManager {
         from,
         "main_table"
       );
-      this.setTableData(await this.convert(tableData, this.tableType));
+      sessionStorage.setItem("TableData", JSON.stringify(tableData));
+      this.setTableData(await this.convert(this.tableType));
     }
   }
 
   // Stragtegy Pattern
-  public async convert(
-    tableData: TableData,
-    tableView: ViewSetting
-  ): Promise<Table> {
+  public async convert(tableView: ViewSetting): Promise<Table> {
+    let table = sessionStorage.getItem("TableData");
+    let result: TableData = JSON.parse(table!);
     this.setStrategyByViewSetting(tableView);
-    return await this.converter.convertBackendData(tableData);
+    return await this.converter.convertBackendData(result);
   }
 
   public setTableDataSetter(
@@ -81,22 +81,12 @@ class UiManager {
     return this;
   }
 
-  // public async convertNestedToOne(table: NestedTable): Promise<Table> {
-  //   let result = this.converter.convertNestedToTableData(table);
-  //   console.log("I am confused", result);
-  //   return result;
-  // }
-
-  // public async convertOneToNested(table: TableData): Promise<Table> {
-  //   return this.converter.convertOneToNested(table);
-  // }
-
   public async getSchema(tableName: string): Promise<string[]> {
     const result = await window.electronAPI.getTableSchema(tableName);
     return result;
   }
 
-  public setStrategyByViewSetting(viewSetting: ViewSetting) {
+  private setStrategyByViewSetting(viewSetting: ViewSetting) {
     if (viewSetting === ViewSetting.NESTEDTABLES) {
       this.converter.setStrategy(new NestedTableConverter());
     } else {

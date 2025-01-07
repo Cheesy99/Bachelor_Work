@@ -10,6 +10,11 @@ import TableBuilder from "./TableBuilder.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
 import fs from "fs";
 import { BrowserWindow } from "electron";
+import { Worker } from "worker_threads";
+import { fileURLToPath } from "url";
+import path from "path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class MainManager {
   private browserWindow: BrowserWindow;
@@ -55,6 +60,38 @@ class MainManager {
     const fromID = { startId: 0, endId: 100 };
     const tableData = await this.getTableData(fromID, "main_table");
     this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+  }
+
+  public async saveTableDataToDisk(
+    tableData: TableData,
+    fileName: string
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(path.resolve(__dirname, "saveWorker.js"), {
+        workerData: {
+          filePath: path.resolve(__dirname, fileName),
+          content: tableData,
+        },
+      });
+
+      worker.on("message", (message) => {
+        if (message.status === "success") {
+          resolve();
+        } else {
+          reject(new Error(message.error));
+        }
+      });
+
+      worker.on("error", (error) => {
+        reject(error);
+      });
+
+      worker.on("exit", (code) => {
+        if (code !== 0) {
+          reject(new Error(`Worker stopped with exit code ${code}`));
+        }
+      });
+    });
   }
 
   public async getTableData(

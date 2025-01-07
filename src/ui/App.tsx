@@ -37,29 +37,24 @@ function App() {
   }, [tableType]);
 
   const handleViewChange = async (viewSetting: ViewSetting) => {
-    // setLoading(true);
-    // setTableType(viewSetting);
-    // if (uiManager) {
-    //   uiManager.setStrategyByViewSetting(viewSetting);
-    //   if (tableData) {
-    //     let convertedData: Table | null = null;
-    //     if (viewSetting === ViewSetting.ONETABLE) {
-    //       convertedData = await uiManager.convertNestedToOne(
-    //         tableData as NestedTable
-    //       );
-    //     } else if (viewSetting === ViewSetting.NESTEDTABLES) {
-    //       convertedData = await uiManager.convertOneToNested(
-    //         tableData as TableData
-    //       );
-    //     }
-    //     setTableData(convertedData);
-    //   }
-    // }
-    // setLoading(false);
+    setLoading(true);
+    setTableType(viewSetting);
+    if (uiManager) {
+      if (tableData) {
+        let convertedData: Table | null = null;
+        if (viewSetting === ViewSetting.ONETABLE) {
+          convertedData = await uiManager.convert(viewSetting);
+        } else if (viewSetting === ViewSetting.NESTEDTABLES) {
+          convertedData = await uiManager.convert(viewSetting);
+        }
+        setTableData(convertedData);
+      }
+    }
+    setLoading(false);
   };
 
   const toggleSqlInput = () => {
-    // setShowSqlInput((prev) => !prev);
+    setShowSqlInput((prev) => !prev);
   };
   return (
     <Context.Provider value={[tableData, tableType, loading]}>

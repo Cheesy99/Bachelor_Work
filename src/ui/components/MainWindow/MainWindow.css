@@ -66,3 +66,13 @@
     left: 100%;
   }
 }
+
+.bottom-row {
+  padding: 10px;
+  text-align: center;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}

@@ -17,7 +17,7 @@ function MainWindow({
 }: MainWindowProps) {
   const context: ContextType | undefined = useContext(Context);
   const [sqlCommand, setSqlCommand] = useState("");
-
+  const [currentRowIndex, setCurrentRowIndex] = useState<number>(0);
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
@@ -32,7 +32,18 @@ function MainWindow({
     let newTableData: (string | number)[][] =
       await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
   };
+  const handleNextRow = () => {
+    if (tableData)
+      if (currentRowIndex < tableData.table.length - 1) {
+        setCurrentRowIndex(currentRowIndex + 1);
+      }
+  };
 
+  const handlePreviousRow = () => {
+    if (currentRowIndex > 0) {
+      setCurrentRowIndex(currentRowIndex - 1);
+    }
+  };
   return (
     <div className="main-window">
       <div
@@ -62,6 +73,21 @@ function MainWindow({
             placeholder="Enter SQL command"
           />
           <button onClick={handleSqlSubmit}>Execute</button>
+        </div>
+      )}
+      {!showSqlInput && (
+        <div className="bottom-row">
+          <button onClick={handlePreviousRow} disabled={currentRowIndex === 0}>
+            Previous
+          </button>
+          <button
+            onClick={handleNextRow}
+            disabled={
+              tableData ? currentRowIndex === tableData.table.length - 1 : false
+            }
+          >
+            Next
+          </button>
         </div>
       )}
     </div>

@@ -2,7 +2,8 @@ import React from "react";
 import Modal from "react-modal";
 import { ViewSetting } from "../../../Connector/Enum/Setting";
 import "./Settings.css";
-
+import { useContext, useState } from "react";
+import { Context } from "../../../App";
 interface SettingsModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
@@ -16,6 +17,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   onViewChange,
   currentView,
 }) => {
+  const context = useContext(Context);
   return (
     <Modal
       isOpen={isOpen}
