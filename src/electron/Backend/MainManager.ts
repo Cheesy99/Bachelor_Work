@@ -97,44 +97,6 @@ class MainManager {
     });
   }
 
-  public async insertDatabaseWithWorker(
-    jsonObject: JsonObject[],
-    tableSchema: TableSchema
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const worker = new Worker(
-        path.resolve(__dirname, "./Workers/InserterWorker.js"),
-        {
-          workerData: { content: jsonObject, tableSchema: tableSchema },
-        }
-      );
-
-      worker.on("online", () => {
-        console.log("Worker is online.");
-      });
-
-      worker.on("message", (message) => {
-        console.log("Message from worker:", message);
-        if (message.status === "success") {
-          resolve();
-        } else {
-          reject(new Error(message.error));
-        }
-      });
-
-      worker.on("error", (error) => {
-        console.error("Worker error:", error);
-        reject(error);
-      });
-
-      worker.on("exit", (code) => {
-        if (code !== 0) {
-          reject(new Error(`Worker stopped with exit code ${code}`));
-        }
-      });
-    });
-  }
-
   public async getTableData(
     fromID: FromId,
     tableName: string
@@ -158,6 +120,7 @@ class MainManager {
   }
   public async sqlCommand(sqlCommand: string): Promise<(string | number)[][]> {
     let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
+    console.log("result: ", result);
     const table = result.map((row: string | number) => Object.values(row));
     return table;
   }

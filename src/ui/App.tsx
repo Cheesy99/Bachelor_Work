@@ -7,9 +7,8 @@ import React, { useState, useEffect, useRef } from "react";
 import UiManager from "./Connector/UiManager";
 import Converter from "./Connector/Converter";
 
-type ContextType = [Table | null, ViewSetting, boolean];
+type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const Context = React.createContext<ContextType | undefined>(undefined);
 
 function App() {
@@ -30,12 +29,6 @@ function App() {
   useEffect(() => {
     uiManager.getInitTableData();
   }, []);
-
-  useEffect(() => {
-    if (uiManager) {
-      uiManager.setTableDataSetter(setTableData);
-    }
-  }, [tableType]);
 
   const handleViewChange = async (viewSetting: ViewSetting) => {
     setLoading(true);
@@ -58,7 +51,7 @@ function App() {
     setShowSqlInput((prev) => !prev);
   };
   return (
-    <Context.Provider value={[tableData, tableType, loading]}>
+    <Context.Provider value={[tableData, tableType, loading, uiManager]}>
       <div className="app-container">
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}

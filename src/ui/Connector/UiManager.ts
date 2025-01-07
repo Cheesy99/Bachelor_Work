@@ -1,8 +1,8 @@
 import Converter from "./Converter";
 import NestedTableConverter from "./NestedTableConverter";
 import OneTableConverter from "./OneTableConverter";
-import {translateUmlauts} from "./Utils";
-import {ViewSetting} from "./Enum/Setting";
+import { translateUmlauts } from "./Utils";
+import { ViewSetting } from "./Enum/Setting";
 import React from "react";
 
 class UiManager {
@@ -68,19 +68,11 @@ class UiManager {
     }
   }
 
-  // Stragtegy Pattern
   public async convert(tableView: ViewSetting): Promise<Table> {
     const table = sessionStorage.getItem("TableData");
     const result: TableData = JSON.parse(table!);
     this.setStrategyByViewSetting(tableView);
     return await this.converter.convertBackendData(result);
-  }
-
-  public setTableDataSetter(
-    setter: React.Dispatch<React.SetStateAction<Table | null>>
-  ): this {
-    this.setTableData = setter;
-    return this;
   }
 
   public async getSchema(tableName: string): Promise<string[]> {

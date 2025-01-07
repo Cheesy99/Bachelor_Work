@@ -3,13 +3,14 @@ import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
 import { ViewSetting } from "../../Connector/Enum/Setting";
+import UiManager from "../../Connector/UiManager";
 
 interface MainWindowProps {
   showSqlInput: boolean;
   setSelectedColumnValues: (values: (string | number)[]) => void;
 }
 
-type ContextType = [Table | null, ViewSetting, boolean];
+type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
 function MainWindow({
   showSqlInput,
@@ -21,7 +22,7 @@ function MainWindow({
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-  const [tableData, tableType, loading] = context;
+  const [tableData, tableType, loading, uiManager] = context;
 
   const handleHeaderClick = (columnValues: (string | number)[]) => {
     setSelectedColumnValues(columnValues);
@@ -35,6 +36,7 @@ function MainWindow({
     if (tableData)
       if (currentRowIndex < tableData.table.length - 1) {
         setCurrentRowIndex(currentRowIndex + 1);
+        uiManager;
       }
   };
 
