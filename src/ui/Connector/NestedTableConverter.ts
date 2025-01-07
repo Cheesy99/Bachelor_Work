@@ -1,10 +1,10 @@
 import ConversionStrategy from "./Interface/ConversionStrategy";
-import {getMinMax} from "./Utils";
+import { getMinMax } from "./Utils";
 
 class NestedTableConverter implements ConversionStrategy {
   public async convert(data: TableData): Promise<NestedTable> {
     const tableStruct = this.createTableStruct(data);
-    return await this.convertToNestedView(tableStruct);
+    return await this.convertToTableView(tableStruct);
   }
 
   private createTableStruct(data: TableData): TableStruct {
@@ -54,12 +54,6 @@ class NestedTableConverter implements ConversionStrategy {
     return result;
   }
 
-  private async convertToNestedView(
-    tableStruct: TableStruct
-  ): Promise<NestedTable> {
-    return await this.convertToTableView(tableStruct);
-  }
-
   private async convertToTableView(
     tableStruct: TableStruct
   ): Promise<NestedTable> {
@@ -73,7 +67,7 @@ class NestedTableConverter implements ConversionStrategy {
         if (Array.isArray(column)) {
           const tableName = tableStruct.schema[index];
           const from: FromId = getMinMax(column);
-          const table: TableData = await window.electronAPI.getTableData(
+          const table: TableData = await window.electronAPI.getNestedTableData(
             from,
             tableName
           );

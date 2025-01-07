@@ -1,4 +1,4 @@
-import {ipcRenderer} from "electron";
+import { ipcRenderer } from "electron";
 
 const electron = require("electron");
 
@@ -7,8 +7,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     console.log("Preload got called");
     return ipcRenderer.invoke("upload-json", fileData);
   },
-  getTableData: (fromID: FromId, tableName: string) =>
-    ipcRenderer.invoke("getTableData", fromID, tableName),
+  getNestedTableData: (fromID: FromId, tableName: string) =>
+    ipcRenderer.invoke("getNestedTableData", fromID, tableName),
 
   sendSqlCommand: (
     command: string,
@@ -51,5 +51,9 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   },
   getSaveResult: () => {
     return ipcRenderer.invoke("getSaveResult");
+  },
+
+  getTableData: (fromID: FromId, tableName: string) => {
+    return ipcRenderer.invoke("getTableData", fromID, tableName);
   },
 } satisfies Window["electronAPI"]);

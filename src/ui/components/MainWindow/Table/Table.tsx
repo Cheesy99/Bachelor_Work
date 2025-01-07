@@ -5,7 +5,7 @@ import { ViewSetting } from "../../../Connector/Enum/Setting";
 interface TableProps {
   data: Table;
   viewSetting: ViewSetting;
-  onHeaderClick: (column: (string | number)[]) => void;
+  onHeaderClick: (column: number) => void;
 }
 
 function Table({ data, viewSetting, onHeaderClick }: TableProps) {
@@ -24,7 +24,9 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
           <thead>
             <tr>
               {data.schema.map((item, index) => (
-                <th key={index}>{item}</th>
+                <th key={index} onClick={() => onHeaderClick(index)}>
+                  {item}
+                </th>
               ))}
             </tr>
           </thead>

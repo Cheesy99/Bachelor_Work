@@ -38,6 +38,13 @@ app.on("ready", () => {
   });
 
   ipcMain.handle(
+    "getNestedTableData",
+    async (_, fromID: FromId, tableName: string) => {
+      return await dbManager.getNestedTableData(fromID, tableName);
+    }
+  );
+
+  ipcMain.handle(
     "getTableData",
     async (_, fromID: FromId, tableName: string) => {
       return await dbManager.getTableData(fromID, tableName);
@@ -45,7 +52,7 @@ app.on("ready", () => {
   );
 
   ipcMain.handle("sqlCommand", async (_, command: string) => {
-    return await dbManager.sqlCommand(command);
+    return await dbManager.uiSqlCommand(command);
   });
 
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {

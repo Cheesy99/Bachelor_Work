@@ -23,7 +23,11 @@ type FromId = {
 interface Window {
   electronAPI: {
     sendJsonFile: (fileData: string) => Promise<void>;
-    getTableData: (fromID: FromId, tableName: string) => Promise<TableData>;
+    getNestedTableData: (
+      fromID: FromId,
+      tableName: string
+    ) => Promise<TableData>;
+    getTableData: (fromID: FromId, tableName: string) => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
     subscribeToListener: (callback: (tableData: TableData) => void) => void;

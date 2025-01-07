@@ -17,3 +17,4 @@ class SaveWorker {
     });
   }
 }
+export default SaveWorker;

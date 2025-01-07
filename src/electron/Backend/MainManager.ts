@@ -7,11 +7,6 @@ import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
 import { BrowserWindow } from "electron";
-import { Worker } from "worker_threads";
-import { fileURLToPath } from "url";
-import path from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 class MainManager {
   private browserWindow: BrowserWindow;
@@ -58,43 +53,8 @@ class MainManager {
     await this.dataBase.sqlCommand(mainInsert);
 
     const fromID = { startId: 0, endId: 100 };
-    const tableData = await this.getTableData(fromID, "main_table");
+    const tableData = await this.getNestedTableData(fromID, "main_table");
     this.browserWindow.webContents.send("tableDataFromBackend", tableData);
-  }
-
-  public async saveTableDataToDisk(
-    tableData: TableData,
-    fileName: string
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const worker = new Worker(
-        path.resolve(__dirname, "./Workers/saveWorker.js"),
-        {
-          workerData: {
-            filePath: path.resolve(__dirname, fileName),
-            content: tableData,
-          },
-        }
-      );
-
-      worker.on("message", (message) => {
-        if (message.status === "success") {
-          resolve();
-        } else {
-          reject(new Error(message.error));
-        }
-      });
-
-      worker.on("error", (error) => {
-        reject(error);
-      });
-
-      worker.on("exit", (code) => {
-        if (code !== 0) {
-          reject(new Error(`Worker stopped with exit code ${code}`));
-        }
-      });
-    });
   }
 
   public async getTableData(fromID: FromId, tableName: string): Promise<void> {
@@ -105,11 +65,23 @@ class MainManager {
     console.log(JSON.stringify(dataQuery));
     const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
+    const tableData: TableData = { schema: schema, table: table };
+    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+  }
 
-    this.browserWindow.webContents.send("tableDataFromBackend", {
-      schema,
-      table,
-    });
+  public async getNestedTableData(
+    fromID: FromId,
+    tableName: string
+  ): Promise<TableData> {
+    const { startId, endId } = fromID;
+    console.log("Id range", JSON.stringify(fromID));
+    const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
+    const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
+    console.log(JSON.stringify(dataQuery));
+    const schema = await this.getTableSchema(tableName);
+    const table = dataResult.map((row: string | number) => Object.values(row));
+
+    return { schema: schema, table: table };
   }
 
   public async getCurrentIndexRange(tableName: string): Promise<FromId> {
@@ -121,7 +93,10 @@ class MainManager {
     const endId = maxIdResult[0].maxId;
     return { startId, endId };
   }
-  public async sqlCommand(sqlCommand: string): Promise<(string | number)[][]> {
+
+  public async uiSqlCommand(
+    sqlCommand: string
+  ): Promise<(string | number)[][]> {
     let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
     const table = result.map((row: string | number) => Object.values(row));
     return table;
@@ -148,9 +123,11 @@ class MainManager {
   getSavedResult(): Promise<TableData | boolean> {
     throw new Error("Method not implemented.");
   }
+
   saveResult(tableData: any): Promise<void> {
     throw new Error("Method not implemented.");
   }
+
   public async amountOfRows(tableName: string): Promise<number> {
     const query = `SELECT COUNT(*) as count FROM ${tableName}`;
     const result = await this.dataBase.sqlCommandWithReponse(query);
@@ -158,7 +135,7 @@ class MainManager {
   }
 
   async getRow(id: number, tableName: string): Promise<(string | number)[]> {
-    const result = await this.sqlCommand(
+    const result = await this.uiSqlCommand(
       `SELECT * FROM ${tableName} WHERE id = ${id}`
     );
 

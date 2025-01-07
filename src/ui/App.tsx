@@ -10,7 +10,7 @@ enum IndexDirection {
   RIGHT,
   LEFT,
 }
-type ContextType = [Table | null, ViewSetting, boolean, UiManager];
+type ContextType = [Table | null, ViewSetting, boolean];
 
 export const Context = React.createContext<ContextType | undefined>(undefined);
 
@@ -19,13 +19,14 @@ function App() {
   const [tableType, setTableType] = useState<ViewSetting>(ViewSetting.ONETABLE);
   const [showSqlInput, setShowSqlInput] = useState(false);
   const [selectedColumnValues, setSelectedColumnValues] = useState<
-    (string | number)[]
+    (string | number | TableData)[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [index, setIndex] = useState<{ startId: number; endId: number }>({
     startId: 1,
     endId: 100,
   });
+  const [sqlCommandChain, setSqlCommandChain] = useState<string[]>([]);
 
   const uiManager = new UiManager(
     new Converter(),
@@ -79,7 +80,7 @@ function App() {
     setShowSqlInput((prev) => !prev);
   };
   return (
-    <Context.Provider value={[tableData, tableType, loading, uiManager]}>
+    <Context.Provider value={[tableData, tableType, loading]}>
       <div className="app-container">
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}

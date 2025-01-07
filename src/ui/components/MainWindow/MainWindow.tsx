@@ -3,7 +3,6 @@ import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
 import { ViewSetting } from "../../Connector/Enum/Setting";
-import UiManager from "../../Connector/UiManager";
 enum IndexDirection {
   RIGHT,
   LEFT,
@@ -11,10 +10,10 @@ enum IndexDirection {
 interface MainWindowProps {
   showSqlInput: boolean;
   index: (direction: IndexDirection) => void;
-  setSelectedColumnValues: (values: (string | number)[]) => void;
+  setSelectedColumnValues: (values: (string | number | TableData)[]) => void;
 }
 
-type ContextType = [Table | null, ViewSetting, boolean, UiManager];
+type ContextType = [Table | null, ViewSetting, boolean];
 
 function MainWindow({
   showSqlInput,
@@ -27,10 +26,13 @@ function MainWindow({
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-  const [tableData, tableType, loading, uiManager] = context;
+  const [tableData, tableType, loading] = context;
 
-  const handleHeaderClick = (columnValues: (string | number)[]) => {
-    setSelectedColumnValues(columnValues);
+  const handleHeaderClick = (columnIndex: number) => {
+    if (tableData) {
+      const columnValues = tableData.table.map((row) => row[columnIndex]);
+      setSelectedColumnValues(columnValues);
+    }
   };
 
   const handleSqlSubmit = async () => {
