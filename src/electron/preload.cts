@@ -10,10 +10,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getNestedTableData: (fromID: FromId, tableName: string) =>
     ipcRenderer.invoke("getNestedTableData", fromID, tableName),
 
-  sendSqlCommand: (
-    command: string,
-    tableName: string
-  ): Promise<(string | number)[][]> => {
+  sendSqlCommand: (command: string, tableName: string): Promise<void> => {
     return ipcRenderer.invoke("sqlCommand", command, tableName);
   },
 

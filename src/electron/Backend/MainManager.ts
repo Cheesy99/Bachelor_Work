@@ -95,11 +95,14 @@ class MainManager {
   }
 
   public async uiSqlCommand(
-    sqlCommand: string
-  ): Promise<(string | number)[][]> {
+    sqlCommand: string,
+    tableName: string
+  ): Promise<void> {
     let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
     const table = result.map((row: string | number) => Object.values(row));
-    return table;
+    const schema = await this.getTableSchema(tableName);
+    const tableData = { schema: schema, table: table };
+    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
@@ -135,14 +138,15 @@ class MainManager {
   }
 
   async getRow(id: number, tableName: string): Promise<(string | number)[]> {
-    const result = await this.uiSqlCommand(
+    const result = await this.dataBase.sqlCommandWithReponse(
       `SELECT * FROM ${tableName} WHERE id = ${id}`
     );
+    console.log(result);
 
     if (result.length === 0) {
       throw new Error(`No row found with id ${id} in table ${tableName}`);
     }
-    return result[0];
+    return Object.values(result[0]);
   }
 }
 

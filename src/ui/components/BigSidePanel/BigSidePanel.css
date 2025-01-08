@@ -1,15 +1,25 @@
 .big-side-panel {
-  overflow-y: auto;
-  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border: 1px solid #ccc;
   padding: 10px;
+  box-sizing: border-box;
 }
 
-.column-elements {
-  list-style-type: none; /* Remove bullet points */
-  padding: 0; /* Remove default padding */
+.big-side-panel .list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
 }
 
-.column-elements li {
-  margin-bottom: 8px; /* Optional: Add some space between items */
+.big-side-panel .column-elements {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.big-side-panel .buttons {
+  display: flex;
+  justify-content: center;
 }

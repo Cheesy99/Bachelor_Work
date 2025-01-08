@@ -2,7 +2,8 @@ import { useContext, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
-import { ViewSetting } from "../../Connector/Enum/Setting";
+import { ViewSetting } from "../../connector/Enum/Setting";
+import UiManager from "../../connector/UiManager";
 enum IndexDirection {
   RIGHT,
   LEFT,
@@ -10,10 +11,13 @@ enum IndexDirection {
 interface MainWindowProps {
   showSqlInput: boolean;
   index: (direction: IndexDirection) => void;
-  setSelectedColumnValues: (values: (string | number | TableData)[]) => void;
+  setSelectedColumnValues: (values: {
+    values: (string | number | TableData)[];
+    columnName: string;
+  }) => void;
 }
 
-type ContextType = [Table | null, ViewSetting, boolean];
+type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
 function MainWindow({
   showSqlInput,
@@ -26,19 +30,22 @@ function MainWindow({
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
-  const [tableData, tableType, loading] = context;
+  const [tableData, tableType, loading, uiManager] = context;
 
   const handleHeaderClick = (columnIndex: number) => {
     if (tableData) {
       const columnValues = tableData.table.map((row) => row[columnIndex]);
-      setSelectedColumnValues(columnValues);
+      setSelectedColumnValues({
+        values: columnValues,
+        columnName: tableData.schema[columnIndex],
+      });
     }
   };
 
   const handleSqlSubmit = async () => {
-    let newTableData: (string | number)[][] =
-      await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
+    await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
   };
+
   const handleRight = () => {
     if (tableData)
       if (currentRowIndex < tableData.table.length - 1) {

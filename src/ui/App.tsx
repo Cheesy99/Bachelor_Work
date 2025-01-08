@@ -2,15 +2,15 @@ import "./App.css";
 import BigSidePanel from "./components/BigSidePanel/BigSidePanel";
 import MainWindow from "./components/MainWindow/MainWindow";
 import SmallSidePanel from "./components/SmallSidePanel/SmallSidePanel";
-import { ViewSetting } from "./Connector/Enum/Setting";
+import { ViewSetting } from "./connector/Enum/Setting";
 import React, { useState, useEffect, useRef } from "react";
-import UiManager from "./Connector/UiManager";
-import Converter from "./Connector/Converter";
+import UiManager from "./connector/UiManager";
+import Converter from "./connector/Converter";
 enum IndexDirection {
   RIGHT,
   LEFT,
 }
-type ContextType = [Table | null, ViewSetting, boolean];
+type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
 export const Context = React.createContext<ContextType | undefined>(undefined);
 
@@ -18,9 +18,10 @@ function App() {
   const [tableData, setTableData] = useState<Table | null>(null);
   const [tableType, setTableType] = useState<ViewSetting>(ViewSetting.ONETABLE);
   const [showSqlInput, setShowSqlInput] = useState(false);
-  const [selectedColumnValues, setSelectedColumnValues] = useState<
-    (string | number | TableData)[]
-  >([]);
+  const [selectedColumnValues, setSelectedColumnValues] = useState<{
+    values: (string | number | TableData)[];
+    columnName: string;
+  }>({ values: [], columnName: "id" });
   const [loading, setLoading] = useState(false);
   const [index, setIndex] = useState<{ startId: number; endId: number }>({
     startId: 1,
@@ -80,7 +81,7 @@ function App() {
     setShowSqlInput((prev) => !prev);
   };
   return (
-    <Context.Provider value={[tableData, tableType, loading]}>
+    <Context.Provider value={[tableData, tableType, loading, uiManager]}>
       <div className="app-container">
         <SmallSidePanel
           toggleSqlInput={toggleSqlInput}

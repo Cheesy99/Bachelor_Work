@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Table.css";
-import { ViewSetting } from "../../../Connector/Enum/Setting";
+import { ViewSetting } from "../../../connector/Enum/Setting";
 
 interface TableProps {
   data: Table;

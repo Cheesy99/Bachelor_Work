@@ -85,6 +85,23 @@ class UiManager {
       this.converter.setStrategy(new OneTableConverter());
     }
   }
+
+  public async executeColumnFilter(
+    selectedValues: (string | number)[],
+    columnName: string
+  ): Promise<void> {
+    if (selectedValues.length === 0) {
+      const command = "SELECT * FROM main_table";
+      await window.electronAPI.sendSqlCommand(command, "main_table");
+    } else {
+      const formattedValues = selectedValues
+        .map((value) => (typeof value === "string" ? `'${value}'` : value))
+        .join(", ");
+
+      const command = `SELECT * FROM main_table WHERE ${columnName} IN (${formattedValues})`;
+      await window.electronAPI.sendSqlCommand(command, "main_table");
+    }
+  }
 }
 
 export default UiManager;

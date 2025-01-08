@@ -31,10 +31,7 @@ interface Window {
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
     subscribeToListener: (callback: (tableData: TableData) => void) => void;
-    sendSqlCommand: (
-      sqlCommand: string,
-      tableName: string
-    ) => Promise<(string | number)[][]>;
+    sendSqlCommand: (sqlCommand: string, tableName: string) => Promise<void>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: (result: TableData) => void;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;

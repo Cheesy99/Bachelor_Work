@@ -2,10 +2,10 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
-import UiManager from "../../Connector/UiManager";
+import UiManager from "../../connector/UiManager";
 import SettingsModal from "./Settings/Settings";
 import React from "react";
-import { ViewSetting } from "../../Connector/Enum/Setting";
+import { ViewSetting } from "../../connector/Enum/Setting";
 import Modal from "react-modal";
 
 Modal.setAppElement("#root");

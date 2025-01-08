@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import { ViewSetting } from "../../../Connector/Enum/Setting";
+import { ViewSetting } from "../../../connector/Enum/Setting";
 import "./Settings.css";
 import { useContext } from "react";
 import { Context } from "../../../App";
