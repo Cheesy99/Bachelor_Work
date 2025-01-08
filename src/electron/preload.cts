@@ -25,7 +25,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   },
 
   exportToExcel: () => {
-    return ipcRenderer.send("exportToExcel");
+    return ipcRenderer.invoke("exportToExcel");
   },
   getTableSchema: (tableName: string) => {
     return ipcRenderer.invoke("getTableSchema", tableName);

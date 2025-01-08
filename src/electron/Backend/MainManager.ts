@@ -7,6 +7,12 @@ import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
 import { BrowserWindow } from "electron";
+import { Worker } from "worker_threads";
+import { fileURLToPath } from "url";
+import path from "path";
+import { isDev } from "../util.js";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class MainManager {
   private browserWindow: BrowserWindow;
@@ -15,6 +21,7 @@ class MainManager {
   private excelExporter: ExcelExporter;
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
+  private readonly persistencePath: string;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -28,6 +35,11 @@ class MainManager {
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
     this.excelExporter = new ExcelExporter();
     this.browserWindow = browserWindow;
+    this.persistencePath = path.join(
+      __dirname,
+      isDev() ? "../../" : "../",
+      "data.json"
+    );
   }
 
   get dataBaseExist() {
@@ -59,10 +71,8 @@ class MainManager {
 
   public async getTableData(fromID: FromId, tableName: string): Promise<void> {
     const { startId, endId } = fromID;
-    console.log("Id range", JSON.stringify(fromID));
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
-    console.log(JSON.stringify(dataQuery));
     const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
     const tableData: TableData = { schema: schema, table: table };
@@ -74,10 +84,8 @@ class MainManager {
     tableName: string
   ): Promise<TableData> {
     const { startId, endId } = fromID;
-    console.log("Id range", JSON.stringify(fromID));
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
-    console.log(JSON.stringify(dataQuery));
     const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
 
@@ -102,7 +110,28 @@ class MainManager {
     const table = result.map((row: string | number) => Object.values(row));
     const schema = await this.getTableSchema(tableName);
     const tableData = { schema: schema, table: table };
-    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+    console.log("I was called");
+    const worker = new Worker(
+      path.resolve(__dirname, "./workers/SaveWorker.js")
+    );
+    worker.postMessage({
+      filePath: this.persistencePath,
+      content: tableData,
+    });
+    console.log("Saving data to disk using worker thread...");
+    worker.on("message", (message) => {
+      if (message.status === "success") {
+        console.log("Data saved successfully");
+      } else {
+        console.error("Error saving data:", message.error);
+      }
+    });
+
+    const partialTableData = { schema: schema, table: table.slice(0, 100) };
+    this.browserWindow.webContents.send(
+      "tableDataFromBackend",
+      partialTableData
+    );
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
@@ -141,7 +170,6 @@ class MainManager {
     const result = await this.dataBase.sqlCommandWithReponse(
       `SELECT * FROM ${tableName} WHERE id = ${id}`
     );
-    console.log(result);
 
     if (result.length === 0) {
       throw new Error(`No row found with id ${id} in table ${tableName}`);
