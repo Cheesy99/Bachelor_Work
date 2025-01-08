@@ -5,6 +5,11 @@ type TableData = {
   table: (string | number)[][];
 };
 
+type TreeNode = {
+  name: string;
+  children?: TreeNode[];
+};
+
 type TableStruct = {
   schema: string[];
   table: (string | number | number[])[][];

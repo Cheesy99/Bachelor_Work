@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import "./Table.css";
 import { ViewSetting } from "../../../connector/Enum/Setting";
-
+import React from "react";
+import TreeComponent from "../Tree/TreeComponent";
 interface TableProps {
   data: Table;
   viewSetting: ViewSetting;
@@ -16,6 +16,14 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
   if (!data) {
     return <div>No data available</div>;
   }
+
+  const renderNestedTable = (data: NestedTable) => {
+    return (
+      <>
+        <TreeComponent data={data} />
+      </>
+    );
+  };
 
   const renderTableData = (data: TableData) => {
     return (
@@ -44,7 +52,7 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
     );
   };
 
-  const renderNestedTable = (data: NestedTable) => {
+  const renderNested = (data: NestedTable) => {
     return (
       <>
         <table>
