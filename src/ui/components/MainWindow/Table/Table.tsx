@@ -89,7 +89,7 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
   };
 
   return (
-    <div>
+    <div className="stage-container">
       {isOneTable(viewSetting)
         ? renderTableData(data as TableData)
         : renderNestedTable(data as NestedTable)}
