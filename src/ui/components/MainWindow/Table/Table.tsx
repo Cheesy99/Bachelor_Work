@@ -17,14 +17,6 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
     return <div>No data available</div>;
   }
 
-  const renderNestedTable = (data: NestedTable) => {
-    return (
-      <>
-        <TreeComponent data={data} />
-      </>
-    );
-  };
-
   const renderTableData = (data: TableData) => {
     return (
       <>
@@ -52,7 +44,7 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
     );
   };
 
-  const renderNested = (data: NestedTable) => {
+  const renderNestedTable = (data: NestedTable) => {
     return (
       <>
         <table>

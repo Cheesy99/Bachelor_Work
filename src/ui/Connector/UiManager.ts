@@ -56,7 +56,7 @@ class UiManager {
   }
 
   public async getTableData(from: FromId, tableName: string) {
-    await window.electronAPI.getNestedTableData(from, tableName);
+    await window.electronAPI.getTableData(from, tableName);
   }
 
   public async getInitTableData() {

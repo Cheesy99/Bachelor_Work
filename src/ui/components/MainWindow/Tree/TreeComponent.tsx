@@ -5,33 +5,40 @@ type TreeProps = {
   data: NestedTable;
 };
 
-const convertToTree = (data: NestedTable, parentName: string = "root"): any => {
-  const processTable = (table: NestedTable, parentName: string): any => {
-    return {
-      name: parentName,
-      children: table.table.map((row) => {
-        const nodeName = row[0].toString();
-        const node: any = { name: nodeName, children: [] };
+function TreeComponent({ data }: TreeProps) {
+  const convertToTree = (
+    data: NestedTable,
+    parentName: string = "root"
+  ): any => {
+    const processTable = (table: NestedTable, parentName: string): any => {
+      return {
+        name: parentName,
+        children: table.table.map((row) => {
+          const nodeName = row[0].toString();
+          const node: any = { name: nodeName, children: [] };
 
-        row.forEach((cell, index) => {
-          if (typeof cell === "object" && "schema" in cell && "table" in cell) {
-            node.children.push(processTable(cell as NestedTable, nodeName));
-          } else {
-            node.children.push({
-              name: `${table.schema[index]}: ${cell.toString()}`,
-            });
-          }
-        });
+          row.forEach((cell, index) => {
+            if (
+              typeof cell === "object" &&
+              "schema" in cell &&
+              "table" in cell
+            ) {
+              node.children.push(processTable(cell as NestedTable, nodeName));
+            } else {
+              node.children.push({
+                name: `${table.schema[index]}: ${cell.toString()}`,
+              });
+            }
+          });
 
-        return node;
-      }),
+          return node;
+        }),
+      };
     };
+
+    return processTable(data, parentName);
   };
 
-  return processTable(data, parentName);
-};
-
-const TreeComponent: React.FC<TreeProps> = ({ data }) => {
   const treeData = convertToTree(data);
 
   return (
@@ -46,6 +53,6 @@ const TreeComponent: React.FC<TreeProps> = ({ data }) => {
       />
     </div>
   );
-};
+}
 
 export default TreeComponent;
