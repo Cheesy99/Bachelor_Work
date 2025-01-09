@@ -23,3 +23,7 @@
   display: flex;
   justify-content: center;
 }
+
+.column-elements li {
+  max-width: 200px; /* Adjust this value as needed */
+}

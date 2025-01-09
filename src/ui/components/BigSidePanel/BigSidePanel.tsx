@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import "./BigSidePanel.css";
 import { ViewSetting } from "../../connector/Enum/Setting";
 import UiManager from "../../connector/UiManager";
@@ -52,6 +52,7 @@ function BigSidePanel({ columnValues }: BigSidePanelProps) {
               <label>
                 <input
                   type="checkbox"
+                  defaultChecked
                   checked={selectedColumnValues.includes(value)}
                   onChange={() => handleCheckboxChange(value)}
                 />
