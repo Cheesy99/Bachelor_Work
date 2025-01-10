@@ -6,9 +6,10 @@ interface TableProps {
   data: Table;
   viewSetting: ViewSetting;
   onHeaderClick: (column: number) => void;
+  onIdClick: (rowData: (string | number)[]) => void;
 }
 
-function Table({ data, viewSetting, onHeaderClick }: TableProps) {
+function Table({ data, viewSetting, onHeaderClick, onIdClick }: TableProps) {
   const isOneTable = (viewSetting: ViewSetting): boolean => {
     return viewSetting === ViewSetting.ONETABLE ? true : false;
   };
@@ -34,7 +35,16 @@ function Table({ data, viewSetting, onHeaderClick }: TableProps) {
             {data.table.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {row.map((cell, cellIndex) => (
-                  <td key={cellIndex}>{cell}</td>
+                  <td
+                    key={cellIndex}
+                    onClick={() => {
+                      if (cellIndex === 0) {
+                        onIdClick(row);
+                      }
+                    }}
+                  >
+                    {cell}
+                  </td>
                 ))}
               </tr>
             ))}

@@ -15,6 +15,7 @@ interface MainWindowProps {
     values: (string | number | TableData)[];
     columnName: string;
   }) => void;
+  onIdClick: (values: (string | number)[]) => void;
 }
 
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];
@@ -23,6 +24,7 @@ function MainWindow({
   showSqlInput,
   index,
   setSelectedColumnValues,
+  onIdClick,
 }: MainWindowProps) {
   const [viewType, setViewType] = useState("table");
   const context: ContextType | undefined = useContext(Context);
@@ -91,6 +93,7 @@ function MainWindow({
               data={tableData}
               viewSetting={tableType}
               onHeaderClick={handleHeaderClick}
+              onIdClick={onIdClick}
             />
           )
         )}

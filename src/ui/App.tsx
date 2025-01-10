@@ -10,6 +10,10 @@ enum IndexDirection {
   RIGHT,
   LEFT,
 }
+enum Clicked {
+  RowId,
+  Column,
+}
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
 export const Context = React.createContext<ContextType | undefined>(undefined);
@@ -22,13 +26,19 @@ function App() {
     values: (string | number | TableData)[];
     columnName: string;
   }>({ values: [], columnName: "id" });
+  const [selectedRowData, setSelectedRowData] = useState<(string | number)[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
   const [index, setIndex] = useState<{ startId: number; endId: number }>({
     startId: 1,
     endId: 100,
   });
-  const [sqlCommandChain, setSqlCommandChain] = useState<string[]>([]);
-
+  const [usingStorageSpace, setUsingStorageSpace] = useState<boolean>(false);
+  const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
+  const [lastClicked, setLastClicked] = useState<
+    Clicked.RowId | Clicked.Column
+  >(Clicked.Column);
   const uiManager = new UiManager(
     new Converter(),
     setTableData,
@@ -38,6 +48,19 @@ function App() {
   useEffect(() => {
     uiManager.getInitTableData();
   }, []);
+
+  const handleIdClick = (rowData: (string | number)[]) => {
+    setSelectedRowData(rowData);
+    setLastClicked(Clicked.RowId);
+  };
+
+  const handleColumnClick = (columnValues: {
+    values: (string | number | TableData)[];
+    columnName: string;
+  }) => {
+    setSelectedColumnValues(columnValues);
+    setLastClicked(Clicked.Column);
+  };
 
   const handleViewChange = async (viewSetting: ViewSetting) => {
     setLoading(true);
@@ -88,11 +111,16 @@ function App() {
           handleViewChange={handleViewChange}
           uiManager={uiManager}
         />
-        <BigSidePanel columnValues={selectedColumnValues} />
+        <BigSidePanel
+          columnValues={selectedColumnValues}
+          rowValues={selectedRowData}
+          lastClicked={lastClicked}
+        />
         <MainWindow
           showSqlInput={showSqlInput}
           index={handleIndexChange}
-          setSelectedColumnValues={setSelectedColumnValues}
+          setSelectedColumnValues={handleColumnClick}
+          onIdClick={handleIdClick}
         />
       </div>
     </Context.Provider>
