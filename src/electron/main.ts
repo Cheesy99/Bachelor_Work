@@ -62,7 +62,7 @@ app.on("ready", () => {
     return await dbManager.getRow(id, tableName);
   });
   ipcMain.handle("exportToExcel", async (_, result: TableData) => {
-    await dbManager.exportToExcel(result);
+    await dbManager.exportToExcel();
   });
 
   ipcMain.handle("getTableSchema", async (_, tableName: string) => {

@@ -45,11 +45,11 @@ function TreeComponent({ data }: TreeProps) {
     <div id="treeWrapper" style={{ width: "100%", height: "100vh" }}>
       <Tree
         data={treeData}
-        orientation="horizontal" // Change to "horizontal" if you prefer
-        translate={{ x: 200, y: 100 }} // Adjust the initial position
-        pathFunc="diagonal" // Change to "diagonal" or "straight" if you prefer
-        separation={{ siblings: 1, nonSiblings: 5 }} // Adjust separation
-        nodeSize={{ x: 300, y: 50 }} // Adjust node size
+        orientation="horizontal"
+        translate={{ x: 200, y: 100 }}
+        pathFunc="diagonal"
+        separation={{ siblings: 1, nonSiblings: 5 }}
+        nodeSize={{ x: 300, y: 50 }}
       />
     </div>
   );

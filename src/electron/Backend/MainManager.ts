@@ -11,6 +11,7 @@ import { Worker } from "worker_threads";
 import { fileURLToPath } from "url";
 import path from "path";
 import { isDev } from "../util.js";
+import fs from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -35,11 +36,7 @@ class MainManager {
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
     this.excelExporter = new ExcelExporter();
     this.browserWindow = browserWindow;
-    this.persistencePath = path.join(
-      __dirname,
-      isDev() ? "../../" : "../",
-      "data.json"
-    );
+    this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
   }
 
   get dataBaseExist() {
@@ -115,7 +112,7 @@ class MainManager {
       path.resolve(__dirname, "./workers/SaveWorker.js")
     );
     worker.postMessage({
-      filePath: this.persistencePath,
+      filePath: `${this.persistencePath}data.json`,
       content: tableData,
     });
     console.log("Saving data to disk using worker thread...");
@@ -148,12 +145,58 @@ class MainManager {
     return result.length > 0;
   }
 
-  public async exportToExcel(result: TableData) {
-    await this.excelExporter.exportResultToExcel(result);
+  public async exportToExcel() {
+    const mainTable = await this.getSavedResult();
+    if (mainTable) {
+      const fullTable: TableData = await this.getFullTable(mainTable);
+      console.log("Fulltable", fullTable);
+      const filePath = `${this.persistencePath}excelData.xlsx`;
+
+      await this.excelExporter.exportResultToExcel(fullTable, filePath);
+    } else {
+      console.error("No data available to export");
+    }
+  }
+  async getFullTable(mainTable: TableData): Promise<TableData> {
+    const resultTable: (string | number)[][] = mainTable.table;
+    const resultSchema: string[] = mainTable.schema;
+    const addSchema: Set<string> = new Set();
+    for (let i = 0; i < mainTable.table.length; i++) {
+      for (let j = 1; j < mainTable.table[i].length; j++) {
+        if (typeof mainTable.table[i][j] === "number") {
+          if (mainTable.schema[j]) {
+            resultTable.splice(i, 0);
+            resultTable[i].push(
+              ...(await this.getRow(
+                mainTable.table[i][j] as number,
+                mainTable.schema[j]
+              ))
+            );
+            if (!addSchema.has(mainTable.schema[j])) {
+              addSchema.add(mainTable.schema[j]);
+            }
+          }
+        }
+      }
+    }
+
+    for (const schema of addSchema) {
+      if (schema) {
+        try {
+          const schemaResult = await this.getTableSchema(schema);
+          resultSchema.push(...schemaResult);
+        } catch (error) {
+          console.error(`Error fetching schema for table ${schema}:`, error);
+        }
+      }
+    }
+
+    return { schema: resultSchema, table: resultTable };
   }
 
-  getSavedResult(): Promise<TableData | boolean> {
-    throw new Error("Method not implemented.");
+  public async getSavedResult(): Promise<TableData> {
+    const data = fs.readFileSync(`${this.persistencePath}data.json`, "utf-8");
+    return JSON.parse(data);
   }
 
   saveResult(tableData: any): Promise<void> {

@@ -38,7 +38,7 @@ interface Window {
     subscribeToListener: (callback: (tableData: TableData) => void) => void;
     sendSqlCommand: (sqlCommand: string, tableName: string) => Promise<void>;
     databaseExists: () => Promise<boolean>;
-    exportToExcel: (result: TableData) => Promise<void>;
+    exportToExcel: () => Promise<void>;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
     howManyRows: (tableName: string) => Promise<number>;
     saveResult: (tableData: TableData) => Promise<void>;

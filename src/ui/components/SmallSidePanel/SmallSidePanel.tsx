@@ -28,7 +28,7 @@ function SmallSidePanel({
   const [_, viewType] = context;
 
   const exportToExcel = async () => {
-    // await window.electronAPI.exportToExcel();
+    await window.electronAPI.exportToExcel();
   };
 
   const openSettings = () => {
