@@ -121,6 +121,8 @@ function App() {
           index={handleIndexChange}
           setSelectedColumnValues={handleColumnClick}
           onIdClick={handleIdClick}
+          setTable={setTableData}
+          setTableType={setTableType}
         />
       </div>
     </Context.Provider>

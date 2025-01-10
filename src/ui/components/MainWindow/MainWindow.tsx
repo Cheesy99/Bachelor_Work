@@ -2,8 +2,9 @@ import { useContext, useState } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
 import { Context } from "../../App";
-import { ViewSetting } from "../../connector/Enum/Setting";
+import { ViewSetting, Display } from "../../connector/Enum/Setting";
 import UiManager from "../../connector/UiManager";
+import TreeComponent from "./Tree/TreeComponent";
 enum IndexDirection {
   RIGHT,
   LEFT,
@@ -16,6 +17,8 @@ interface MainWindowProps {
     columnName: string;
   }) => void;
   onIdClick: (values: (string | number)[]) => void;
+  setTable: React.Dispatch<React.SetStateAction<Table | null>>;
+  setTableType: React.Dispatch<React.SetStateAction<ViewSetting>>;
 }
 
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];
@@ -25,8 +28,10 @@ function MainWindow({
   index,
   setSelectedColumnValues,
   onIdClick,
+  setTable,
+  setTableType,
 }: MainWindowProps) {
-  const [viewType, setViewType] = useState("table");
+  const [viewType, setViewType] = useState<Display>(Display.TABLE);
   const context: ContextType | undefined = useContext(Context);
   const [sqlCommand, setSqlCommand] = useState("");
   const [currentRowIndex, setCurrentRowIndex] = useState<number>(0);
@@ -50,7 +55,7 @@ function MainWindow({
   };
 
   const handleToggleChange = () => {
-    setViewType(viewType === "table" ? "tree" : "table");
+    setViewType(viewType === Display.TABLE ? Display.TREE : Display.TABLE);
   };
 
   const handleRight = () => {
@@ -87,7 +92,7 @@ function MainWindow({
       >
         {loading ? (
           <div className="loading-bar">Loading...</div>
-        ) : (
+        ) : viewType === Display.TABLE ? (
           tableData && (
             <Table
               data={tableData}
@@ -96,8 +101,19 @@ function MainWindow({
               onIdClick={onIdClick}
             />
           )
+        ) : (
+          tableData && (
+            <TreeComponent
+              tableSetter={setTable}
+              data={tableData}
+              viewSetting={tableType}
+              uiManager={uiManager}
+              setTableType={setTableType}
+            />
+          )
         )}
       </div>
+
       {showSqlInput && (
         <div className="sql-input">
           <input

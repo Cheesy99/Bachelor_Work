@@ -1,4 +1,9 @@
 export enum ViewSetting {
-  ONETABLE = "one",
-  NESTEDTABLES = "nested",
+  ONETABLE,
+  NESTEDTABLES,
+}
+
+export enum Display {
+  TABLE,
+  TREE,
 }

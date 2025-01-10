@@ -64,7 +64,6 @@ function BigSidePanel({
                   <label>
                     <input
                       type="checkbox"
-                      defaultChecked
                       checked={selectedColumnValues.includes(value)}
                       onChange={() => handleCheckboxChange(value)}
                     />
