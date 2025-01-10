@@ -76,6 +76,10 @@ function MainWindow({
     <div className="main-window">
       <div className="header">
         <h4 className="table-name">main_table</h4>
+        <div className="header-button">
+          <button>Undo</button>
+          <button>Reset</button>
+        </div>
         <div className="toggle-container">
           <span className="toggle-label">Table</span>
           <label className="switch">

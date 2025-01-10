@@ -30,6 +30,9 @@ function BigSidePanel({
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
   >([]);
+  const [selectedRowValues, setSelectedRowValues] = useState<
+    (string | number)[]
+  >([]);
   const filteredValues = Array.from(
     new Set(
       columnValues.values.filter(
@@ -38,7 +41,7 @@ function BigSidePanel({
     )
   );
 
-  const handleFilter = async (
+  const columnFilter = async (
     value: (string | number)[],
     comlumnName: string
   ) => {
@@ -71,17 +74,26 @@ function BigSidePanel({
                   </label>
                 </li>
               ))
-            : rowValues.map((value, index) => <li key={index}>{value}</li>)}
+            : rowValues.map((value, index) => (
+                <li key={index}>
+                  <h3>{tableData?.schema[index]}</h3>
+                  {value}
+                </li>
+              ))}
         </ul>
       </div>
       <div className="buttons">
-        <button
-          onClick={() =>
-            handleFilter(selectedColumnValues, columnValues.columnName)
-          }
-        >
-          filter
-        </button>
+        {lastClicked === Clicked.Column ? (
+          <button
+            onClick={() =>
+              columnFilter(selectedRowValues, columnValues.columnName)
+            }
+          >
+            filter
+          </button>
+        ) : (
+          <button>filter</button>
+        )}
       </div>
     </div>
   );
