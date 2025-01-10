@@ -37,11 +37,8 @@ function Table({ data, viewSetting, onHeaderClick, onIdClick }: TableProps) {
                 {row.map((cell, cellIndex) => (
                   <td
                     key={cellIndex}
-                    onClick={() => {
-                      if (cellIndex === 0) {
-                        onIdClick(row);
-                      }
-                    }}
+                    className={cellIndex === 0 ? "id-column" : ""}
+                    onClick={() => cellIndex === 0 && onIdClick(row)}
                   >
                     {cell}
                   </td>

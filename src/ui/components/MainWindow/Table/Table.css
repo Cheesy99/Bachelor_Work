@@ -19,9 +19,10 @@ td {
 
 th {
   background-color: #000000;
-  position: sticky; /* Make the header sticky */
+  position: sticky;
   top: 0;
-  z-index: 0.01; /* Ensure the header is above the table body */
+  z-index: 0.01;
+  cursor: pointer;
 }
 
 .header-cell {
@@ -31,4 +32,11 @@ th {
 
 .header-cell:hover {
   font-size: 0.83em;
+}
+td.id-column {
+  cursor: pointer; /* Change cursor to pointer for ID column */
+}
+
+tr:hover {
+  background-color: #848484;
 }

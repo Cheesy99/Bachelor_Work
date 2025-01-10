@@ -56,10 +56,20 @@ function BigSidePanel({
     );
   };
 
+  const handleDeleteRow = () => {
+    // Add logic to delete the row
+    console.log("Delete row");
+  };
+
   return (
     <div className="big-side-panel">
       <h2>{lastClicked === Clicked.Column ? "Column Values" : "Row Values"}</h2>
       <div className="list">
+        {lastClicked === Clicked.RowId && (
+          <button onClick={handleDeleteRow} className="delete-button">
+            Delete Row
+          </button>
+        )}
         <ul className="column-elements">
           {lastClicked === Clicked.Column
             ? filteredValues.map((value, index) => (
