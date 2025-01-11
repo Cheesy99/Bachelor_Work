@@ -86,11 +86,6 @@ class UiManager {
     }
   }
 
-  public async deleteRow(id: number, tableName: string): Promise<void> {
-    const command: string = `SELECT * FROM ${tableName} WHERE id != ${id}`;
-    await window.electronAPI.sendSqlCommand(command, tableName);
-  }
-
   public async executeColumnFilter(
     selectedValues: (string | number)[],
     columnName: string
