@@ -83,7 +83,11 @@ function MainWindow({
         <div className="toggle-container">
           <span className="toggle-label">Table</span>
           <label className="switch">
-            <input type="checkbox" onChange={handleToggleChange} />
+            <input
+              type="checkbox"
+              onChange={handleToggleChange}
+              disabled={!tableData}
+            />
             <span className="slider round"></span>
           </label>
           <span className="toggle-label">Tree</span>
@@ -96,17 +100,15 @@ function MainWindow({
       >
         {loading ? (
           <div className="loading-bar">Loading...</div>
-        ) : viewType === Display.TABLE ? (
-          tableData && (
+        ) : tableData ? (
+          viewType === Display.TABLE ? (
             <Table
               data={tableData}
               viewSetting={tableType}
               onHeaderClick={handleHeaderClick}
               onIdClick={onIdClick}
             />
-          )
-        ) : (
-          tableData && (
+          ) : (
             <TreeComponent
               tableSetter={setTable}
               data={tableData}
@@ -115,6 +117,10 @@ function MainWindow({
               setTableType={setTableType}
             />
           )
+        ) : (
+          <div className="default-stage">
+            <p>No data available. Please select a table or load data.</p>
+          </div>
         )}
       </div>
 

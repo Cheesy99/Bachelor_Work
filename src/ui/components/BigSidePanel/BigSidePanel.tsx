@@ -56,9 +56,8 @@ function BigSidePanel({
     );
   };
 
-  const handleDeleteRow = () => {
-    // Add logic to delete the row
-    console.log("Delete row");
+  const handleDeleteRow = async (id: number, tableName: string) => {
+    await uiManager.deleteRow(id, tableName);
   };
 
   return (
@@ -66,7 +65,12 @@ function BigSidePanel({
       <h2>{lastClicked === Clicked.Column ? "Column Values" : "Row Values"}</h2>
       <div className="list">
         {lastClicked === Clicked.RowId && (
-          <button onClick={handleDeleteRow} className="delete-button">
+          <button
+            onClick={() =>
+              handleDeleteRow(rowValues[0] as number, "main_table")
+            }
+            className="delete-button"
+          >
             Delete Row
           </button>
         )}
