@@ -45,7 +45,7 @@ class DataBaseConnector {
     });
   }
 
-  public sqlCommandWithReponse(sqlCommand: string): Promise<any[]> {
+  public sqlCommandWithReponse(sqlCommand: any): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this.dataBase.all(sqlCommand, (err, rows) => {
         if (err) {

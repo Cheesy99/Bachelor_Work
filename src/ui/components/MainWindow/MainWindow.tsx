@@ -51,7 +51,7 @@ function MainWindow({
   };
 
   const handleSqlSubmit = async () => {
-    await window.electronAPI.sendSqlCommand(sqlCommand, "main_table");
+    await window.electronAPI.executeSqlCommandStack(sqlCommand, "main_table");
   };
 
   const handleToggleChange = () => {

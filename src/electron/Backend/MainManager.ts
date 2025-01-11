@@ -23,6 +23,7 @@ class MainManager {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
+  private fromDisk: boolean;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -35,6 +36,7 @@ class MainManager {
     this.tableBuilder = new TableBuilder();
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
     this.excelExporter = new ExcelExporter();
+    this.fromDisk = false;
     this.browserWindow = browserWindow;
     this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
   }
@@ -43,29 +45,41 @@ class MainManager {
     return this.dataBase.databaseExists();
   }
 
-  public async insertJson(json: string): Promise<void> {
-    const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
-      const cleanedKey = DataCleaner.cleanName(p1);
-      return `"${cleanedKey}":`;
-    });
+  public async insertJson(json: string): Promise<string> {
+    try {
+      const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
+        const cleanedKey = DataCleaner.cleanName(p1);
+        return `"${cleanedKey}":`;
+      });
 
-    const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-    let schemaResult: {
-      command: string[];
-      tableSchema: TableSchema;
-    } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
-    await this.dataBase.sqlCommand(schemaResult.command);
-    const mainInsert: any[] = await this.tableBuilder.build(
-      jsonObject,
-      schemaResult.tableSchema
-    );
-    await this.dataBase.sqlCommand(mainInsert);
+      const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
+      let schemaResult: {
+        command: string[];
+        tableSchema: TableSchema;
+      } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
+      await this.dataBase.sqlCommand(schemaResult.command);
+      const mainInsert: any[] = await this.tableBuilder.build(
+        jsonObject,
+        schemaResult.tableSchema
+      );
+      await this.dataBase.sqlCommand(mainInsert);
 
-    const fromID = { startId: 0, endId: 100 };
-    const tableData = await this.getNestedTableData(fromID, "main_table");
-    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+      const fromID = { startId: 0, endId: 100 };
+      const tableData = await this.getNestedTableData(fromID, "main_table");
+      this.browserWindow.webContents.send(
+        "tableDataFromBackend",
+        tableData,
+        false
+      );
+
+      return "ok";
+    } catch (error) {
+      console.error("Error handling insertJson:", error);
+      return "Invalid Json object please give valid json object";
+    }
   }
 
+  //What is the purpose of this I don't like it need refactoring and remove this method
   public async getTableData(fromID: FromId, tableName: string): Promise<void> {
     const { startId, endId } = fromID;
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
@@ -73,7 +87,11 @@ class MainManager {
     const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
     const tableData: TableData = { schema: schema, table: table };
-    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+    this.browserWindow.webContents.send(
+      "tableDataFromBackend",
+      tableData,
+      false
+    );
   }
 
   public async getNestedTableData(
@@ -100,35 +118,42 @@ class MainManager {
   }
 
   public async uiSqlCommand(
-    sqlCommand: string,
+    sqlCommand: any[],
     tableName: string
-  ): Promise<void> {
-    let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
-    const table = result.map((row: string | number) => Object.values(row));
-    const schema = await this.getTableSchema(tableName);
-    const tableData = { schema: schema, table: table };
-    console.log("I was called");
-    const worker = new Worker(
-      path.resolve(__dirname, "./workers/SaveWorker.js")
-    );
-    worker.postMessage({
-      filePath: `${this.persistencePath}data.json`,
-      content: tableData,
-    });
-    console.log("Saving data to disk using worker thread...");
-    worker.on("message", (message) => {
-      if (message.status === "success") {
-        console.log("Data saved successfully");
-      } else {
-        console.error("Error saving data:", message.error);
-      }
-    });
+  ): Promise<string> {
+    try {
+      let command = sqlCommand.join("; ");
+      let result = await this.dataBase.sqlCommandWithReponse(command);
+      const table = result.map((row: string | number) => Object.values(row));
+      const schema = await this.getTableSchema(tableName);
+      const tableData = { schema: schema, table: table };
+      const worker = new Worker(
+        path.resolve(__dirname, "./workers/SaveWorker.js")
+      );
+      worker.postMessage({
+        filePath: `${this.persistencePath}data.json`,
+        content: tableData,
+      });
+      worker.on("message", (message) => {
+        if (message.status === "success") {
+          console.log("Data saved successfully");
+        } else {
+          console.error("Error saving data:", message.error);
+        }
+      });
 
-    const partialTableData = { schema: schema, table: table.slice(0, 100) };
-    this.browserWindow.webContents.send(
-      "tableDataFromBackend",
-      partialTableData
-    );
+      const partialTableData = { schema: schema, table: table.slice(0, 100) };
+      this.browserWindow.webContents.send(
+        "tableDataFromBackend",
+        partialTableData,
+        true
+      );
+
+      return "ok";
+    } catch (error) {
+      console.error("Error executing SQL command:", error);
+      return "An error occurred while executing the SQL command";
+    }
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
@@ -157,7 +182,7 @@ class MainManager {
       console.error("No data available to export");
     }
   }
-  async getFullTable(mainTable: TableData): Promise<TableData> {
+  private async getFullTable(mainTable: TableData): Promise<TableData> {
     const resultTable: (string | number)[][] = mainTable.table;
     const resultSchema: string[] = mainTable.schema;
     const addSchema: Set<string> = new Set();
@@ -218,6 +243,27 @@ class MainManager {
       throw new Error(`No row found with id ${id} in table ${tableName}`);
     }
     return Object.values(result[0]);
+  }
+
+  async cleanDatabase(): Promise<void> {
+    try {
+      // Get the list of all tables in the database
+      const tablesQuery = `SELECT name FROM sqlite_master WHERE type='table'`;
+      const tablesResult = await this.dataBase.sqlCommandWithReponse(
+        tablesQuery
+      );
+
+      // Iterate over each table and drop it
+      for (const table of tablesResult) {
+        const dropTableQuery = `DROP TABLE IF EXISTS ${table.name}`;
+        await this.dataBase.sqlCommand([dropTableQuery]);
+      }
+
+      console.log("Database cleared successfully.");
+    } catch (error) {
+      console.error("Error clearing the database:", error);
+      throw new Error("Failed to clear the database.");
+    }
   }
 }
 

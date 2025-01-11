@@ -15,9 +15,11 @@ enum Clicked {
   Column,
 }
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];
-
+type ContextStack = [any[], React.Dispatch<React.SetStateAction<any[]>>];
 export const Context = React.createContext<ContextType | undefined>(undefined);
-
+export const ContextCommandStack = React.createContext<
+  ContextStack | undefined
+>(undefined);
 function App() {
   const [tableData, setTableData] = useState<Table | null>(null);
   const [tableType, setTableType] = useState<ViewSetting>(ViewSetting.ONETABLE);
@@ -34,7 +36,6 @@ function App() {
     startId: 1,
     endId: 100,
   });
-  const [usingStorageSpace, setUsingStorageSpace] = useState<boolean>(false);
   const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
   const [lastClicked, setLastClicked] = useState<
     Clicked.RowId | Clicked.Column
@@ -43,7 +44,9 @@ function App() {
     new Converter(),
     setTableData,
     setLoading,
-    tableType
+    tableType,
+    sqlCommandStack,
+    setSqlCommandStack
   );
   useEffect(() => {
     uiManager.getInitTableData();
@@ -105,26 +108,30 @@ function App() {
   };
   return (
     <Context.Provider value={[tableData, tableType, loading, uiManager]}>
-      <div className="app-container">
-        <SmallSidePanel
-          toggleSqlInput={toggleSqlInput}
-          handleViewChange={handleViewChange}
-          uiManager={uiManager}
-        />
-        <BigSidePanel
-          columnValues={selectedColumnValues}
-          rowValues={selectedRowData}
-          lastClicked={lastClicked}
-        />
-        <MainWindow
-          showSqlInput={showSqlInput}
-          index={handleIndexChange}
-          setSelectedColumnValues={handleColumnClick}
-          onIdClick={handleIdClick}
-          setTable={setTableData}
-          setTableType={setTableType}
-        />
-      </div>
+      <ContextCommandStack.Provider
+        value={[sqlCommandStack, setSqlCommandStack]}
+      >
+        <div className="app-container">
+          <SmallSidePanel
+            toggleSqlInput={toggleSqlInput}
+            handleViewChange={handleViewChange}
+            uiManager={uiManager}
+          />
+          <BigSidePanel
+            columnValues={selectedColumnValues}
+            rowValues={selectedRowData}
+            lastClicked={lastClicked}
+          />
+          <MainWindow
+            showSqlInput={showSqlInput}
+            index={handleIndexChange}
+            setSelectedColumnValues={handleColumnClick}
+            onIdClick={handleIdClick}
+            setTable={setTableData}
+            setTableType={setTableType}
+          />
+        </div>
+      </ContextCommandStack.Provider>
     </Context.Provider>
   );
 }

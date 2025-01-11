@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import "./BigSidePanel.css";
 import { ViewSetting } from "../../connector/Enum/Setting";
 import UiManager from "../../connector/UiManager";
-import { Context } from "../../App";
+import { Context, ContextCommandStack } from "../../App";
 
 enum Clicked {
   RowId,
@@ -16,24 +16,30 @@ interface BigSidePanelProps {
 }
 
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];
-
+type ContextStack = [any[], React.Dispatch<React.SetStateAction<any[]>>];
 function BigSidePanel({
   columnValues,
   rowValues,
   lastClicked,
 }: BigSidePanelProps) {
   const context: ContextType | undefined = useContext(Context);
+  const contextCommandStack: ContextStack | undefined =
+    useContext(ContextCommandStack);
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
+  if (!contextCommandStack) {
+    throw new Error("contextCommandStack is not defined");
+  }
   const [tableData, tableType, loading, uiManager] = context;
+  const [sqlCommandStack, setSqlCommandStack] = contextCommandStack;
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
   >([]);
   const [selectedRowValues, setSelectedRowValues] = useState<
     (string | number)[]
   >([]);
-  const filteredValues = Array.from(
+  const filteredColumnValues = Array.from(
     new Set(
       columnValues.values.filter(
         (value) => typeof value === "string" || typeof value === "number"
@@ -43,12 +49,19 @@ function BigSidePanel({
 
   const columnFilter = async (
     value: (string | number)[],
-    comlumnName: string
+    columnName: string
   ) => {
-    await uiManager.executeColumnFilter(value, comlumnName);
+    const formattedValues = value
+      .map((value) => (typeof value === "string" ? `'${value}'` : value))
+      .join(", ");
+    let command = `SELECT * FROM main_table WHERE ${columnName} IN (${formattedValues})`;
+    const history = sqlCommandStack;
+    history.push(command);
+    setSqlCommandStack(history);
+    await uiManager.executeStack();
   };
 
-  const handleCheckboxChange = (value: string | number) => {
+  const handleColumnCheckbox = (value: string | number) => {
     setSelectedColumnValues((prevSelected) =>
       prevSelected.includes(value)
         ? prevSelected.filter((item) => item !== value)
@@ -57,7 +70,11 @@ function BigSidePanel({
   };
 
   const handleDeleteRow = async (id: number, tableName: string) => {
-    await uiManager.deleteRow(id, tableName);
+    const command: string = `SELECT * FROM ${tableName} WHERE id != ${id}`;
+    const history = sqlCommandStack;
+    history.push(command);
+    setSqlCommandStack(history);
+    await uiManager.executeStack();
   };
 
   return (
@@ -76,13 +93,13 @@ function BigSidePanel({
         )}
         <ul className="column-elements">
           {lastClicked === Clicked.Column
-            ? filteredValues.map((value, index) => (
+            ? filteredColumnValues.map((value, index) => (
                 <li key={index}>
                   <label>
                     <input
                       type="checkbox"
                       checked={selectedColumnValues.includes(value)}
-                      onChange={() => handleCheckboxChange(value)}
+                      onChange={() => handleColumnCheckbox(value)}
                     />
                     {value}
                   </label>
@@ -100,7 +117,7 @@ function BigSidePanel({
         {lastClicked === Clicked.Column ? (
           <button
             onClick={() =>
-              columnFilter(selectedRowValues, columnValues.columnName)
+              columnFilter(selectedColumnValues, columnValues.columnName)
             }
           >
             filter

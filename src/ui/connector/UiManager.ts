@@ -12,23 +12,31 @@ class UiManager {
     React.SetStateAction<Table | null>
   > | null;
   private readonly tableType: ViewSetting;
+  private sqlCommandStack: any[];
+  private setSqlCommandStack: React.Dispatch<React.SetStateAction<any[]>>;
 
   public constructor(
     converter: Converter,
     tableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    tableType: ViewSetting
+    tableType: ViewSetting,
+    sqlCommandStack: any[],
+    setSqlCommandStack: React.Dispatch<React.SetStateAction<any[]>>
   ) {
+    this.setSqlCommandStack = setSqlCommandStack;
     this.converter = converter;
     this.setTableData = tableRef;
     this.setLoading = setLoading;
     this.tableType = tableType;
-    window.electronAPI.subscribeToListener(async (tableData: TableData) => {
-      if (this.setTableData) {
-        sessionStorage.setItem("TableData", JSON.stringify(tableData));
-        this.setTableData(await this.convert(this.tableType));
+    this.sqlCommandStack = sqlCommandStack;
+    window.electronAPI.subscribeToListener(
+      async (tableData: TableData, fromDisk: boolean) => {
+        if (this.setTableData) {
+          sessionStorage.setItem("TableData", JSON.stringify(tableData));
+          this.setTableData(await this.convert(this.tableType));
+        }
       }
-    });
+    );
   }
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -46,12 +54,13 @@ class UiManager {
         this.setLoading(true);
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
-        await window.electronAPI.sendJsonFile(fileData);
+        let reponse = await window.electronAPI.sendJsonFile(fileData);
         this.setLoading(false);
+        if (reponse !== "ok") {
+          alert(reponse);
+        }
       };
       reader.readAsText(file);
-    } else {
-      alert("Invalid file type. Please select a .json file.");
     }
   }
 
@@ -67,6 +76,9 @@ class UiManager {
     }
   }
 
+  public async clearOutDatabase(): Promise<void> {
+    return await window.electronAPI.cleanDatabase();
+  }
   public async convert(tableView: ViewSetting): Promise<Table> {
     const table = sessionStorage.getItem("TableData");
     const result: TableData = JSON.parse(table!);
@@ -86,25 +98,14 @@ class UiManager {
     }
   }
 
-  public async deleteRow(id: number, tableName: string): Promise<void> {
-    const command: string = `SELECT * FROM ${tableName} WHERE id != ${id}`;
-    await window.electronAPI.sendSqlCommand(command, tableName);
-  }
+  public async executeStack() {
+    console.log("This is stack value", this.sqlCommandStack);
+    let reponse = await window.electronAPI.executeSqlCommandStack(
+      this.sqlCommandStack,
+      "main_table"
+    );
 
-  public async executeColumnFilter(
-    selectedValues: (string | number)[],
-    columnName: string
-  ): Promise<void> {
-    if (selectedValues.length === 0) {
-      const command = "SELECT * FROM main_table";
-      await window.electronAPI.sendSqlCommand(command, "main_table");
-    } else {
-      const formattedValues = selectedValues
-        .map((value) => (typeof value === "string" ? `'${value}'` : value))
-        .join(", ");
-
-      const command = `SELECT * FROM main_table WHERE ${columnName} IN (${formattedValues})`;
-      await window.electronAPI.sendSqlCommand(command, "main_table");
+    if (reponse !== "ok") {
     }
   }
 }

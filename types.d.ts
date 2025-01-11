@@ -27,7 +27,7 @@ type FromId = {
 
 interface Window {
   electronAPI: {
-    sendJsonFile: (fileData: string) => Promise<void>;
+    sendJsonFile: (fileData: string) => Promise<string>;
     getNestedTableData: (
       fromID: FromId,
       tableName: string
@@ -35,14 +35,20 @@ interface Window {
     getTableData: (fromID: FromId, tableName: string) => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
-    subscribeToListener: (callback: (tableData: TableData) => void) => void;
-    sendSqlCommand: (sqlCommand: string, tableName: string) => Promise<void>;
+    subscribeToListener: (
+      callback: (tableData: TableData, fromDisk: boolean) => void
+    ) => void;
+    executeSqlCommandStack: (
+      sqlCommand: any[],
+      tableName: string
+    ) => Promise<string>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => Promise<void>;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
     howManyRows: (tableName: string) => Promise<number>;
     saveResult: (tableData: TableData) => Promise<void>;
     getSaveResult: () => Promise<TableData | boolean>;
+    cleanDatabase: () => Promise<void>;
     // insertUsingWorkerNodes: (fileData: string) => Promise<void>;
   };
 }

@@ -26,7 +26,7 @@ app.on("ready", () => {
   ipcMain.handle("upload-json", async (_, fileData: string) => {
     try {
       if (dbManager) {
-        await dbManager.insertJson(fileData);
+        return await dbManager.insertJson(fileData);
       } else {
         console.error(
           "MainManager instance or insertJson method is not defined"
@@ -51,12 +51,9 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle(
-    "sqlCommand",
-    async (_, command: string, tableName: string) => {
-      return await dbManager.uiSqlCommand(command, tableName);
-    }
-  );
+  ipcMain.handle("sqlCommand", async (_, command: any[], tableName: string) => {
+    return await dbManager.uiSqlCommand(command, tableName);
+  });
 
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
     return await dbManager.getRow(id, tableName);
@@ -83,5 +80,8 @@ app.on("ready", () => {
 
   ipcMain.handle("getSavedResult", async (_) => {
     return await dbManager.getSavedResult();
+  });
+  ipcMain.handle("cleanDatabase", async (_) => {
+    return await dbManager.cleanDatabase();
   });
 });
