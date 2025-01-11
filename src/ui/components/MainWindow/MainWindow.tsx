@@ -153,8 +153,7 @@ function MainWindow({
 
       {showSqlInput && (
         <div className="sql-input">
-          <input
-            type="text"
+          <textarea
             value={sqlCommand}
             onChange={(e) => setSqlCommand(e.target.value)}
             placeholder="Enter SQL command"
