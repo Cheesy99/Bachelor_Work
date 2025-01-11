@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
-import { Context } from "../../App";
+import { createSqlQuery } from "../../connector/Utils";
+import { Context, ContextCommandStack } from "../../App";
 import { ViewSetting, Display } from "../../connector/Enum/Setting";
 import UiManager from "../../connector/UiManager";
 import TreeComponent from "./Tree/TreeComponent";
@@ -20,7 +21,7 @@ interface MainWindowProps {
   setTable: React.Dispatch<React.SetStateAction<Table | null>>;
   setTableType: React.Dispatch<React.SetStateAction<ViewSetting>>;
 }
-
+type ContextStack = [any[], React.Dispatch<React.SetStateAction<any[]>>];
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];
 
 function MainWindow({
@@ -35,9 +36,15 @@ function MainWindow({
   const context: ContextType | undefined = useContext(Context);
   const [sqlCommand, setSqlCommand] = useState("");
   const [currentRowIndex, setCurrentRowIndex] = useState<number>(0);
+  const contextCommandStack: ContextStack | undefined =
+    useContext(ContextCommandStack);
   if (!context) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
+  if (!contextCommandStack) {
+    throw new Error("contextCommandStack is not defined");
+  }
+  const [sqlCommandStack, setSqlCommandStack] = contextCommandStack;
   const [tableData, tableType, loading, uiManager] = context;
 
   const handleHeaderClick = (columnIndex: number) => {
@@ -72,13 +79,33 @@ function MainWindow({
       index(IndexDirection.LEFT);
     }
   };
+  async function handleUndo(): Promise<void> {
+    let history: any[] = sqlCommandStack;
+    if (history.length !== 0) {
+      history.pop();
+      await uiManager.executeStack();
+    }
+  }
+
+  useEffect(() => {
+    if (showSqlInput) {
+      setSqlCommand(createSqlQuery(sqlCommandStack));
+    }
+  }, [showSqlInput, sqlCommandStack]);
+
+  async function handleReset(): Promise<void> {
+    //HERE BUG IN THAT NOW WHOLE TABLE SAVED ON DISK
+    setSqlCommandStack([]);
+    await uiManager.executeStack();
+  }
+
   return (
     <div className="main-window">
       <div className="header">
         <h4 className="table-name">main_table</h4>
         <div className="header-button">
-          <button>Undo</button>
-          <button>Reset</button>
+          <button onClick={handleUndo}>Undo</button>
+          <button onClick={handleReset}>Reset</button>
         </div>
         <div className="toggle-container">
           <span className="toggle-label">Table</span>

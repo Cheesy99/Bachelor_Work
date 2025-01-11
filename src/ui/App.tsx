@@ -65,6 +65,8 @@ function App() {
     setLastClicked(Clicked.Column);
   };
 
+  const [sqlInputValue, setSqlInputValue] = useState<string>("");
+
   const handleViewChange = async (viewSetting: ViewSetting) => {
     setLoading(true);
     setTableType(viewSetting);

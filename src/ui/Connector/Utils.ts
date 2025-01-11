@@ -57,3 +57,13 @@ export const removeId = (
 ): (string | number)[][] => {
   return table.map((row) => row.slice(1));
 };
+
+export const createSqlQuery = (command: any[]): string => {
+  let result: string = "";
+  if (command.length !== 0) {
+    result = command.join(" ");
+    result = result.replace(/AND/, "WHERE");
+  }
+  result = `SELECT * FROM main_table ${result}`;
+  return result;
+};

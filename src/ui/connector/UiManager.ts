@@ -1,7 +1,7 @@
 import Converter from "./Converter";
 import NestedTableConverter from "./NestedTableConverter";
 import OneTableConverter from "./OneTableConverter";
-import { translateUmlauts } from "./Utils";
+import { translateUmlauts, createSqlQuery } from "./Utils";
 import { ViewSetting } from "./Enum/Setting";
 import React from "react";
 
@@ -99,14 +99,8 @@ class UiManager {
   }
 
   public async executeStack() {
-    console.log("This is stack value", this.sqlCommandStack);
-    let command = this.sqlCommandStack.join(" ");
-    command = command.replace(/AND/, "WHERE");
-    command = `SELECT * FROM main_table ${command}`;
-
-    console.log("Final command:", command);
     let reponse = await window.electronAPI.executeSqlCommandStack(
-      command,
+      createSqlQuery(this.sqlCommandStack),
       "main_table"
     );
 
