@@ -105,8 +105,15 @@ class UiManager {
     );
 
     if (reponse !== "ok") {
+      alert("Sql Error occured please press undo or reset");
     }
   }
+
+  public async changingSchemaName(
+    stackCommand: any[],
+    orignalColumnName: string,
+    newColumnName: string
+  ) {}
 }
 
 export default UiManager;

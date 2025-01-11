@@ -57,6 +57,8 @@ function MainWindow({
     }
   };
 
+  const onDoubleClick = (columnName: string) => {};
+
   const handleSqlSubmit = async () => {
     await window.electronAPI.executeSqlCommandStack(sqlCommand, "main_table");
   };
@@ -131,6 +133,7 @@ function MainWindow({
           viewType === Display.TABLE ? (
             <Table
               data={tableData}
+              onDoubleClick={onDoubleClick}
               viewSetting={tableType}
               onHeaderClick={handleHeaderClick}
               onIdClick={onIdClick}

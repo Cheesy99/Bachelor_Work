@@ -1,22 +1,45 @@
 import "./Table.css";
 import { ViewSetting } from "../../../connector/Enum/Setting";
-import React from "react";
+import React, { useState } from "react";
 import TreeComponent from "../Tree/TreeComponent";
 interface TableProps {
   data: Table;
   viewSetting: ViewSetting;
   onHeaderClick: (column: number) => void;
   onIdClick: (rowData: (string | number)[]) => void;
+  onDoubleClick: (string: string) => void;
 }
 
-function Table({ data, viewSetting, onHeaderClick, onIdClick }: TableProps) {
+function Table({
+  data,
+  viewSetting,
+  onHeaderClick,
+  onIdClick,
+  onDoubleClick,
+}: TableProps) {
   const isOneTable = (viewSetting: ViewSetting): boolean => {
     return viewSetting === ViewSetting.ONETABLE ? true : false;
   };
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [newColumnName, setNewColumnName] = useState<string>("");
 
   if (!data) {
     return <div>No data available</div>;
   }
+
+  const handleHeaderDoubleClick = (index: number) => {
+    setEditingIndex(index);
+    setNewColumnName(data.schema[index]);
+  };
+
+  const handleHeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewColumnName(e.target.value);
+  };
+
+  const handleHeaderBlur = (index: number) => {
+    onDoubleClick(newColumnName);
+    setEditingIndex(null);
+  };
 
   const renderTableData = (data: TableData) => {
     return (
@@ -24,9 +47,23 @@ function Table({ data, viewSetting, onHeaderClick, onIdClick }: TableProps) {
         <table>
           <thead>
             <tr>
-              {data.schema.map((item, index) => (
-                <th key={index} onClick={() => onHeaderClick(index)}>
-                  {item}
+              {data.schema.map((columnName, index) => (
+                <th
+                  key={index}
+                  onClick={() => onHeaderClick(index)}
+                  onDoubleClick={() => handleHeaderDoubleClick(index)}
+                >
+                  {editingIndex === index ? (
+                    <input
+                      type="text"
+                      value={newColumnName}
+                      onChange={handleHeaderChange}
+                      onBlur={() => handleHeaderBlur(index)}
+                      autoFocus
+                    />
+                  ) : (
+                    columnName
+                  )}
                 </th>
               ))}
             </tr>

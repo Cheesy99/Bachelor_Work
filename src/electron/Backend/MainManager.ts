@@ -179,7 +179,6 @@ class MainManager {
     const mainTable = await this.getSavedResult();
     if (mainTable) {
       const fullTable: TableData = await this.getFullTable(mainTable);
-      console.log("Fulltable", fullTable);
       const filePath = `${this.persistencePath}excelData.xlsx`;
 
       await this.excelExporter.exportResultToExcel(fullTable, filePath);
@@ -187,6 +186,7 @@ class MainManager {
       console.error("No data available to export");
     }
   }
+
   private async getFullTable(mainTable: TableData): Promise<TableData> {
     const resultTable: (string | number)[][] = mainTable.table;
     const resultSchema: string[] = mainTable.schema;
