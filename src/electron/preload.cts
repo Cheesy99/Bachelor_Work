@@ -11,7 +11,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("getNestedTableData", fromID, tableName),
 
   executeSqlCommandStack: (
-    command: any[],
+    command: any,
     tableName: string
   ): Promise<string> => {
     return ipcRenderer.invoke("sqlCommand", command, tableName);

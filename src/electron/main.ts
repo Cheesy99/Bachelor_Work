@@ -51,7 +51,7 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle("sqlCommand", async (_, command: any[], tableName: string) => {
+  ipcMain.handle("sqlCommand", async (_, command: any, tableName: string) => {
     return await dbManager.uiSqlCommand(command, tableName);
   });
 

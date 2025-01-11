@@ -100,8 +100,13 @@ class UiManager {
 
   public async executeStack() {
     console.log("This is stack value", this.sqlCommandStack);
+    let command = this.sqlCommandStack.join(" ");
+    command = command.replace(/AND/, "WHERE");
+    command = `SELECT * FROM main_table ${command}`;
+
+    console.log("Final command:", command);
     let reponse = await window.electronAPI.executeSqlCommandStack(
-      this.sqlCommandStack,
+      command,
       "main_table"
     );
 

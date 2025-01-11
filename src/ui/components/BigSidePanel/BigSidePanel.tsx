@@ -54,7 +54,7 @@ function BigSidePanel({
     const formattedValues = value
       .map((value) => (typeof value === "string" ? `'${value}'` : value))
       .join(", ");
-    let command = `SELECT * FROM main_table WHERE ${columnName} IN (${formattedValues})`;
+    let command = `AND ${columnName} IN (${formattedValues})`;
     const history = sqlCommandStack;
     history.push(command);
     setSqlCommandStack(history);
@@ -70,7 +70,7 @@ function BigSidePanel({
   };
 
   const handleDeleteRow = async (id: number, tableName: string) => {
-    const command: string = `SELECT * FROM ${tableName} WHERE id != ${id}`;
+    const command: string = `AND id != ${id}`;
     const history = sqlCommandStack;
     history.push(command);
     setSqlCommandStack(history);

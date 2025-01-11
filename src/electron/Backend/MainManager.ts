@@ -118,12 +118,12 @@ class MainManager {
   }
 
   public async uiSqlCommand(
-    sqlCommand: any[],
+    sqlCommand: any,
     tableName: string
   ): Promise<string> {
     try {
-      let command = sqlCommand.join("; ");
-      let result = await this.dataBase.sqlCommandWithReponse(command);
+      console.log("Commands", sqlCommand);
+      let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
       const schema = await this.getTableSchema(tableName);
       const tableData = { schema: schema, table: table };
@@ -142,7 +142,12 @@ class MainManager {
         }
       });
 
-      const partialTableData = { schema: schema, table: table.slice(0, 100) };
+      const maxValue = table.length > 100 ? 100 : table.length;
+
+      const partialTableData = {
+        schema: schema,
+        table: table.slice(0, maxValue),
+      };
       this.browserWindow.webContents.send(
         "tableDataFromBackend",
         partialTableData,

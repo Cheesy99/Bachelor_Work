@@ -39,7 +39,7 @@ interface Window {
       callback: (tableData: TableData, fromDisk: boolean) => void
     ) => void;
     executeSqlCommandStack: (
-      sqlCommand: any[],
+      sqlCommand: any,
       tableName: string
     ) => Promise<string>;
     databaseExists: () => Promise<boolean>;
