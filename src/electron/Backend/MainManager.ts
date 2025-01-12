@@ -9,7 +9,7 @@ import SqlTextGenerator from "./SqlTextGenerator.js";
 import { BrowserWindow } from "electron";
 import { Worker } from "worker_threads";
 import { fileURLToPath } from "url";
-import path from "path";
+import path, { resolve } from "path";
 import { isDev } from "../util.js";
 import fs from "fs";
 const __filename = fileURLToPath(import.meta.url);
@@ -144,16 +144,19 @@ class MainManager {
       const schema = await this.getTableSchema(tableName);
       const tableData = { schema: schema, table: table };
       const worker = new Worker(path.resolve(__dirname, "./SaveWorker.js"));
-      worker.postMessage({
-        filePath: `${this.persistencePath}data.json`,
-        content: tableData,
-      });
-      worker.on("message", (message) => {
-        if (message.status === "success") {
-          console.log("Data saved successfully");
-        } else {
-          console.error("Error saving data:", message.error);
-        }
+
+      const workerPromise = new Promise<void>((resolve, reject) => {
+        worker.postMessage({
+          filePath: `${this.persistencePath}data.json`,
+          content: tableData,
+        });
+        worker.on("message", (message) => {
+          if (message.status === "success") {
+            console.log("Data saved successfully");
+          } else {
+            console.error("Error saving data:", message.error);
+          }
+        });
       });
 
       const maxValue = table.length > 100 ? 100 : table.length;
@@ -167,6 +170,15 @@ class MainManager {
         partialTableData,
         true
       );
+
+      try {
+        await workerPromise;
+      } catch (error) {
+        this.fromDisk = false;
+        console.error("Failed to save data:", error);
+        throw error;
+      }
+
       this.fromDisk = true;
       return "ok";
     } catch (error) {
