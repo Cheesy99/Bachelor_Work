@@ -40,7 +40,7 @@ app.on("ready", () => {
   ipcMain.handle(
     "getNestedTableData",
     async (_, fromID: FromId, tableName: string) => {
-      return await dbManager.getNestedTableData(fromID, tableName);
+      return await dbManager.getTableDataObject(fromID, tableName);
     }
   );
 

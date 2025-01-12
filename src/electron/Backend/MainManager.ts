@@ -9,7 +9,7 @@ import SqlTextGenerator from "./SqlTextGenerator.js";
 import { BrowserWindow } from "electron";
 import { Worker } from "worker_threads";
 import { fileURLToPath } from "url";
-import path, { resolve } from "path";
+import path from "path";
 import { isDev } from "../util.js";
 import fs from "fs";
 const __filename = fileURLToPath(import.meta.url);
@@ -65,7 +65,7 @@ class MainManager {
       await this.dataBase.sqlCommand(mainInsert);
 
       const fromID = { startId: 0, endId: 100 };
-      const tableData = await this.getNestedTableData(fromID, "main_table");
+      const tableData = await this.getTableDataObject(fromID, "main_table");
       this.browserWindow.webContents.send(
         "tableDataFromBackend",
         tableData,
@@ -111,7 +111,7 @@ class MainManager {
     );
   }
 
-  public async getNestedTableData(
+  public async getTableDataObject(
     fromID: FromId,
     tableName: string
   ): Promise<TableData> {
@@ -153,8 +153,21 @@ class MainManager {
         worker.on("message", (message) => {
           if (message.status === "success") {
             console.log("Data saved successfully");
+            resolve();
           } else {
             console.error("Error saving data:", message.error);
+            reject(new Error(message.error));
+          }
+        });
+
+        worker.on("error", (error) => {
+          console.error("Worker error:", error);
+          reject(error);
+        });
+
+        worker.on("exit", (code) => {
+          if (code !== 0) {
+            reject(new Error(`Worker stopped with exit code ${code}`));
           }
         });
       });
@@ -176,12 +189,13 @@ class MainManager {
       } catch (error) {
         this.fromDisk = false;
         console.error("Failed to save data:", error);
-        throw error;
+        return "failed to save";
       }
 
       this.fromDisk = true;
       return "ok";
     } catch (error) {
+      this.fromDisk = false;
       console.error("Error executing SQL command:", error);
       return "An error occurred while executing the SQL command";
     }
