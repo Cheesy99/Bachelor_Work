@@ -31,6 +31,15 @@ function SmallSidePanel({
     await window.electronAPI.exportToExcel();
   };
 
+  const deleteDatabase = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete the database?"
+    );
+    if (confirmed) {
+      setIsModalOpen(false);
+      await uiManager.clearOutDatabase();
+    }
+  };
   const openSettings = () => {
     setIsModalOpen(true);
   };
@@ -56,6 +65,7 @@ function SmallSidePanel({
         <i className="fas fa-cog icon"></i>
       </label>
       <SettingsModal
+        deleteDatabase={deleteDatabase}
         isOpen={isModalOpen}
         onRequestClose={closeSettings}
         handleViewChange={handleViewChange}
