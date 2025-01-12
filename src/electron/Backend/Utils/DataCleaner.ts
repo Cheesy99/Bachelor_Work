@@ -3,13 +3,13 @@ import TableSchema from "../Interfaces/TableSchema.js";
 
 class DataCleaner {
   public static cleanName(name: string): string {
-    return name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9_]/g, "_");
+    return name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9_]/g, "");
   }
 
   public static formatValue(value: any): string {
     if (typeof value === "string") {
       // Replace spaces and hyphens with underscores
-      value = value.replace(/[\s-]/g, "_");
+      value = value.replace(/[\s-]/g, "");
       return `'${value.replace(/'/g, "''")}'`;
     }
     return `${value}`;

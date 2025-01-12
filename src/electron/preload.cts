@@ -53,8 +53,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("getSaveResult");
   },
 
-  getTableData: (fromID: FromId, tableName: string) => {
-    return ipcRenderer.invoke("getTableData", fromID, tableName);
+  getTableData: (from: From, tableName: string) => {
+    return ipcRenderer.invoke("getTableData", from, tableName);
   },
   cleanDatabase: () => {
     return ipcRenderer.invoke("cleanDatabase");

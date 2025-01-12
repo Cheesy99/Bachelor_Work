@@ -25,6 +25,11 @@ type FromId = {
   endId: number;
 };
 
+type From = {
+  startIndex: number;
+  endIndex: number;
+};
+
 interface Window {
   electronAPI: {
     sendJsonFile: (fileData: string) => Promise<string>;
@@ -32,7 +37,7 @@ interface Window {
       fromID: FromId,
       tableName: string
     ) => Promise<TableData>;
-    getTableData: (fromID: FromId, tableName: string) => Promise<void>;
+    getTableData: (from: From, tableName: string) => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
     subscribeToListener: (

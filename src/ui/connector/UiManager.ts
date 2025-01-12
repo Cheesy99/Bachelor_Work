@@ -61,14 +61,14 @@ class UiManager {
     }
   }
 
-  public async getTableData(from: FromId, tableName: string) {
+  public async getTableData(from: From, tableName: string) {
     await window.electronAPI.getTableData(from, tableName);
   }
 
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists && this.setTableData) {
-      const from: FromId = { startId: 0, endId: 100 };
+      const from: From = { startIndex: 0, endIndex: 100 };
       await window.electronAPI.getTableData(from, "main_table");
     }
   }
@@ -111,11 +111,7 @@ class UiManager {
     throw new Error("Method not implemented.");
   }
 
-  public async changingSchemaName(
-    stackCommand: any[],
-    orignalColumnName: string,
-    newColumnName: string
-  ) {}
+  public async changingSchemaName(command: string) {}
 }
 
 export default UiManager;

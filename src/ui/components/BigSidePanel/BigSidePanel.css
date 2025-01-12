@@ -25,5 +25,39 @@
 }
 
 .column-elements li {
-  max-width: 200px; /* Adjust this value as needed */
+  max-width: 200px;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.get-all-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+}
+
+.get-all-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+}
+
+.header-column-values {
+  padding-bottom: 15px;
 }

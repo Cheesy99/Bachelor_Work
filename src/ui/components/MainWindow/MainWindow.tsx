@@ -56,8 +56,17 @@ function MainWindow({
       });
     }
   };
-
-  const onDoubleClick = (columnName: string) => {};
+  //BUGG WHEN CHANGING NAME WITH INVALID STACK
+  const onDoubleClick = async (
+    newColumnName: string,
+    oldColumnName: string
+  ) => {
+    console.log(newColumnName, oldColumnName);
+    if (oldColumnName !== newColumnName) {
+      let renameStatment = `ALTER TABLE main_table RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
+      await uiManager.changingSchemaName(renameStatment);
+    }
+  };
 
   const handleSqlSubmit = async () => {
     await window.electronAPI.executeSqlCommandStack(sqlCommand, "main_table");
@@ -109,7 +118,6 @@ function MainWindow({
   return (
     <div className="main-window">
       <div className="header">
-        <h4 className="table-name">main_table</h4>
         <div className="header-button">
           <button onClick={handleUndo}>Undo</button>
           <button onClick={handleReset}>Reset</button>

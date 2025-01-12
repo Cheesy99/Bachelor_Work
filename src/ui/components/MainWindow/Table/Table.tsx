@@ -7,7 +7,7 @@ interface TableProps {
   viewSetting: ViewSetting;
   onHeaderClick: (column: number) => void;
   onIdClick: (rowData: (string | number)[]) => void;
-  onDoubleClick: (string: string) => void;
+  onDoubleClick: (newName: string, oldName: string) => void;
 }
 
 function Table({
@@ -22,6 +22,7 @@ function Table({
   };
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newColumnName, setNewColumnName] = useState<string>("");
+  const [oldColumnName, setOldColumnName] = useState<string>("");
 
   if (!data) {
     return <div>No data available</div>;
@@ -29,15 +30,16 @@ function Table({
 
   const handleHeaderDoubleClick = (index: number) => {
     setEditingIndex(index);
-    setNewColumnName(data.schema[index]); 
+    setOldColumnName(data.schema[index]);
+    setNewColumnName(data.schema[index]);
   };
 
   const handleHeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewColumnName(e.target.value);
   };
 
-  const handleHeaderBlur = (index: number) => {
-    onDoubleClick(newColumnName);
+  const handleHeaderBlur = () => {
+    onDoubleClick(newColumnName, oldColumnName);
     setEditingIndex(null);
   };
 
@@ -58,7 +60,7 @@ function Table({
                       type="text"
                       value={newColumnName}
                       onChange={handleHeaderChange}
-                      onBlur={() => handleHeaderBlur(index)}
+                      onBlur={() => handleHeaderBlur()}
                       autoFocus
                     />
                   ) : (

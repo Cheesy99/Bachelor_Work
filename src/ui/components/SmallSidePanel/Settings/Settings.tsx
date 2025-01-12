@@ -46,7 +46,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           />
           One View
         </label>
+        <label>Max Rowns:</label>
+        <input></input>
       </div>
+
       <button className="delete-button" onClick={deleteDatabase}>
         Delete DataBase
       </button>

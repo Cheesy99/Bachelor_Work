@@ -134,9 +134,9 @@ input:checked + .slider:before {
 }
 
 .sql-input input {
-  width: 100%; /* Make the input take the full width of its container */
-  height: 40px; /* Adjust the height as needed */
-  padding: 10px; /* Add padding for better appearance */
-  font-size: 16px; /* Adjust the font size as needed */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
 }

@@ -28,7 +28,15 @@ class SchemaBuilder {
         result.push(...this.recursiveSchema(obj, "main_table"))
       );
     }
-    return this.cleanData(result);
+    const finished: TableSchema = this.cleanData(result);
+    Object.keys(finished).forEach((key: string) => {
+      if (key !== "main_table") {
+        finished[key].forEach((value, index) => {
+          finished[key][index] = `${key}_${value}`;
+        });
+      }
+    });
+    return finished;
   }
 
   private recursiveSchema(
@@ -44,6 +52,7 @@ class SchemaBuilder {
         });
       }
     });
+
     return result;
   }
 

@@ -34,7 +34,7 @@ th {
   font-size: 0.83em;
 }
 td.id-column {
-  cursor: pointer; /* Change cursor to pointer for ID column */
+  cursor: pointer;
 }
 
 tr:hover {

@@ -79,20 +79,35 @@ class MainManager {
     }
   }
 
-  public async initGetTableData(
-    fromID: FromId,
-    tableName: string
-  ): Promise<void> {
-    const { startId, endId } = fromID;
-    const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
-    const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
-    const schema = await this.getTableSchema(tableName);
-    const table = dataResult.map((row: string | number) => Object.values(row));
+  public async GetTableData(from: From, tableName: string): Promise<void> {
+    let schema: string[] = [];
+    let table: (string | number)[][] = [];
+    const { startIndex, endIndex } = from;
+    if (this.fromDisk) {
+      try {
+        const filePath = path.join(
+          __dirname,
+          `${this.persistencePath}data.json`
+        );
+        const fileContent = fs.readFileSync(filePath, "utf-8");
+        const data = JSON.parse(fileContent);
+        schema = data.schema;
+        table = data.table.slice(startIndex, endIndex + 1);
+      } catch (error) {
+        console.error("Error reading data from disk:", error);
+        return;
+      }
+    } else {
+      const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startIndex} AND ${endIndex}`;
+      const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
+      schema = await this.getTableSchema(tableName);
+      table = dataResult.map((row: string | number) => Object.values(row));
+    }
     const tableData: TableData = { schema: schema, table: table };
     this.browserWindow.webContents.send(
       "tableDataFromBackend",
       tableData,
-      false
+      this.fromDisk
     );
   }
 
@@ -124,7 +139,6 @@ class MainManager {
     tableName: string
   ): Promise<string> {
     try {
-      console.log("Commands", sqlCommand);
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
       const schema = await this.getTableSchema(tableName);

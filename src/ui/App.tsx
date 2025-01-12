@@ -32,9 +32,9 @@ function App() {
     []
   );
   const [loading, setLoading] = useState(false);
-  const [index, setIndex] = useState<{ startId: number; endId: number }>({
-    startId: 1,
-    endId: 100,
+  const [index, setIndex] = useState<{ startIndex: number; endIndex: number }>({
+    startIndex: 1,
+    endIndex: 100,
   });
   const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
   const [lastClicked, setLastClicked] = useState<
@@ -64,8 +64,6 @@ function App() {
     setLastClicked(Clicked.Column);
   };
 
-  const [sqlInputValue, setSqlInputValue] = useState<string>("");
-
   const handleViewChange = async (viewSetting: ViewSetting) => {
     setLoading(true);
     setTableType(viewSetting);
@@ -86,18 +84,18 @@ function App() {
   const handleIndexChange = (direction: IndexDirection) => {
     if (direction === IndexDirection.RIGHT) {
       const newIdex = {
-        startId: index.startId + 100,
-        endId: index.endId + 100,
+        startIndex: index.startIndex + 100,
+        endIndex: index.endIndex + 100,
       };
       setIndex(newIdex);
       uiManager.getTableData(newIdex, "main_table");
     } else {
-      if (index.startId <= 0) {
-        console.log("start index is less then 0", index.startId);
+      if (index.startIndex <= 0) {
+        console.log("start index is less then 0", index.startIndex);
       } else {
         const newIdex = {
-          startId: Math.max(0, index.startId - 100),
-          endId: Math.max(index.endId - 100, 100),
+          startIndex: Math.max(0, index.startIndex - 100),
+          endIndex: Math.max(index.endIndex - 100, 100),
         };
         setIndex(newIdex);
         uiManager.getTableData(newIdex, "main_table");
@@ -113,7 +111,7 @@ function App() {
     setSelectedColumnValues({ values: [], columnName: "id" });
     setSelectedRowData([]);
     setSqlCommandStack([]);
-    setIndex({ startId: 1, endId: 100 });
+    setIndex({ startIndex: 1, endIndex: 100 });
     setLastClicked(Clicked.Column);
     setLoading(false);
   };

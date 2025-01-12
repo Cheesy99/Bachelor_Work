@@ -77,11 +77,13 @@ function BigSidePanel({
     await uiManager.executeStack();
   };
 
+  const handleDeleteColumn = () => {};
+
   return (
     <div className="big-side-panel">
       <h2>{lastClicked === Clicked.Column ? "Column Values" : "Row Values"}</h2>
       <div className="list">
-        {lastClicked === Clicked.RowId && (
+        {lastClicked === Clicked.RowId ? (
           <button
             onClick={() =>
               handleDeleteRow(rowValues[0] as number, "main_table")
@@ -90,6 +92,25 @@ function BigSidePanel({
           >
             Delete Row
           </button>
+        ) : (
+          <div className="header-column-values">
+            <button
+              onClick={() => handleDeleteColumn}
+              className="delete-button"
+            >
+              Delete Column
+            </button>
+            <button
+              onClick={() => handleDeleteColumn}
+              className="get-all-button"
+            >
+              Get All
+            </button>
+            <label className="select-all-button">
+              <input type="checkbox" />
+              Select all
+            </label>
+          </div>
         )}
         <ul className="column-elements">
           {lastClicked === Clicked.Column
