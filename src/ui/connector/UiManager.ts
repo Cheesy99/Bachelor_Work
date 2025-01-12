@@ -13,17 +13,14 @@ class UiManager {
   > | null;
   private readonly tableType: ViewSetting;
   private sqlCommandStack: any[];
-  private setSqlCommandStack: React.Dispatch<React.SetStateAction<any[]>>;
 
   public constructor(
     converter: Converter,
     tableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     tableType: ViewSetting,
-    sqlCommandStack: any[],
-    setSqlCommandStack: React.Dispatch<React.SetStateAction<any[]>>
+    sqlCommandStack: any[]
   ) {
-    this.setSqlCommandStack = setSqlCommandStack;
     this.converter = converter;
     this.setTableData = tableRef;
     this.setLoading = setLoading;
@@ -77,6 +74,7 @@ class UiManager {
   }
 
   public async clearOutDatabase(): Promise<void> {
+    sessionStorage.clear();
     return await window.electronAPI.cleanDatabase();
   }
   public async convert(tableView: ViewSetting): Promise<Table> {

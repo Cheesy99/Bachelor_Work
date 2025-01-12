@@ -45,8 +45,7 @@ function App() {
     setTableData,
     setLoading,
     tableType,
-    sqlCommandStack,
-    setSqlCommandStack
+    sqlCommandStack
   );
   useEffect(() => {
     uiManager.getInitTableData();
@@ -108,6 +107,16 @@ function App() {
   const toggleSqlInput = () => {
     setShowSqlInput((prev) => !prev);
   };
+
+  const resetApp = () => {
+    setTableData(null);
+    setSelectedColumnValues({ values: [], columnName: "id" });
+    setSelectedRowData([]);
+    setSqlCommandStack([]);
+    setIndex({ startId: 1, endId: 100 });
+    setLastClicked(Clicked.Column);
+    setLoading(false);
+  };
   return (
     <Context.Provider value={[tableData, tableType, loading, uiManager]}>
       <ContextCommandStack.Provider
@@ -118,6 +127,7 @@ function App() {
             toggleSqlInput={toggleSqlInput}
             handleViewChange={handleViewChange}
             uiManager={uiManager}
+            resetApp={resetApp}
           />
           <BigSidePanel
             columnValues={selectedColumnValues}

@@ -38,11 +38,9 @@ class OneTableConverter implements ConversionStrategy {
     const newSchema = newTable.schema;
     // This will only work for one foreigntable needs to work for other to need to see where the other foreign table starts
     schemaCollectedForIndex.forEach((value: number) => {
-      let appendValue = `${newSchema[value]}.`;
+      let appendValue = `${newSchema.at(value)}.`;
       newSchema.forEach((literalValue: string, index) => {
-        if (value < index) {
-          newSchema[index] = appendValue + literalValue;
-        }
+        if (value < index) newSchema[index] = appendValue + literalValue;
       });
       newSchema.splice(value, 1);
     });

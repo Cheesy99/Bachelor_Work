@@ -3,8 +3,21 @@ import path from "path";
 import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
 import MainManager from "./Backend/MainManager.js";
-
+import DataBaseConnector from "./Backend/DataBaseConnector.js";
 ipcMain.setMaxListeners(20);
+
+app.on("before-quit", async (event) => {
+  event.preventDefault();
+  try {
+    const dbConnector = DataBaseConnector.getInstance();
+    await dbConnector.closeDatabase();
+    console.log("Database connection closed successfully.");
+    app.quit();
+  } catch (error) {
+    console.error("Error closing the database connection:", error);
+    app.quit();
+  }
+});
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({

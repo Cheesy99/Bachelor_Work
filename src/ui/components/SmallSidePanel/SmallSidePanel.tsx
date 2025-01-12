@@ -13,11 +13,13 @@ interface SmallSidePanelProps {
   toggleSqlInput: () => void;
   handleViewChange: (view: ViewSetting) => void;
   uiManager: UiManager;
+  resetApp: () => void;
 }
 function SmallSidePanel({
   toggleSqlInput,
   handleViewChange,
   uiManager,
+  resetApp,
 }: SmallSidePanelProps) {
   const context = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +40,7 @@ function SmallSidePanel({
     if (confirmed) {
       setIsModalOpen(false);
       await uiManager.clearOutDatabase();
+      resetApp();
     }
   };
   const openSettings = () => {

@@ -250,22 +250,12 @@ class MainManager {
 
   async cleanDatabase(): Promise<void> {
     try {
-      // Get the list of all tables in the database
-      const tablesQuery = `SELECT name FROM sqlite_master WHERE type='table'`;
-      const tablesResult = await this.dataBase.sqlCommandWithReponse(
-        tablesQuery
-      );
+      await this.dataBase.recreateDatabase();
 
-      // Iterate over each table and drop it
-      for (const table of tablesResult) {
-        const dropTableQuery = `DROP TABLE IF EXISTS ${table.name}`;
-        await this.dataBase.sqlCommand([dropTableQuery]);
-      }
-
-      console.log("Database cleared successfully.");
+      console.log("Database file deleted successfully.");
     } catch (error) {
-      console.error("Error clearing the database:", error);
-      throw new Error("Failed to clear the database.");
+      console.error("Error deleting the database file:", error);
+      throw new Error("Failed to delete the database file.");
     }
   }
 }

@@ -3,6 +3,7 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 import { isDev } from "../util.js";
 import { Readable } from "stream";
+import fs from "fs";
 
 class DataBaseConnector {
   private static instance: DataBaseConnector;
@@ -25,6 +26,45 @@ class DataBaseConnector {
       "dataBase.db"
     );
     this.dataBase = new sqlite3.Database(this.dbPath);
+  }
+
+  public async closeDatabase(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.dataBase.close((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  private async deleteDatabase() {
+    try {
+      await this.closeDatabase();
+      fs.unlinkSync(this.dbPath);
+      console.log("Database file deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting the database file:", error);
+      throw new Error("Failed to delete the database file.");
+    }
+  }
+
+  public async recreateDatabase(): Promise<void> {
+    try {
+      await this.deleteDatabase();
+      this.dataBase = new sqlite3.Database(this.dbPath, (err) => {
+        if (err) {
+          console.error("Error creating new database:", err);
+        } else {
+          console.log("New database created successfully.");
+        }
+      });
+    } catch (error) {
+      console.error("Error recreating the database:", error);
+      throw new Error("Failed to recreate the database.");
+    }
   }
 
   public databaseExists(): Promise<boolean> {
