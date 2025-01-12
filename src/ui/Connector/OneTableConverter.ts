@@ -8,6 +8,7 @@ class OneTableConverter implements ConversionStrategy {
   private async createOneTable(data: TableData): Promise<TableData> {
     const newTable: TableData = { schema: data.schema, table: [] };
     const schemaCollectedForIndex: Set<number> = new Set();
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, row] of data.table.entries()) {
       const insertRow = [];
@@ -25,6 +26,8 @@ class OneTableConverter implements ConversionStrategy {
             const result = newSchema.filter((element) => element !== "id");
             newTable.schema.push(...result);
           }
+          //Removing id of foreign table now need to also remove it in schema
+          foreignRow.splice(0, 1);
           insertRow.push(...foreignRow);
         } else if (index1 !== 0) {
           insertRow.push(element);
@@ -32,7 +35,19 @@ class OneTableConverter implements ConversionStrategy {
       }
       newTable.table.push(insertRow);
     }
-    return newTable;
+    const newSchema = newTable.schema;
+    // This will only work for one foreigntable needs to work for other to need to see where the other foreign table starts
+    schemaCollectedForIndex.forEach((value: number) => {
+      let appendValue = `${newSchema[value]}.`;
+      newSchema.forEach((literalValue: string, index) => {
+        if (value < index) {
+          newSchema[index] = appendValue + literalValue;
+        }
+      });
+      newSchema.splice(value, 1);
+    });
+
+    return { schema: newSchema, table: newTable.table };
   }
 }
 

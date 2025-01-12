@@ -9,6 +9,7 @@ interface SettingsModalProps {
   onRequestClose: () => void;
   handleViewChange: (view: ViewSetting) => void;
   currentView: ViewSetting;
+  deleteDatabase: () => void;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -16,6 +17,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   onRequestClose,
   handleViewChange,
   currentView,
+  deleteDatabase,
 }) => {
   useContext(Context);
   return (
@@ -45,6 +47,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           One View
         </label>
       </div>
+      <button className="delete-DB" onClick={deleteDatabase}>
+        Delete
+      </button>
       <button className="close-button" onClick={onRequestClose}>
         Close
       </button>
