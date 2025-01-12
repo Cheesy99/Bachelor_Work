@@ -8,7 +8,6 @@ class OneTableConverter implements ConversionStrategy {
   private async createOneTable(data: TableData): Promise<TableData> {
     const newTable: TableData = { schema: data.schema, table: [] };
     const schemaCollectedForIndex: Set<number> = new Set();
-    const removeFromSchema: Set<string> = new Set();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, row] of data.table.entries()) {
       const insertRow = [];
@@ -24,11 +23,8 @@ class OneTableConverter implements ConversionStrategy {
             const newSchema: string[] = await window.electronAPI.getTableSchema(
               tableName
             );
-            newSchema.forEach((element, index) => {
-              newSchema[index] = `${tableName}.${element}`;
-            });
-            newTable.schema.push(...newSchema);
-            removeFromSchema.add(tableName);
+            const result = newSchema.filter((element) => element !== "id");
+            newTable.schema.push(...result);
           }
           //Removing id of foreign table now need to also remove it in schema
           insertRow.push(...foreignRow);
@@ -40,10 +36,6 @@ class OneTableConverter implements ConversionStrategy {
     }
     let newSchema = newTable.schema;
     // This will only work for one foreigntable needs to work for other to need to see where the other foreign table starts
-
-    removeFromSchema.forEach((value) => {
-      newSchema = newSchema.filter((schemaValue) => schemaValue !== value);
-    });
 
     return { schema: newSchema, table: newTable.table };
   }

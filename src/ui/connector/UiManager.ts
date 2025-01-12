@@ -107,6 +107,10 @@ class UiManager {
     }
   }
 
+  async restart() {
+    throw new Error("Method not implemented.");
+  }
+
   public async changingSchemaName(
     stackCommand: any[],
     orignalColumnName: string,

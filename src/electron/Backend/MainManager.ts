@@ -71,7 +71,7 @@ class MainManager {
         tableData,
         false
       );
-
+      this.fromDisk = false;
       return "ok";
     } catch (error) {
       console.error("Error handling insertJson:", error);
@@ -79,8 +79,10 @@ class MainManager {
     }
   }
 
-  //What is the purpose of this I don't like it need refactoring and remove this method
-  public async getTableData(fromID: FromId, tableName: string): Promise<void> {
+  public async initGetTableData(
+    fromID: FromId,
+    tableName: string
+  ): Promise<void> {
     const { startId, endId } = fromID;
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
@@ -151,13 +153,15 @@ class MainManager {
         partialTableData,
         true
       );
-
+      this.fromDisk = true;
       return "ok";
     } catch (error) {
       console.error("Error executing SQL command:", error);
       return "An error occurred while executing the SQL command";
     }
   }
+
+  public getDataFromDisk() {}
 
   public async getTableSchema(tableName: string): Promise<string[]> {
     const schemaQuery = `PRAGMA table_info(${tableName})`;

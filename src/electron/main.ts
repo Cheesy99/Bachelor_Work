@@ -47,7 +47,7 @@ app.on("ready", () => {
   ipcMain.handle(
     "getTableData",
     async (_, fromID: FromId, tableName: string) => {
-      return await dbManager.getTableData(fromID, tableName);
+      return await dbManager.initGetTableData(fromID, tableName);
     }
   );
 

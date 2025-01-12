@@ -97,8 +97,13 @@ function MainWindow({
 
   async function handleReset(): Promise<void> {
     //HERE BUG IN THAT NOW WHOLE TABLE SAVED ON DISK
-    setSqlCommandStack([]);
-    await uiManager.executeStack();
+    const confirmed = window.confirm(
+      "Are you sure you want to reset all changes will be removed"
+    );
+    if (confirmed) {
+      setSqlCommandStack([]);
+      await uiManager.restart();
+    }
   }
 
   return (
