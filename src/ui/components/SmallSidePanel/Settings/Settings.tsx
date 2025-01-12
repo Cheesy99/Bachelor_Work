@@ -47,8 +47,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           One View
         </label>
       </div>
-      <button className="delete-DB" onClick={deleteDatabase}>
-        Delete
+      <button className="delete-button" onClick={deleteDatabase}>
+        Delete DataBase
       </button>
       <button className="close-button" onClick={onRequestClose}>
         Close

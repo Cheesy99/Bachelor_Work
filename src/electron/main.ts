@@ -3,21 +3,8 @@ import path from "path";
 import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
 import MainManager from "./Backend/MainManager.js";
-import DataBaseConnector from "./Backend/DataBaseConnector.js";
-ipcMain.setMaxListeners(20);
 
-app.on("before-quit", async (event) => {
-  event.preventDefault();
-  try {
-    const dbConnector = DataBaseConnector.getInstance();
-    await dbConnector.closeDatabase();
-    console.log("Database connection closed successfully.");
-    app.quit();
-  } catch (error) {
-    console.error("Error closing the database connection:", error);
-    app.quit();
-  }
-});
+ipcMain.setMaxListeners(20);
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
@@ -85,10 +72,6 @@ app.on("ready", () => {
 
   ipcMain.handle("howManyRows", async (_, tableName: string) => {
     return await dbManager.amountOfRows(tableName);
-  });
-
-  ipcMain.handle("saveResult", async (_, tableData) => {
-    return await dbManager.saveResult(tableData);
   });
 
   ipcMain.handle("getSavedResult", async (_) => {

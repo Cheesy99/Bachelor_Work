@@ -227,10 +227,6 @@ class MainManager {
     return JSON.parse(data);
   }
 
-  saveResult(tableData: any): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
   public async amountOfRows(tableName: string): Promise<number> {
     const query = `SELECT COUNT(*) as count FROM ${tableName}`;
     const result = await this.dataBase.sqlCommandWithReponse(query);
@@ -251,7 +247,9 @@ class MainManager {
   async cleanDatabase(): Promise<void> {
     try {
       await this.dataBase.recreateDatabase();
-
+      this.tableBuilder = new TableBuilder();
+      this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
+      this.excelExporter = new ExcelExporter();
       console.log("Database file deleted successfully.");
     } catch (error) {
       console.error("Error deleting the database file:", error);

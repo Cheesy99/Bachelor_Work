@@ -46,7 +46,6 @@ interface Window {
     exportToExcel: () => Promise<void>;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
     howManyRows: (tableName: string) => Promise<number>;
-    saveResult: (tableData: TableData) => Promise<void>;
     getSaveResult: () => Promise<TableData | boolean>;
     cleanDatabase: () => Promise<void>;
     // insertUsingWorkerNodes: (fileData: string) => Promise<void>;

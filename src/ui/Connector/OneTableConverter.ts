@@ -8,7 +8,7 @@ class OneTableConverter implements ConversionStrategy {
   private async createOneTable(data: TableData): Promise<TableData> {
     const newTable: TableData = { schema: data.schema, table: [] };
     const schemaCollectedForIndex: Set<number> = new Set();
-
+    const removeFromSchema: Set<string> = new Set();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, row] of data.table.entries()) {
       const insertRow = [];
@@ -16,18 +16,21 @@ class OneTableConverter implements ConversionStrategy {
       for (let index1 = 1; index1 < row.length; index1++) {
         const element = row[index1];
         if (typeof element === "number" && index1 !== 0) {
+          const tableName = newTable.schema[index1];
           const foreignRow: (string | number)[] =
-            await window.electronAPI.getRow(element, newTable.schema[index1]);
+            await window.electronAPI.getRow(element, tableName);
           if (!schemaCollectedForIndex.has(index1)) {
             schemaCollectedForIndex.add(index1);
             const newSchema: string[] = await window.electronAPI.getTableSchema(
-              newTable.schema[index1]
+              tableName
             );
-            const result = newSchema.filter((element) => element !== "id");
-            newTable.schema.push(...result);
+            newSchema.forEach((element, index) => {
+              newSchema[index] = `${tableName}.${element}`;
+            });
+            newTable.schema.push(...newSchema);
+            removeFromSchema.add(tableName);
           }
           //Removing id of foreign table now need to also remove it in schema
-          foreignRow.splice(0, 1);
           insertRow.push(...foreignRow);
         } else if (index1 !== 0) {
           insertRow.push(element);
@@ -35,14 +38,11 @@ class OneTableConverter implements ConversionStrategy {
       }
       newTable.table.push(insertRow);
     }
-    const newSchema = newTable.schema;
+    let newSchema = newTable.schema;
     // This will only work for one foreigntable needs to work for other to need to see where the other foreign table starts
-    schemaCollectedForIndex.forEach((value: number) => {
-      let appendValue = `${newSchema.at(value)}.`;
-      newSchema.forEach((literalValue: string, index) => {
-        if (value < index) newSchema[index] = appendValue + literalValue;
-      });
-      newSchema.splice(value, 1);
+
+    removeFromSchema.forEach((value) => {
+      newSchema = newSchema.filter((schemaValue) => schemaValue !== value);
     });
 
     return { schema: newSchema, table: newTable.table };

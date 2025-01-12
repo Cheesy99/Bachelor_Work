@@ -49,9 +49,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("howManyRows", tableName);
   },
 
-  saveResult: (tableData: TableData) => {
-    return ipcRenderer.invoke("saveResult", tableData);
-  },
   getSaveResult: () => {
     return ipcRenderer.invoke("getSaveResult");
   },
