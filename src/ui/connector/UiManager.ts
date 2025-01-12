@@ -111,6 +111,7 @@ class UiManager {
     throw new Error("Method not implemented.");
   }
 
+  // need to implement if rename is in foreign table
   public async changingSchemaName(command: string) {}
 }
 

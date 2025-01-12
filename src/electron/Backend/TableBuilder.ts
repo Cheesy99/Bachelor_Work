@@ -29,7 +29,13 @@ class TableBuilder {
     const totalRes: Promise<number>[][] = [];
 
     for (const columnName of columnNames) {
-      let value = json[columnName] ? json[columnName] : "not found";
+      const realKey = columnName.includes("_")
+        ? columnName.split("_").pop()
+        : columnName;
+      if (!realKey) {
+        continue;
+      }
+      let value = json[realKey] ? json[realKey] : "not found";
       if (Array.isArray(value)) {
         const res: Promise<number>[] = value.map(async (Innererow) => {
           return await this.recursive(Innererow, tableSchema, columnName);
