@@ -29,7 +29,7 @@ function Table({
 
   const handleHeaderDoubleClick = (index: number) => {
     setEditingIndex(index);
-    setNewColumnName(data.schema[index]);
+    setNewColumnName(data.schema[index]); 
   };
 
   const handleHeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -127,9 +127,7 @@ class MainManager {
       const table = result.map((row: string | number) => Object.values(row));
       const schema = await this.getTableSchema(tableName);
       const tableData = { schema: schema, table: table };
-      const worker = new Worker(
-        path.resolve(__dirname, "./workers/SaveWorker.js")
-      );
+      const worker = new Worker(path.resolve(__dirname, "./SaveWorker.js"));
       worker.postMessage({
         filePath: `${this.persistencePath}data.json`,
         content: tableData,
