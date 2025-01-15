@@ -5,7 +5,7 @@ import { getPreloadPath } from "./pathResolver.js";
 import MainManager from "./Backend/MainManager.js";
 
 ipcMain.setMaxListeners(20);
-
+let mainManager: MainManager;
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
     title: "JSON cleaner",
@@ -18,15 +18,15 @@ app.on("ready", () => {
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
-  const dbManager = MainManager.getInstance(mainWindow);
+  mainManager = MainManager.getInstance(mainWindow);
 
   ipcMain.handle("databaseExists", async () => {
-    return dbManager.dataBaseExist;
+    return mainManager.dataBaseExist;
   });
   ipcMain.handle("upload-json", async (_, fileData: string) => {
     try {
-      if (dbManager) {
-        return await dbManager.insertJson(fileData);
+      if (mainManager) {
+        return await mainManager.insertJson(fileData);
       } else {
         console.error(
           "MainManager instance or insertJson method is not defined"
@@ -40,42 +40,42 @@ app.on("ready", () => {
   ipcMain.handle(
     "getNestedTableData",
     async (_, fromID: FromId, tableName: string) => {
-      return await dbManager.getTableDataObject(fromID, tableName);
+      return await mainManager.getTableDataObject(fromID, tableName);
     }
   );
 
   ipcMain.handle("getTableData", async (_, from: From, tableName: string) => {
-    return await dbManager.GetTableData(from, tableName);
+    return await mainManager.GetTableData(from, tableName);
   });
 
   ipcMain.handle("sqlCommand", async (_, command: any, tableName: string) => {
-    return await dbManager.uiSqlCommand(command, tableName);
+    return await mainManager.uiSqlCommand(command, tableName);
   });
 
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
-    return await dbManager.getRow(id, tableName);
+    return await mainManager.getRow(id, tableName);
   });
   ipcMain.handle("exportToExcel", async (_, result: TableData) => {
-    await dbManager.exportToExcel();
+    await mainManager.exportToExcel();
   });
 
   ipcMain.handle("getTableSchema", async (_, tableName: string) => {
-    return await dbManager.getTableSchema(tableName);
+    return await mainManager.getTableSchema(tableName);
   });
 
   ipcMain.handle("checkIfTable", async (_, tableName: string) => {
-    return await dbManager.checkForTable(tableName);
+    return await mainManager.checkForTable(tableName);
   });
 
   ipcMain.handle("howManyRows", async (_, tableName: string) => {
-    return await dbManager.amountOfRows(tableName);
+    return await mainManager.amountOfRows(tableName);
   });
 
   ipcMain.handle("getSavedResult", async (_) => {
-    return await dbManager.getSavedResult();
+    return await mainManager.getSavedResult();
   });
   ipcMain.handle("cleanDatabase", async (_) => {
-    return await dbManager.cleanDatabase();
+    return await mainManager.cleanDatabase();
   });
   ipcMain.handle(
     "renameColumn",
@@ -85,11 +85,17 @@ app.on("ready", () => {
       newColumnName: string,
       oldColumnName: string
     ) => {
-      return await dbManager.renameColumn(
+      return await mainManager.renameColumn(
         commandStack,
         newColumnName,
         oldColumnName
       );
     }
   );
+});
+
+app.on("before-quit", () => {
+  if (mainManager) {
+    mainManager.saveSchemaToDisk();
+  }
 });

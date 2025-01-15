@@ -25,7 +25,6 @@ class MainManager {
   private readonly persistencePath: string;
   private fromDisk: boolean;
   private mainSchema: Map<string, [string, boolean]>;
-  private diskWriting: boolean;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -42,7 +41,24 @@ class MainManager {
     this.browserWindow = browserWindow;
     this.mainSchema = new Map();
     this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
-    this.diskWriting = false;
+    this.loadSchemaFromDisk();
+  }
+  loadSchemaFromDisk() {
+    const schemaFilePath = path.resolve(this.persistencePath, "schema.json");
+
+    if (fs.existsSync(schemaFilePath)) {
+      try {
+        const data = fs.readFileSync(schemaFilePath, "utf8");
+        const schemaArray: [string, [string, boolean]][] = JSON.parse(data);
+        this.mainSchema = new Map(schemaArray);
+        console.log("Schema loaded from disk successfully.");
+      } catch (err) {
+        console.error("Error reading or parsing schema from disk:", err);
+      }
+    } else {
+      console.log("Schema file does not exist. Initializing a new schema.");
+      this.mainSchema = new Map();
+    }
   }
 
   get dataBaseExist() {
@@ -121,6 +137,18 @@ class MainManager {
     );
   }
 
+  public saveSchemaToDisk(): void {
+    const schemaJson = JSON.stringify(Array.from(this.mainSchema.entries()));
+    const schemaFilePath = path.resolve(this.persistencePath, "schema.json");
+
+    try {
+      fs.writeFileSync(schemaFilePath, schemaJson);
+      console.log("Schema saved to disk successfully.");
+    } catch (err) {
+      console.error("Error writing schema to disk:", err);
+    }
+  }
+
   public async getTableDataObject(
     fromID: FromId,
     tableName: string
@@ -154,7 +182,6 @@ class MainManager {
       const schema = await this.getTableSchema(tableName);
       const tableData = { schema: schema, table: table };
       const worker = new Worker(path.resolve(__dirname, "./SaveWorker.js"));
-      this.diskWriting = true;
       worker.postMessage({
         filePath: `${this.persistencePath}data.json`,
         content: tableData,
@@ -313,6 +340,7 @@ class MainManager {
       this.tableBuilder = new TableBuilder();
       this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
       this.excelExporter = new ExcelExporter();
+      this.mainSchema = new Map();
       console.log("Database file deleted successfully.");
     } catch (error) {
       console.error("Error deleting the database file:", error);
