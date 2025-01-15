@@ -112,7 +112,16 @@ class UiManager {
   }
 
   // need to implement if rename is in foreign table
-  public async changingSchemaName(command: string) {}
+  public async changingSchemaName(
+    newColumnName: string,
+    oldColumnName: string
+  ) {
+    await window.electronAPI.renameNamingColumn(
+      createSqlQuery(this.sqlCommandStack),
+      newColumnName,
+      oldColumnName
+    );
+  }
 }
 
 export default UiManager;

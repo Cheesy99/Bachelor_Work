@@ -77,4 +77,19 @@ app.on("ready", () => {
   ipcMain.handle("cleanDatabase", async (_) => {
     return await dbManager.cleanDatabase();
   });
+  ipcMain.handle(
+    "renameColumn",
+    async (
+      _,
+      commandStack: string,
+      newColumnName: string,
+      oldColumnName: string
+    ) => {
+      return await dbManager.renameColumn(
+        commandStack,
+        newColumnName,
+        oldColumnName
+      );
+    }
+  );
 });

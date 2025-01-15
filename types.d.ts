@@ -53,6 +53,10 @@ interface Window {
     howManyRows: (tableName: string) => Promise<number>;
     getSaveResult: () => Promise<TableData | boolean>;
     cleanDatabase: () => Promise<void>;
-    // insertUsingWorkerNodes: (fileData: string) => Promise<void>;
+    renameNamingColumn: (
+      commandStack: string,
+      newColumnName: string,
+      oldColumnName: string
+    ) => Promise<void>;
   };
 }

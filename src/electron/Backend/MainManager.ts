@@ -24,6 +24,8 @@ class MainManager {
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
   private fromDisk: boolean;
+  private mainSchema: Map<string, [string, boolean]>;
+  private diskWriting: boolean;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -38,7 +40,9 @@ class MainManager {
     this.excelExporter = new ExcelExporter();
     this.fromDisk = false;
     this.browserWindow = browserWindow;
+    this.mainSchema = new Map();
     this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
+    this.diskWriting = false;
   }
 
   get dataBaseExist() {
@@ -62,6 +66,12 @@ class MainManager {
         jsonObject,
         schemaResult.tableSchema
       );
+      for (const [key, value] of Object.entries(schemaResult.tableSchema)) {
+        value.forEach((element) => {
+          this.mainSchema.set(element, [key, true]);
+        });
+      }
+      console.log("mainschema", this.mainSchema);
       await this.dataBase.sqlCommand(mainInsert);
 
       const fromID = { startId: 0, endId: 100 };
@@ -144,32 +154,22 @@ class MainManager {
       const schema = await this.getTableSchema(tableName);
       const tableData = { schema: schema, table: table };
       const worker = new Worker(path.resolve(__dirname, "./SaveWorker.js"));
+      this.diskWriting = true;
+      worker.postMessage({
+        filePath: `${this.persistencePath}data.json`,
+        content: tableData,
+      });
 
-      const workerPromise = new Promise<void>((resolve, reject) => {
-        worker.postMessage({
-          filePath: `${this.persistencePath}data.json`,
-          content: tableData,
-        });
-        worker.on("message", (message) => {
-          if (message.status === "success") {
-            console.log("Data saved successfully");
-            resolve();
-          } else {
-            console.error("Error saving data:", message.error);
-            reject(new Error(message.error));
-          }
-        });
+      worker.on("message", (message) => {
+        if (message.status === "success") {
+          console.log("Data saved successfully");
+        } else {
+          console.error("Error saving data:", message.error);
+        }
+      });
 
-        worker.on("error", (error) => {
-          console.error("Worker error:", error);
-          reject(error);
-        });
-
-        worker.on("exit", (code) => {
-          if (code !== 0) {
-            reject(new Error(`Worker stopped with exit code ${code}`));
-          }
-        });
+      worker.on("error", (error) => {
+        console.error("Worker error:", error);
       });
 
       const maxValue = table.length > 100 ? 100 : table.length;
@@ -184,14 +184,6 @@ class MainManager {
         true
       );
 
-      try {
-        await workerPromise;
-      } catch (error) {
-        this.fromDisk = false;
-        console.error("Failed to save data:", error);
-        return "failed to save";
-      }
-
       this.fromDisk = true;
       return "ok";
     } catch (error) {
@@ -201,7 +193,34 @@ class MainManager {
     }
   }
 
-  public getDataFromDisk() {}
+  public async getDataFromDisk(from: From): Promise<void> {
+    const filePath = `${this.persistencePath}data.json`;
+
+    try {
+      const fileContent = await fs.promises.readFile(filePath, "utf-8");
+      const data: TableData = JSON.parse(fileContent);
+
+      const resultSchema: string[] = data.schema;
+      const resultTable: (string | number)[][] = data.table.slice(
+        from.startIndex,
+        from.endIndex
+      );
+
+      const resultTableData: TableData = {
+        schema: resultSchema,
+        table: resultTable,
+      };
+
+      this.browserWindow.webContents.send(
+        "dataFromDisk",
+        resultTableData,
+        true
+      );
+    } catch (error) {
+      console.error("Error reading data from disk:", error);
+      throw new Error("Failed to read data from disk");
+    }
+  }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
     const schemaQuery = `PRAGMA table_info(${tableName})`;
@@ -298,6 +317,26 @@ class MainManager {
     } catch (error) {
       console.error("Error deleting the database file:", error);
       throw new Error("Failed to delete the database file.");
+    }
+  }
+
+  async renameColumn(
+    commandStack: string,
+    newColumnName: string,
+    oldColumnName: string
+  ): Promise<void> {
+    console.log("oldColumn", oldColumnName);
+    let tableNameAndIfDeleted: [string, boolean] | undefined =
+      this.mainSchema.get(oldColumnName);
+    console.log("Mainschema", this.mainSchema);
+    let tableName;
+    if (tableNameAndIfDeleted) {
+      tableName = tableNameAndIfDeleted[0];
+      let renameStatment = `ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
+      await this.dataBase.sqlCommand([renameStatment]);
+      await this.uiSqlCommand(commandStack, "main_table");
+    } else {
+      throw Error("This schema doesn't match the column names");
     }
   }
 }

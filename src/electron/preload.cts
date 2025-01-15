@@ -59,4 +59,17 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   cleanDatabase: () => {
     return ipcRenderer.invoke("cleanDatabase");
   },
+
+  renameNamingColumn: (
+    commandStack: string,
+    newColumnName: string,
+    oldColumnName: string
+  ) => {
+    return ipcRenderer.invoke(
+      "renameColumn",
+      commandStack,
+      newColumnName,
+      oldColumnName
+    );
+  },
 } satisfies Window["electronAPI"]);

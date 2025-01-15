@@ -46,7 +46,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           />
           One View
         </label>
-        <label>Max Rowns:</label>
+        <label>Max Row's:</label>
+        To many row value can lead to decreased preformance
         <input></input>
       </div>
 

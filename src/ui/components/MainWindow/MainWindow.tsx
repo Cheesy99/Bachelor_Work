@@ -61,10 +61,8 @@ function MainWindow({
     newColumnName: string,
     oldColumnName: string
   ) => {
-    console.log(newColumnName, oldColumnName);
     if (oldColumnName !== newColumnName) {
-      let renameStatment = `ALTER TABLE main_table RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
-      await uiManager.changingSchemaName(renameStatment);
+      await uiManager.changingSchemaName(newColumnName, oldColumnName);
     }
   };
 
