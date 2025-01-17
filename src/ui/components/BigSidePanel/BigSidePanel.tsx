@@ -36,9 +36,7 @@ function BigSidePanel({
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
   >([]);
-  const [selectedRowValues, setSelectedRowValues] = useState<
-    (string | number)[]
-  >([]);
+  const [selectedAll, setSelectedAll] = useState<boolean>(false);
   const filteredColumnValues = Array.from(
     new Set(
       columnValues.values.filter(
@@ -81,6 +79,16 @@ function BigSidePanel({
     await uiManager.deleteColumn(columnValues.columnName);
   };
 
+  const handleSelectAll = async () => {
+    if (!selectedAll) {
+      const allValues = await uiManager.getAllValue(columnValues.columnName);
+      setSelectedColumnValues(allValues);
+    } else {
+      setSelectedColumnValues([]);
+    }
+    setSelectedAll(!selectedAll);
+  };
+
   return (
     <div className="big-side-panel">
       <h2>{lastClicked === Clicked.Column ? "Column Values" : "Row Values"}</h2>
@@ -102,14 +110,12 @@ function BigSidePanel({
             >
               Delete Column
             </button>
-            <button
-              onClick={() => handleDeleteColumn}
-              className="get-all-button"
-            >
-              Get All
-            </button>
             <label className="select-all-button">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={selectedAll}
+                onChange={handleSelectAll}
+              />
               Select all
             </label>
           </div>
