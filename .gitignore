@@ -30,3 +30,7 @@ vite.config.*
 !test.json
 !SoSe23FromXLS.json
 *.xlsx
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
