@@ -111,7 +111,6 @@ class UiManager {
     throw new Error("Method not implemented.");
   }
 
-  // need to implement if rename is in foreign table
   public async changingSchemaName(
     newColumnName: string,
     oldColumnName: string
@@ -121,6 +120,17 @@ class UiManager {
       newColumnName,
       oldColumnName
     );
+  }
+
+  public async deleteColumn(columnName: string) {
+    await window.electronAPI.deleteColumn(
+      createSqlQuery(this.sqlCommandStack),
+      columnName
+    );
+  }
+
+  async getAllValue(columnName: string): Promise<string[]> {
+    return await window.electronAPI.getAllColumnValues(columnName);
   }
 }
 

@@ -77,21 +77,28 @@ app.on("ready", () => {
   ipcMain.handle("cleanDatabase", async (_) => {
     return await mainManager.cleanDatabase();
   });
+
   ipcMain.handle(
     "renameColumn",
-    async (
-      _,
-      commandStack: string,
-      newColumnName: string,
-      oldColumnName: string
-    ) => {
+    async (_, commandStack: string, tableName: string, columnName: string) => {
       return await mainManager.renameColumn(
         commandStack,
-        newColumnName,
-        oldColumnName
+        tableName,
+        columnName
       );
     }
   );
+
+  ipcMain.handle(
+    "removeColumn",
+    async (_, commandStack: string, columnName: string) => {
+      return await mainManager.removeColumn(commandStack, columnName);
+    }
+  );
+
+  ipcMain.handle("getAllValues", async (_, columnName: string) => {
+    return await mainManager.getAllValues(columnName);
+  });
 });
 
 app.on("before-quit", () => {

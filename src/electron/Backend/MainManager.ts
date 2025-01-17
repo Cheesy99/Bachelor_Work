@@ -24,7 +24,7 @@ class MainManager {
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
   private fromDisk: boolean;
-  private mainSchema: Map<string, [string, boolean]>;
+  private mainSchema: Map<string, string>;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -49,11 +49,15 @@ class MainManager {
     if (fs.existsSync(schemaFilePath)) {
       try {
         const data = fs.readFileSync(schemaFilePath, "utf8");
-        const schemaArray: [string, [string, boolean]][] = JSON.parse(data);
-        this.mainSchema = new Map(schemaArray);
+        if (data.trim().length === 0) {
+          console.warn("Schema file is empty.");
+          return;
+        }
+        const schemaDictionary: [string, string][] = JSON.parse(data);
+        this.mainSchema = new Map(schemaDictionary);
         console.log("Schema loaded from disk successfully.");
-      } catch (err) {
-        console.error("Error reading or parsing schema from disk:", err);
+      } catch (error) {
+        console.error("Error reading or parsing schema from disk:", error);
       }
     } else {
       console.log("Schema file does not exist. Initializing a new schema.");
@@ -84,7 +88,7 @@ class MainManager {
       );
       for (const [key, value] of Object.entries(schemaResult.tableSchema)) {
         value.forEach((element) => {
-          this.mainSchema.set(element, [key, true]);
+          this.mainSchema.set(element, key);
         });
       }
       console.log("mainschema", this.mainSchema);
@@ -341,6 +345,23 @@ class MainManager {
       this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
       this.excelExporter = new ExcelExporter();
       this.mainSchema = new Map();
+
+      const file1Path = path.resolve(this.persistencePath, "data.json");
+      const file2Path = path.resolve(this.persistencePath, "schema.json");
+
+      if (fs.existsSync(file1Path)) {
+        fs.unlinkSync(file1Path);
+        console.log(`Deleted file: ${file1Path}`);
+      } else {
+        console.warn(`File not found: ${file1Path}`);
+      }
+
+      if (fs.existsSync(file2Path)) {
+        fs.unlinkSync(file2Path);
+        console.log(`Deleted file: ${file2Path}`);
+      } else {
+        console.warn(`File not found: ${file2Path}`);
+      }
       console.log("Database file deleted successfully.");
     } catch (error) {
       console.error("Error deleting the database file:", error);
@@ -354,17 +375,55 @@ class MainManager {
     oldColumnName: string
   ): Promise<void> {
     console.log("oldColumn", oldColumnName);
-    let tableNameAndIfDeleted: [string, boolean] | undefined =
+    let tableNameAndIfDeleted: string | undefined =
       this.mainSchema.get(oldColumnName);
     console.log("Mainschema", this.mainSchema);
     let tableName;
     if (tableNameAndIfDeleted) {
-      tableName = tableNameAndIfDeleted[0];
+      tableName = tableNameAndIfDeleted;
       let renameStatment = `ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
       await this.dataBase.sqlCommand([renameStatment]);
       await this.uiSqlCommand(commandStack, "main_table");
     } else {
       throw Error("This schema doesn't match the column names");
+    }
+  }
+
+  async removeColumn(commandStack: string, columnName: string): Promise<void> {
+    try {
+      let tableNameAndIfDeleted: string | undefined =
+        this.mainSchema.get(columnName);
+      let tableName;
+      if (tableNameAndIfDeleted) {
+        tableName = tableNameAndIfDeleted;
+        let dropColumnStatement = `ALTER TABLE ${tableName} DROP COLUMN ${columnName};`;
+        await this.dataBase.sqlCommand([dropColumnStatement]);
+        await this.uiSqlCommand(commandStack, "main_table");
+      }
+    } catch (error) {
+      console.error(`Error removing column ${columnName}`, error);
+
+      throw new Error(`Failed to remove column ${columnName}`);
+    }
+  }
+
+  async getAllValues(columnName: string): Promise<String[]> {
+    try {
+      const tableName = this.mainSchema.get(columnName);
+      if (!tableName) {
+        throw new Error(`Table for column ${columnName} not found in schema.`);
+      }
+
+      const query = `SELECT ${columnName} FROM ${tableName};`;
+      const result = await this.dataBase.sqlCommandWithReponse(query);
+
+      return result.map((row: any) => row[columnName]);
+    } catch (error) {
+      console.error(
+        `Error getting all values for column ${columnName}:`,
+        error
+      );
+      throw new Error(`Failed to get all values for column ${columnName}`);
     }
   }
 }

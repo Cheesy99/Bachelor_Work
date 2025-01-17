@@ -72,4 +72,10 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
       oldColumnName
     );
   },
+  deleteColumn: (commandStack: string, columnName: string) => {
+    return ipcRenderer.invoke("removeColumn", commandStack, columnName);
+  },
+  getAllColumnValues: (columnName: string) => {
+    return ipcRenderer.invoke("getAllValues", columnName);
+  },
 } satisfies Window["electronAPI"]);

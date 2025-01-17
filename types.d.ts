@@ -58,5 +58,8 @@ interface Window {
       newColumnName: string,
       oldColumnName: string
     ) => Promise<void>;
+
+    deleteColumn: (commandStack: string, columnName: string) => Promise<void>;
+    getAllColumnValues: (columnName: string) => Promise<string[]>;
   };
 }

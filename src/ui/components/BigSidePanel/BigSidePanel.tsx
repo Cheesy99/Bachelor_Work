@@ -77,7 +77,9 @@ function BigSidePanel({
     await uiManager.executeStack();
   };
 
-  const handleDeleteColumn = () => {};
+  const handleDeleteColumn = async () => {
+    await uiManager.deleteColumn(columnValues.columnName);
+  };
 
   return (
     <div className="big-side-panel">
