@@ -9,16 +9,24 @@ interface SettingsModalProps {
   onRequestClose: () => void;
   handleViewChange: (view: ViewSetting) => void;
   currentView: ViewSetting;
+  amountSetted: number;
   deleteDatabase: () => void;
+  setterAmountSetting: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onRequestClose,
   handleViewChange,
+  setterAmountSetting,
+  amountSetted,
   currentView,
   deleteDatabase,
 }) => {
+  const setAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newAmount: number = parseInt(event.target.value, 10);
+    setterAmountSetting(newAmount);
+  };
   useContext(Context);
   return (
     <Modal
@@ -48,7 +56,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         </label>
         <label>Max Row's:</label>
         To many row value can lead to decreased preformance
-        <input></input>
+        <input type="number" value={amountSetted} onChange={setAmount}></input>
       </div>
 
       <button className="delete-button" onClick={deleteDatabase}>

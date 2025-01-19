@@ -13,11 +13,15 @@ interface SmallSidePanelProps {
   toggleSqlInput: () => void;
   handleViewChange: (view: ViewSetting) => void;
   uiManager: UiManager;
+  setterAmountSetting: React.Dispatch<React.SetStateAction<number>>;
+  amountSetted: number;
   resetApp: () => void;
 }
 function SmallSidePanel({
   toggleSqlInput,
   handleViewChange,
+  setterAmountSetting,
+  amountSetted,
   uiManager,
   resetApp,
 }: SmallSidePanelProps) {
@@ -69,7 +73,9 @@ function SmallSidePanel({
       </label>
       <SettingsModal
         deleteDatabase={deleteDatabase}
+        setterAmountSetting={setterAmountSetting}
         isOpen={isModalOpen}
+        amountSetted={amountSetted}
         onRequestClose={closeSettings}
         handleViewChange={handleViewChange}
         currentView={viewType}

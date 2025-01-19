@@ -12,7 +12,7 @@ enum Clicked {
 interface BigSidePanelProps {
   columnValues: { values: (string | number | TableData)[]; columnName: string };
   rowValues: (string | number)[];
-  lastClicked: Clicked;
+  lastClicked: Clicked | undefined;
 }
 
 type ContextType = [Table | null, ViewSetting, boolean, UiManager];

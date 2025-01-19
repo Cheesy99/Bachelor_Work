@@ -32,14 +32,15 @@ function App() {
     []
   );
   const [loading, setLoading] = useState(false);
+  const [amountOfShownRows, setAmountOfShownRows] = useState<number>(100);
   const [index, setIndex] = useState<{ startIndex: number; endIndex: number }>({
     startIndex: 1,
-    endIndex: 100,
+    endIndex: amountOfShownRows,
   });
   const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
   const [lastClicked, setLastClicked] = useState<
-    Clicked.RowId | Clicked.Column
-  >(Clicked.Column);
+    Clicked.RowId | Clicked.Column | undefined
+  >(undefined);
   const uiManager = new UiManager(
     new Converter(),
     setTableData,
@@ -84,8 +85,8 @@ function App() {
   const handleIndexChange = (direction: IndexDirection) => {
     if (direction === IndexDirection.RIGHT) {
       const newIdex = {
-        startIndex: index.startIndex + 100,
-        endIndex: index.endIndex + 100,
+        startIndex: index.startIndex + amountOfShownRows,
+        endIndex: index.endIndex + amountOfShownRows,
       };
       setIndex(newIdex);
       uiManager.getTableData(newIdex, "main_table");
@@ -94,8 +95,11 @@ function App() {
         console.log("start index is less then 0", index.startIndex);
       } else {
         const newIdex = {
-          startIndex: Math.max(0, index.startIndex - 100),
-          endIndex: Math.max(index.endIndex - 100, 100),
+          startIndex: Math.max(0, index.startIndex - amountOfShownRows),
+          endIndex: Math.max(
+            index.endIndex - amountOfShownRows,
+            amountOfShownRows
+          ),
         };
         setIndex(newIdex);
         uiManager.getTableData(newIdex, "main_table");
@@ -108,9 +112,11 @@ function App() {
 
   const resetApp = () => {
     setTableData(null);
-    setSelectedColumnValues({ values: [], columnName: "id" });
+    setSelectedColumnValues({ values: [], columnName: "" });
     setSelectedRowData([]);
     setSqlCommandStack([]);
+    setLastClicked(undefined);
+    setAmountOfShownRows(100);
     setIndex({ startIndex: 1, endIndex: 100 });
     setLastClicked(Clicked.Column);
     setLoading(false);
@@ -121,25 +127,39 @@ function App() {
         value={[sqlCommandStack, setSqlCommandStack]}
       >
         <div className="app-container">
-          <SmallSidePanel
-            toggleSqlInput={toggleSqlInput}
-            handleViewChange={handleViewChange}
-            uiManager={uiManager}
-            resetApp={resetApp}
-          />
-          <BigSidePanel
-            columnValues={selectedColumnValues}
-            rowValues={selectedRowData}
-            lastClicked={lastClicked}
-          />
-          <MainWindow
-            showSqlInput={showSqlInput}
-            index={handleIndexChange}
-            setSelectedColumnValues={handleColumnClick}
-            onIdClick={handleIdClick}
-            setTable={setTableData}
-            setTableType={setTableType}
-          />
+          <div className="small-side-panel">
+            <SmallSidePanel
+              toggleSqlInput={toggleSqlInput}
+              handleViewChange={handleViewChange}
+              setterAmountSetting={setAmountOfShownRows}
+              amountSetted={amountOfShownRows}
+              uiManager={uiManager}
+              resetApp={resetApp}
+            />
+          </div>
+          {lastClicked !== undefined && (
+            <div className="big-side-panel">
+              <BigSidePanel
+                columnValues={selectedColumnValues}
+                rowValues={selectedRowData}
+                lastClicked={lastClicked}
+              />
+            </div>
+          )}
+          <div
+            className={`main-window ${
+              lastClicked !== undefined ? "" : "main-window-full-width"
+            }`}
+          >
+            <MainWindow
+              showSqlInput={showSqlInput}
+              index={handleIndexChange}
+              setSelectedColumnValues={handleColumnClick}
+              onIdClick={handleIdClick}
+              setTable={setTableData}
+              setTableType={setTableType}
+            />
+          </div>
         </div>
       </ContextCommandStack.Provider>
     </Context.Provider>

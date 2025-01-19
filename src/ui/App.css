@@ -15,16 +15,22 @@ body {
   width: 99vw;
 }
 
-.app-container > :nth-child(1) {
-  flex: 0 0 auto;
+.small-side-panel {
+  flex: 0 0 3%;
   width: 10px;
 }
 
-.app-container > :nth-child(2) {
+.big-side-panel {
   flex: 0 0 20%;
+  height: 100%;
   background-color: RGB(148, 148, 148);
 }
 
-.app-container > :nth-child(3) {
-  flex: 0 0 77.6%;
+.main-window {
+  flex: 0 0 78%;
+}
+
+.main-window-full-width {
+  flex: 0 0 98%;
+  transition: flex 0.3s;
 }
