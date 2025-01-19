@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { isDev } from "../util.js";
 import { Readable } from "stream";
 import fs from "fs";
+import { app } from "electron";
 
 class DataBaseConnector {
   private static instance: DataBaseConnector;
@@ -19,7 +20,9 @@ class DataBaseConnector {
   private constructor() {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-
+    // FOR PRODUCTION BUILD
+    // const userDataPath = app.getPath("userData");
+    // this.dbPath = path.join(userDataPath, "dataBase.db");
     this.dbPath = path.join(
       __dirname,
       isDev() ? "../../" : "../",

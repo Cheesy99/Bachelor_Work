@@ -1,6 +1,16 @@
 {
   "appId": "com.t-chisi.JSONFilter",
-  "files": ["dist-electron", "dist-react"],
+  "files": [
+    "dist-electron",
+    "dist-react",
+    "node_modules/**/*",
+    "package.json",
+    "src/electron/*",
+    {
+      "from": "src/electron",
+      "filter": ["!Tests/**"]
+    }
+  ],
   "extraResources": ["dist-electron/preload.cjs"],
   "icon": "./desktopIcon.png",
   "mac": {
