@@ -25,6 +25,7 @@ class MainManager {
   private readonly persistencePath: string;
   private fromDisk: boolean;
   private mainSchema: Map<string, string>;
+  private indexJump: number = 100;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -43,8 +44,17 @@ class MainManager {
     this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
     this.loadSchemaFromDisk();
   }
+
+  setJumper(jump: number): Promise<void> {
+    this.indexJump = jump;
+    return Promise.resolve();
+  }
+
   loadSchemaFromDisk() {
-    const schemaFilePath = path.resolve(this.persistencePath, "schema.json");
+    const schemaFilePath = path.join(
+      __dirname,
+      `${this.persistencePath}data.json`
+    );
 
     if (fs.existsSync(schemaFilePath)) {
       try {
@@ -91,10 +101,9 @@ class MainManager {
           this.mainSchema.set(element, key);
         });
       }
-      console.log("mainschema", this.mainSchema);
       await this.dataBase.sqlCommand(mainInsert);
 
-      const fromID = { startId: 0, endId: 100 };
+      const fromID = { startId: 0, endId: this.indexJump };
       const tableData = await this.getTableDataObject(fromID, "main_table");
       this.browserWindow.webContents.send(
         "tableDataFromBackend",
@@ -119,8 +128,7 @@ class MainManager {
           __dirname,
           `${this.persistencePath}data.json`
         );
-        const fileContent = fs.readFileSync(filePath, "utf-8");
-        const data = JSON.parse(fileContent);
+        const data: TableData = await this.getDiskData();
         schema = data.schema;
         table = data.table.slice(startIndex, endIndex + 1);
       } catch (error) {
@@ -203,7 +211,8 @@ class MainManager {
         console.error("Worker error:", error);
       });
 
-      const maxValue = table.length > 100 ? 100 : table.length;
+      const maxValue =
+        table.length >= this.indexJump ? this.indexJump : table.length;
 
       const partialTableData = {
         schema: schema,
@@ -224,35 +233,6 @@ class MainManager {
     }
   }
 
-  public async getDataFromDisk(from: From): Promise<void> {
-    const filePath = `${this.persistencePath}data.json`;
-
-    try {
-      const fileContent = await fs.promises.readFile(filePath, "utf-8");
-      const data: TableData = JSON.parse(fileContent);
-
-      const resultSchema: string[] = data.schema;
-      const resultTable: (string | number)[][] = data.table.slice(
-        from.startIndex,
-        from.endIndex
-      );
-
-      const resultTableData: TableData = {
-        schema: resultSchema,
-        table: resultTable,
-      };
-
-      this.browserWindow.webContents.send(
-        "dataFromDisk",
-        resultTableData,
-        true
-      );
-    } catch (error) {
-      console.error("Error reading data from disk:", error);
-      throw new Error("Failed to read data from disk");
-    }
-  }
-
   public async getTableSchema(tableName: string): Promise<string[]> {
     const schemaQuery = `PRAGMA table_info(${tableName})`;
     const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
@@ -268,7 +248,7 @@ class MainManager {
   }
 
   public async exportToExcel() {
-    const mainTable = await this.getSavedResult();
+    const mainTable = await this.getDiskData();
     if (mainTable) {
       const fullTable: TableData = await this.getFullTable(mainTable);
       const filePath = `${this.persistencePath}excelData.xlsx`;
@@ -316,7 +296,7 @@ class MainManager {
     return { schema: resultSchema, table: resultTable };
   }
 
-  public async getSavedResult(): Promise<TableData> {
+  public async getDiskData(): Promise<TableData> {
     const data = fs.readFileSync(`${this.persistencePath}data.json`, "utf-8");
     return JSON.parse(data);
   }

@@ -47,7 +47,8 @@ function App() {
     setTableData,
     setLoading,
     tableType,
-    sqlCommandStack
+    sqlCommandStack,
+    amountOfShownRows
   );
   useEffect(() => {
     uiManager.getInitTableData();
@@ -119,8 +120,9 @@ function App() {
     setSelectedRowData([]);
     setSqlCommandStack([]);
     setShowSidePanel(false);
-    setAmountOfShownRows(100);
-    setIndex({ startIndex: 1, endIndex: 100 });
+    const amountIndex = amountOfShownRows;
+    setAmountOfShownRows(amountIndex);
+    setIndex({ startIndex: 1, endIndex: amountIndex });
     setLastClicked(Clicked.Column);
     setLoading(false);
   };

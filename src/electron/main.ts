@@ -72,7 +72,7 @@ app.on("ready", () => {
   });
 
   ipcMain.handle("getSavedResult", async (_) => {
-    return await mainManager.getSavedResult();
+    return await mainManager.getDiskData();
   });
   ipcMain.handle("cleanDatabase", async (_) => {
     return await mainManager.cleanDatabase();
@@ -98,6 +98,10 @@ app.on("ready", () => {
 
   ipcMain.handle("getAllValues", async (_, columnName: string) => {
     return await mainManager.getAllValues(columnName);
+  });
+
+  ipcMain.handle("setJump", async (_, jump: number) => {
+    return await mainManager.setJumper(jump);
   });
 });
 

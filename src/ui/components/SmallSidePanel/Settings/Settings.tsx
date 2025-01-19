@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 import { ViewSetting } from "../../../connector/Enum/Setting";
 import "./Settings.css";
 import { useContext } from "react";
 import { Context } from "../../../App";
+import UiManager from "../../../connector/UiManager";
 interface SettingsModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
@@ -11,6 +12,7 @@ interface SettingsModalProps {
   currentView: ViewSetting;
   amountSetted: number;
   deleteDatabase: () => void;
+  uiManager: UiManager;
   setterAmountSetting: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -20,12 +22,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   handleViewChange,
   setterAmountSetting,
   amountSetted,
+  uiManager,
   currentView,
   deleteDatabase,
 }) => {
+  const [saveBetween, setSaveBetween] = useState<number>(amountSetted);
   const setAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount: number = parseInt(event.target.value, 10);
-    setterAmountSetting(newAmount);
+    setSaveBetween(newAmount);
+  };
+
+  const setStepAmount = async () => {
+    await uiManager.setJump(saveBetween);
+    setterAmountSetting(saveBetween);
+    await uiManager.executeStack();
   };
   useContext(Context);
   return (
@@ -56,7 +66,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         </label>
         <label>Max Row's:</label>
         To many row value can lead to decreased preformance
-        <input type="number" value={amountSetted} onChange={setAmount}></input>
+        <input type="number" value={saveBetween} onChange={setAmount}></input>
+        <button onClick={setStepAmount}>Change</button>
       </div>
 
       <button className="delete-button" onClick={deleteDatabase}>

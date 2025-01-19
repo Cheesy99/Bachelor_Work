@@ -73,6 +73,7 @@ function SmallSidePanel({
       </label>
       <SettingsModal
         deleteDatabase={deleteDatabase}
+        uiManager={uiManager}
         setterAmountSetting={setterAmountSetting}
         isOpen={isModalOpen}
         amountSetted={amountSetted}

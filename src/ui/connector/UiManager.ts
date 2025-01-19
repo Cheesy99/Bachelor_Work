@@ -13,14 +13,16 @@ class UiManager {
   > | null;
   private readonly tableType: ViewSetting;
   private sqlCommandStack: any[];
-
+  private amountToTake: number;
   public constructor(
     converter: Converter,
     tableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     tableType: ViewSetting,
-    sqlCommandStack: any[]
+    sqlCommandStack: any[],
+    amountToTake: number
   ) {
+    this.amountToTake = amountToTake;
     this.converter = converter;
     this.setTableData = tableRef;
     this.setLoading = setLoading;
@@ -68,7 +70,7 @@ class UiManager {
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists && this.setTableData) {
-      const from: From = { startIndex: 0, endIndex: 100 };
+      const from: From = { startIndex: 0, endIndex: this.amountToTake };
       await window.electronAPI.getTableData(from, "main_table");
     }
   }
@@ -132,6 +134,8 @@ class UiManager {
   async getAllValue(columnName: string): Promise<string[]> {
     return await window.electronAPI.getAllColumnValues(columnName);
   }
+
+  async setJump(jump: number): Promise<void> {}
 }
 
 export default UiManager;
