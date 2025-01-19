@@ -39,7 +39,7 @@ body {
 .show-side-panel {
   cursor: pointer;
   position: relative;
-  transform: translateY(950%);
+  top: 50%;
   height: 3%;
   left: 0;
   font-size: 11px;
@@ -49,4 +49,5 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #007afc;
 }
