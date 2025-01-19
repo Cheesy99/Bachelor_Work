@@ -99,6 +99,8 @@ class UiManager {
   }
 
   public async executeStack() {
+    console.log(createSqlQuery(this.sqlCommandStack));
+    console.log("ok", this.amountToTake);
     let reponse = await window.electronAPI.executeSqlCommandStack(
       createSqlQuery(this.sqlCommandStack),
       "main_table"

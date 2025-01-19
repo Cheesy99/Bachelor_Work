@@ -29,12 +29,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const [saveBetween, setSaveBetween] = useState<number>(amountSetted);
   const setAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount: number = parseInt(event.target.value, 10);
-    setSaveBetween(newAmount);
+    if (!isNaN(newAmount)) {
+      setSaveBetween(newAmount);
+    }
   };
 
   const setStepAmount = async () => {
-    await uiManager.setJump(saveBetween);
     setterAmountSetting(saveBetween);
+    await uiManager.setJump(amountSetted);
     await uiManager.executeStack();
   };
   useContext(Context);
