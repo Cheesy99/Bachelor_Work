@@ -37,6 +37,7 @@ function App() {
     startIndex: 1,
     endIndex: amountOfShownRows,
   });
+  const [showSidePanel, setShowSidePanel] = useState<boolean>(false);
   const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
   const [lastClicked, setLastClicked] = useState<
     Clicked.RowId | Clicked.Column | undefined
@@ -54,6 +55,7 @@ function App() {
 
   const handleIdClick = (rowData: (string | number)[]) => {
     setSelectedRowData(rowData);
+    setShowSidePanel(true);
     setLastClicked(Clicked.RowId);
   };
 
@@ -62,6 +64,7 @@ function App() {
     columnName: string;
   }) => {
     setSelectedColumnValues(columnValues);
+    setShowSidePanel(true);
     setLastClicked(Clicked.Column);
   };
 
@@ -115,11 +118,15 @@ function App() {
     setSelectedColumnValues({ values: [], columnName: "" });
     setSelectedRowData([]);
     setSqlCommandStack([]);
-    setLastClicked(undefined);
+    setShowSidePanel(false);
     setAmountOfShownRows(100);
     setIndex({ startIndex: 1, endIndex: 100 });
     setLastClicked(Clicked.Column);
     setLoading(false);
+  };
+
+  const toggleSidePanel = () => {
+    setShowSidePanel((prev) => !prev);
   };
   return (
     <Context.Provider value={[tableData, tableType, loading, uiManager]}>
@@ -137,7 +144,7 @@ function App() {
               resetApp={resetApp}
             />
           </div>
-          {lastClicked !== undefined && (
+          {showSidePanel && (
             <div className="big-side-panel">
               <BigSidePanel
                 columnValues={selectedColumnValues}
@@ -146,9 +153,12 @@ function App() {
               />
             </div>
           )}
+          <div className="show-side-panel" onClick={toggleSidePanel}>
+            {showSidePanel ? "←" : "→"}
+          </div>
           <div
             className={`main-window ${
-              lastClicked !== undefined ? "" : "main-window-full-width"
+              showSidePanel ? "" : "main-window-full-width"
             }`}
           >
             <MainWindow
