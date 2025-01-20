@@ -42,6 +42,8 @@ class TableBuilder {
         });
         totalRes.push(res);
         insertOrderForeign.push(columnName);
+      } else if (typeof value === "object") {
+        await this.recursive(value, tableSchema, columnName);
       } else {
         typeof value === "string"
           ? (value = `'${value.replace(/'/g, "''")}'`)

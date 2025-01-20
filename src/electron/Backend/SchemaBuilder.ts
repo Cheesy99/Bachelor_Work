@@ -2,6 +2,7 @@ import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
 import DataCleaner from "./Utils/DataCleaner.js";
+import { isObject } from "util";
 class SchemaBuilder {
   private sqlTextGenerator: SqlTextGenerator;
 
@@ -46,10 +47,13 @@ class SchemaBuilder {
     const keys = Object.keys(json);
     const result = [{ [tableName]: keys }];
     keys.forEach((key) => {
-      if (Array.isArray(json[key])) {
-        json[key].forEach((obj) => {
+      const value = json[key];
+      if (Array.isArray(value)) {
+        value.forEach((obj) => {
           result.push(...this.recursiveSchema(obj, key));
         });
+      } else if (typeof value === "object" && typeof value !== "string") {
+        result.push(...this.recursiveSchema(value, key));
       }
     });
 
