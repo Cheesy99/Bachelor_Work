@@ -3,6 +3,7 @@ import path from "path";
 import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
 import MainManager from "./Backend/MainManager.js";
+import { ipcRenderer } from "electron/renderer";
 
 ipcMain.setMaxListeners(20);
 let mainManager: MainManager;
@@ -44,13 +45,16 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle("getTableData", async (_, from: From, tableName: string) => {
-    return await mainManager.GetTableData(from, tableName);
+  ipcMain.handle("initTableData", async (_, from: From) => {
+    return await mainManager.initTableData(from);
   });
 
-  ipcMain.handle("sqlCommand", async (_, command: any, tableName: string) => {
-    return await mainManager.uiSqlCommand(command, tableName);
-  });
+  ipcMain.handle(
+    "sqlCommand",
+    async (_, command: any, schema: string[], tableName: string) => {
+      return await mainManager.uiSqlCommand(command, schema, tableName);
+    }
+  );
 
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
     return await mainManager.getRow(id, tableName);
@@ -106,7 +110,8 @@ app.on("ready", () => {
 });
 
 app.on("before-quit", () => {
+  // ipcRenderer.removeAllListeners("tableDataFromBackend");
   if (mainManager) {
-    mainManager.saveSchemaToDisk();
+    mainManager.saveSchemasToDiskWhenQuit();
   }
 });

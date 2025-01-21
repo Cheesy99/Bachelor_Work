@@ -14,17 +14,20 @@ class UiManager {
   private readonly tableType: ViewSetting;
   private sqlCommandStack: any[];
   private amountToTake: number;
+  private tableRef: Table | null;
   public constructor(
     converter: Converter,
-    tableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
+    setterTableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    tableRef: Table | null,
     tableType: ViewSetting,
     sqlCommandStack: any[],
     amountToTake: number
   ) {
     this.amountToTake = amountToTake;
     this.converter = converter;
-    this.setTableData = tableRef;
+    this.tableRef = tableRef;
+    this.setTableData = setterTableRef;
     this.setLoading = setLoading;
     this.tableType = tableType;
     this.sqlCommandStack = sqlCommandStack;
@@ -63,15 +66,17 @@ class UiManager {
     }
   }
 
-  public async getTableData(from: From, tableName: string) {
-    await window.electronAPI.getTableData(from, tableName);
+  //THis is a bugg this should be done over another endpoint e.g. nextIndex here the disk data is
+  //Being loaded here is a BIG BUGG!!!!!!!!!!!!
+  public async getTableData(from: From) {
+    await window.electronAPI.initTableData(from);
   }
 
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists && this.setTableData) {
       const from: From = { startIndex: 0, endIndex: this.amountToTake };
-      await window.electronAPI.getTableData(from, "main_table");
+      await window.electronAPI.initTableData(from);
     }
   }
 
@@ -99,10 +104,9 @@ class UiManager {
   }
 
   public async executeStack() {
-    console.log(createSqlQuery(this.sqlCommandStack));
-    console.log("ok", this.amountToTake);
     let reponse = await window.electronAPI.executeSqlCommandStack(
       createSqlQuery(this.sqlCommandStack),
+      this.tableRef?.schema!,
       "main_table"
     );
 

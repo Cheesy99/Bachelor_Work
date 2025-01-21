@@ -46,6 +46,7 @@ function App() {
     new Converter(),
     setTableData,
     setLoading,
+    tableData,
     tableType,
     sqlCommandStack,
     amountOfShownRows
@@ -93,7 +94,7 @@ function App() {
         endIndex: index.endIndex + amountOfShownRows,
       };
       setIndex(newIdex);
-      uiManager.getTableData(newIdex, "main_table");
+      uiManager.getTableData(newIdex);
     } else {
       if (index.startIndex <= 0) {
         console.log("start index is less then 0", index.startIndex);
@@ -106,7 +107,7 @@ function App() {
           ),
         };
         setIndex(newIdex);
-        uiManager.getTableData(newIdex, "main_table");
+        uiManager.getTableData(newIdex);
       }
     }
   };

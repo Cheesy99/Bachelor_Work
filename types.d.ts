@@ -37,14 +37,15 @@ interface Window {
       fromID: FromId,
       tableName: string
     ) => Promise<TableData>;
-    getTableData: (from: From, tableName: string) => Promise<void>;
+    initTableData: (from: From) => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
     subscribeToListener: (
       callback: (tableData: TableData, fromDisk: boolean) => void
     ) => void;
     executeSqlCommandStack: (
-      sqlCommand: any,
+      command: any,
+      schema: string[],
       tableName: string
     ) => Promise<string>;
     databaseExists: () => Promise<boolean>;

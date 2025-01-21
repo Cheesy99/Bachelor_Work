@@ -24,8 +24,10 @@ class MainManager {
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
   private fromDisk: boolean;
-  private mainSchema: Map<string, string>;
+  private mainSchema: Map<string, string[]>;
+  private currentlyShowSchema: Map<string, string[]>;
   private indexJump: number = 100;
+  private currentForeignSchemaToSelect: string[] = [];
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -41,38 +43,12 @@ class MainManager {
     this.fromDisk = false;
     this.browserWindow = browserWindow;
     this.mainSchema = new Map();
+    this.currentlyShowSchema = new Map();
     this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
-    this.loadSchemaFromDisk();
   }
 
-  setJumper(jump: number): Promise<void> {
+  setJumper(jump: number): void {
     this.indexJump = jump;
-    return Promise.resolve();
-  }
-
-  loadSchemaFromDisk() {
-    const schemaFilePath = path.join(
-      __dirname,
-      `${this.persistencePath}data.json`
-    );
-
-    if (fs.existsSync(schemaFilePath)) {
-      try {
-        const data = fs.readFileSync(schemaFilePath, "utf8");
-        if (data.trim().length === 0) {
-          console.warn("Schema file is empty.");
-          return;
-        }
-        const schemaDictionary: [string, string][] = JSON.parse(data);
-        this.mainSchema = new Map(schemaDictionary);
-        console.log("Schema loaded from disk successfully.");
-      } catch (error) {
-        console.error("Error reading or parsing schema from disk:", error);
-      }
-    } else {
-      console.log("Schema file does not exist. Initializing a new schema.");
-      this.mainSchema = new Map();
-    }
   }
 
   get dataBaseExist() {
@@ -97,9 +73,8 @@ class MainManager {
         schemaResult.tableSchema
       );
       for (const [key, value] of Object.entries(schemaResult.tableSchema)) {
-        value.forEach((element) => {
-          this.mainSchema.set(element, key);
-        });
+        this.mainSchema.set(key, value);
+        this.currentlyShowSchema.set(key, value);
       }
       await this.dataBase.sqlCommand(mainInsert);
 
@@ -118,16 +93,12 @@ class MainManager {
     }
   }
 
-  public async GetTableData(from: From, tableName: string): Promise<void> {
+  public async initTableData(from: From): Promise<void> {
     let schema: string[] = [];
     let table: (string | number)[][] = [];
     const { startIndex, endIndex } = from;
     if (this.fromDisk) {
       try {
-        const filePath = path.join(
-          __dirname,
-          `${this.persistencePath}data.json`
-        );
         const data: TableData = await this.getDiskData();
         schema = data.schema;
         table = data.table.slice(startIndex, endIndex + 1);
@@ -136,9 +107,9 @@ class MainManager {
         return;
       }
     } else {
-      const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startIndex} AND ${endIndex}`;
+      const dataQuery = `SELECT * FROM main_table WHERE id BETWEEN ${startIndex} AND ${endIndex}`;
       const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
-      schema = await this.getTableSchema(tableName);
+      schema = await this.getTableSchema("main_table");
       table = dataResult.map((row: string | number) => Object.values(row));
     }
     const tableData: TableData = { schema: schema, table: table };
@@ -149,12 +120,19 @@ class MainManager {
     );
   }
 
-  public saveSchemaToDisk(): void {
-    const schemaJson = JSON.stringify(Array.from(this.mainSchema.entries()));
+  public saveSchemasToDiskWhenQuit(): void {
+    const schemaJson = JSON.stringify(Array.from(this.mainSchema));
+    const shownSchemaJson = JSON.stringify(
+      Array.from(this.currentlyShowSchema)
+    );
     const schemaFilePath = path.resolve(this.persistencePath, "schema.json");
-
+    const currentlyShow = path.resolve(
+      this.persistencePath,
+      "shownSchema.json"
+    );
     try {
       fs.writeFileSync(schemaFilePath, schemaJson);
+      fs.writeFileSync(currentlyShow, shownSchemaJson);
       console.log("Schema saved to disk successfully.");
     } catch (err) {
       console.error("Error writing schema to disk:", err);
@@ -186,16 +164,49 @@ class MainManager {
 
   public async uiSqlCommand(
     sqlCommand: any,
+    inputSchema: string[],
     tableName: string
   ): Promise<string> {
     try {
+      this.currentForeignSchemaToSelect = [];
+      const addForeignTable: Set<string> = new Set();
+      console.log("inputSchema", inputSchema);
+      let mainSchema: string[] = inputSchema.filter((value) => {
+        let isMainSchema = false;
+        this.currentlyShowSchema.get("main_table")?.forEach((columnName) => {
+          if (columnName === value) {
+            isMainSchema = true;
+          } else {
+            this.currentlyShowSchema.keys().forEach((key) => {
+              if (
+                this.currentlyShowSchema.get(key)?.includes(value) &&
+                key !== "main_table"
+              ) {
+                addForeignTable.add(key);
+              }
+            });
+            this.currentForeignSchemaToSelect.push(value);
+          }
+        });
+        return isMainSchema;
+      });
+      const addForeignArray = Array.from(addForeignTable).join(", ");
+      mainSchema = mainSchema.concat(addForeignArray);
+      let finalCommand = `SELECT ${mainSchema} `;
+      console.log("result", mainSchema);
+      sqlCommand = finalCommand.concat(sqlCommand);
+
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
       const schema = await this.getTableSchema(tableName);
       const tableData = { schema: schema, table: table };
+
+      //These worker are obviouly asychronous they save on another thread so the resource are free on the main thread
+      //Only works because of speed of application !!!WARNING big bugg potention as there is no queue for income messages
+      //While workers are busy
       const worker = new Worker(path.resolve(__dirname, "./SaveWorker.js"));
       worker.postMessage({
-        filePath: `${this.persistencePath}data.json`,
+        filePath: path.resolve(this.persistencePath, "data.json"),
         content: tableData,
       });
 
@@ -296,9 +307,23 @@ class MainManager {
     return { schema: resultSchema, table: resultTable };
   }
 
-  public async getDiskData(): Promise<TableData> {
-    const data = fs.readFileSync(`${this.persistencePath}data.json`, "utf-8");
-    return JSON.parse(data);
+  public getDiskData(): TableData {
+    const data = JSON.parse(
+      fs.readFileSync(path.resolve(this.persistencePath, "data.json"), "utf-8")
+    );
+    this.currentlyShowSchema = JSON.parse(
+      fs.readFileSync(
+        path.resolve(this.persistencePath, "shownSchema.json"),
+        "utf-8"
+      )
+    );
+    this.mainSchema = JSON.parse(
+      fs.readFileSync(
+        path.resolve(this.persistencePath, "schema.json"),
+        "utf-8"
+      )
+    );
+    return data;
   }
 
   public async amountOfRows(tableName: string): Promise<number> {
@@ -307,9 +332,22 @@ class MainManager {
     return result[0].count;
   }
 
+  // Here for foreigntable you can save the scheam main_table: (Id, Name,...) , termine (Id, Name,...) and then when they delete
+  //it just remove it form here
+  //So instead of * get the schema text you save from the user this si a better way of doing the delete column then and save the name changes thsi will have to
+  // be done in the database change it in the text array and the in the database
   async getRow(id: number, tableName: string): Promise<(string | number)[]> {
+    let schema: string[] = [];
+    if (this.currentForeignSchemaToSelect.length !== 0) {
+      // Getting the value of the schema we are showing that are to the corresponding table
+      schema = this.currentForeignSchemaToSelect.filter((activeColumn) => {
+        this.currentlyShowSchema.get(tableName)?.includes(activeColumn);
+      });
+    }
+
+    const finale = schema.length <= 1 ? "*" : schema.join(" ,");
     const result = await this.dataBase.sqlCommandWithReponse(
-      `SELECT * FROM ${tableName} WHERE id = ${id}`
+      `SELECT ${finale} FROM ${tableName} WHERE id = ${id}`
     );
 
     if (result.length === 0) {
@@ -328,6 +366,7 @@ class MainManager {
 
       const file1Path = path.resolve(this.persistencePath, "data.json");
       const file2Path = path.resolve(this.persistencePath, "schema.json");
+      const file3Path = path.resolve(this.persistencePath, "shownSchema.json");
 
       if (fs.existsSync(file1Path)) {
         fs.unlinkSync(file1Path);
@@ -342,6 +381,12 @@ class MainManager {
       } else {
         console.warn(`File not found: ${file2Path}`);
       }
+      if (fs.existsSync(file3Path)) {
+        fs.unlinkSync(file3Path);
+        console.log(`Deleted file: ${file3Path}`);
+      } else {
+        console.warn(`File not found: ${file3Path}`);
+      }
       console.log("Database file deleted successfully.");
     } catch (error) {
       console.error("Error deleting the database file:", error);
@@ -353,39 +398,9 @@ class MainManager {
     commandStack: string,
     newColumnName: string,
     oldColumnName: string
-  ): Promise<void> {
-    console.log("oldColumn", oldColumnName);
-    let tableNameAndIfDeleted: string | undefined =
-      this.mainSchema.get(oldColumnName);
-    console.log("Mainschema", this.mainSchema);
-    let tableName;
-    if (tableNameAndIfDeleted) {
-      tableName = tableNameAndIfDeleted;
-      let renameStatment = `ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
-      await this.dataBase.sqlCommand([renameStatment]);
-      await this.uiSqlCommand(commandStack, "main_table");
-    } else {
-      throw Error("This schema doesn't match the column names");
-    }
-  }
+  ): Promise<void> {}
 
-  async removeColumn(commandStack: string, columnName: string): Promise<void> {
-    try {
-      let tableNameAndIfDeleted: string | undefined =
-        this.mainSchema.get(columnName);
-      let tableName;
-      if (tableNameAndIfDeleted) {
-        tableName = tableNameAndIfDeleted;
-        let dropColumnStatement = `ALTER TABLE ${tableName} DROP COLUMN ${columnName};`;
-        await this.dataBase.sqlCommand([dropColumnStatement]);
-        await this.uiSqlCommand(commandStack, "main_table");
-      }
-    } catch (error) {
-      console.error(`Error removing column ${columnName}`, error);
-
-      throw new Error(`Failed to remove column ${columnName}`);
-    }
-  }
+  async removeColumn(commandStack: string, columnName: string): Promise<void> {}
 
   async getAllValues(columnName: string): Promise<String[]> {
     try {

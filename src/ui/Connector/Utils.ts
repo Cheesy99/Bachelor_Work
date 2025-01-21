@@ -64,6 +64,21 @@ export const createSqlQuery = (command: any[]): string => {
     result = command.join(" ");
     result = result.replace(/AND/, "WHERE");
   }
-  result = `SELECT * FROM main_table ${result}`;
+
+  result = `FROM main_table ${result}`;
+  return result;
+};
+
+export const createSqlQueryForView = (
+  command: any[],
+  schema: string[]
+): string => {
+  let result: string = "";
+  if (command.length !== 0) {
+    result = command.join(" ");
+    result = result.replace(/AND/, "WHERE");
+  }
+
+  result = `SELECT ${schema.join(", ")} FROM main_table ${result}`;
   return result;
 };

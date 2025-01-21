@@ -41,6 +41,12 @@ class DataCleaner {
 
     return result;
   };
+
+  public schemaSqlPrinter = (schemaArray: string[]): string => {
+    let result = "(";
+    let shemaString = schemaArray.join(", ");
+    return result.concat(shemaString).concat(")");
+  };
 }
 
 export default DataCleaner;

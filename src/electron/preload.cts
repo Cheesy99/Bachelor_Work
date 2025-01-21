@@ -12,9 +12,10 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
 
   executeSqlCommandStack: (
     command: any,
+    schema: string[],
     tableName: string
   ): Promise<string> => {
-    return ipcRenderer.invoke("sqlCommand", command, tableName);
+    return ipcRenderer.invoke("sqlCommand", command, schema, tableName);
   },
 
   subscribeToListener: (
@@ -53,8 +54,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("getSaveResult");
   },
 
-  getTableData: (from: From, tableName: string) => {
-    return ipcRenderer.invoke("getTableData", from, tableName);
+  initTableData: (from: From) => {
+    return ipcRenderer.invoke("initTableData", from);
   },
   cleanDatabase: () => {
     return ipcRenderer.invoke("cleanDatabase");

@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import "./MainWindow.css";
 import Table from "./Table/Table";
-import { createSqlQuery } from "../../connector/Utils";
+import { createSqlQuery, createSqlQueryForView } from "../../connector/Utils";
 import { Context, ContextCommandStack } from "../../App";
 import { ViewSetting, Display } from "../../connector/Enum/Setting";
 import UiManager from "../../connector/UiManager";
@@ -67,7 +67,8 @@ function MainWindow({
   };
 
   const handleSqlSubmit = async () => {
-    await window.electronAPI.executeSqlCommandStack(sqlCommand, "main_table");
+    if (tableData) await uiManager.executeStack();
+    else alert("Table Data is not been uploaded");
   };
 
   const handleToggleChange = () => {
@@ -98,7 +99,9 @@ function MainWindow({
 
   useEffect(() => {
     if (showSqlInput) {
-      setSqlCommand(createSqlQuery(sqlCommandStack));
+      if (tableData)
+        setSqlCommand(createSqlQueryForView(sqlCommandStack, tableData.schema));
+      else setSqlCommand("");
     }
   }, [showSqlInput, sqlCommandStack]);
 
