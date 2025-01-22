@@ -381,12 +381,7 @@ class MainManager {
       } else {
         console.warn(`File not found: ${file2Path}`);
       }
-      if (fs.existsSync(file3Path)) {
-        fs.unlinkSync(file3Path);
-        console.log(`Deleted file: ${file3Path}`);
-      } else {
-        console.warn(`File not found: ${file3Path}`);
-      }
+
       console.log("Database file deleted successfully.");
     } catch (error) {
       console.error("Error deleting the database file:", error);
