@@ -12,7 +12,6 @@ Modal.setAppElement("#root");
 interface SmallSidePanelProps {
   toggleSqlInput: () => void;
   handleViewChange: (view: ViewSetting) => void;
-  uiManager: UiManager;
   setterAmountSetting: React.Dispatch<React.SetStateAction<number>>;
   amountSetted: number;
   resetApp: () => void;
@@ -22,7 +21,6 @@ function SmallSidePanel({
   handleViewChange,
   setterAmountSetting,
   amountSetted,
-  uiManager,
   resetApp,
 }: SmallSidePanelProps) {
   const context = useContext(Context);
@@ -31,7 +29,7 @@ function SmallSidePanel({
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
 
-  const [_, viewType] = context;
+  const [tableData, tableType, loading, uiManager] = context;
 
   const exportToExcel = async () => {
     await window.electronAPI.exportToExcel();
@@ -79,7 +77,8 @@ function SmallSidePanel({
         amountSetted={amountSetted}
         onRequestClose={closeSettings}
         handleViewChange={handleViewChange}
-        currentView={viewType}
+        table={tableData}
+        currentView={tableType}
       />
 
       <label

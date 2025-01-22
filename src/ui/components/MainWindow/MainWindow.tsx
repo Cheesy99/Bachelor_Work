@@ -67,8 +67,17 @@ function MainWindow({
   };
 
   const handleSqlSubmit = async () => {
-    if (tableData) await uiManager.executeStack();
-    else alert("Table Data is not been uploaded");
+    if (tableData) {
+      const selectColumnsMatch = sqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
+      let selectColumns: string[] = [];
+      if (selectColumnsMatch && selectColumnsMatch[1]) {
+        selectColumns = selectColumnsMatch[1]
+          .split(",")
+          .map((col) => col.trim());
+      }
+
+      await uiManager.executeStack(selectColumns);
+    } else alert("Table Data is not been uploaded");
   };
 
   const handleToggleChange = () => {
@@ -93,9 +102,14 @@ function MainWindow({
     let history: any[] = sqlCommandStack;
     if (history.length !== 0) {
       history.pop();
-      await uiManager.executeStack();
+      await uiManager.executeStack(tableData?.schema!);
     }
   }
+
+  const handleSqlInputField = (value: string) => {
+    setSqlCommand(value);
+    console.log(value);
+  };
 
   useEffect(() => {
     if (showSqlInput) {
@@ -172,7 +186,7 @@ function MainWindow({
         <div className="sql-input">
           <textarea
             value={sqlCommand}
-            onChange={(e) => setSqlCommand(e.target.value)}
+            onChange={(e) => handleSqlInputField(e.target.value)}
             placeholder="Enter SQL command"
           />
           <button onClick={handleSqlSubmit}>Execute</button>

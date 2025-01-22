@@ -143,7 +143,6 @@ function App() {
               handleViewChange={handleViewChange}
               setterAmountSetting={setAmountOfShownRows}
               amountSetted={amountOfShownRows}
-              uiManager={uiManager}
               resetApp={resetApp}
             />
           </div>

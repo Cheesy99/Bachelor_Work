@@ -13,6 +13,7 @@ interface SettingsModalProps {
   amountSetted: number;
   deleteDatabase: () => void;
   uiManager: UiManager;
+  table: Table | null;
   setterAmountSetting: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -24,6 +25,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   amountSetted,
   uiManager,
   currentView,
+  table,
   deleteDatabase,
 }) => {
   const [saveBetween, setSaveBetween] = useState<number>(amountSetted);
@@ -37,7 +39,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const setStepAmount = async () => {
     setterAmountSetting(saveBetween);
     await uiManager.setJump(amountSetted);
-    await uiManager.executeStack();
+    await uiManager.executeStack(table?.schema!);
   };
   useContext(Context);
   return (

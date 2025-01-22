@@ -76,6 +76,12 @@ class MainManager {
         this.mainSchema.set(key, value);
         this.currentlyShowSchema.set(key, value);
       }
+
+      this.mainSchema.keys().forEach((key) => {
+        this.mainSchema.get(key)?.push("id");
+      });
+
+      this.currentlyShowSchema.get("main_table")?.push("id");
       await this.dataBase.sqlCommand(mainInsert);
 
       const fromID = { startId: 0, endId: this.indexJump };
@@ -193,13 +199,12 @@ class MainManager {
       const addForeignArray = Array.from(addForeignTable).join(", ");
       mainSchema = mainSchema.concat(addForeignArray);
       let finalCommand = `SELECT ${mainSchema} `;
-      console.log("result", mainSchema);
+      console.log("result", finalCommand);
       sqlCommand = finalCommand.concat(sqlCommand);
 
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
-      const schema = await this.getTableSchema(tableName);
-      const tableData = { schema: schema, table: table };
+      const tableData = { schema: mainSchema, table: table };
 
       //These worker are obviouly asychronous they save on another thread so the resource are free on the main thread
       //Only works because of speed of application !!!WARNING big bugg potention as there is no queue for income messages
@@ -226,7 +231,7 @@ class MainManager {
         table.length >= this.indexJump ? this.indexJump : table.length;
 
       const partialTableData = {
-        schema: schema,
+        schema: mainSchema,
         table: table.slice(0, maxValue),
       };
       this.browserWindow.webContents.send(
