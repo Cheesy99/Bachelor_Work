@@ -78,10 +78,10 @@ class MainManager {
       }
 
       this.mainSchema.keys().forEach((key) => {
-        if (this.mainSchema.get(key)?.includes("id"))
+        if (!this.mainSchema.get(key)?.includes("id"))
           this.mainSchema.get(key)?.push("id");
       });
-      if (this.currentlyShowSchema.get("main_table")?.includes("id"))
+      if (!this.currentlyShowSchema.get("main_table")?.includes("id"))
         this.currentlyShowSchema.get("main_table")?.push("id");
       await this.dataBase.sqlCommand(mainInsert);
 
