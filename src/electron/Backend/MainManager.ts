@@ -177,7 +177,8 @@ class MainManager {
     try {
       this.currentForeignSchemaToSelect = [];
       const addForeignTable: Set<string> = new Set();
-      console.log("inputSchema", inputSchema);
+      console.log("inputSchema: ", inputSchema);
+      console.log("currentlyShowSchema: ", this.currentlyShowSchema);
       let mainSchema: string[] = inputSchema.filter((value) => {
         let isMainSchema = false;
         this.currentlyShowSchema.get("main_table")?.forEach((columnName) => {
@@ -347,7 +348,9 @@ class MainManager {
     if (this.currentForeignSchemaToSelect.length !== 0) {
       // Getting the value of the schema we are showing that are to the corresponding table
       schema = this.currentForeignSchemaToSelect.filter((activeColumn) => {
-        this.currentlyShowSchema.get(tableName)?.includes(activeColumn);
+        if (this.currentlyShowSchema.get(tableName)?.includes(activeColumn))
+          return true;
+        else return false;
       });
     }
 
