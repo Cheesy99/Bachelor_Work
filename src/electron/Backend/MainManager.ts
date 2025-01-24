@@ -177,26 +177,37 @@ class MainManager {
     try {
       this.currentForeignSchemaToSelect = [];
       const addForeignTable: Set<string> = new Set();
+      const newShowMap: Map<string, string[]> = new Map();
       console.log("inputSchema: ", inputSchema);
       console.log("currentlyShowSchema: ", this.currentlyShowSchema);
-      let mainSchema: string[] = inputSchema.filter((value) => {
+      let mainSchema: string[] = inputSchema.filter((shownColumnNames) => {
         let isMainSchema = false;
         this.currentlyShowSchema.get("main_table")?.forEach((columnName) => {
-          if (columnName === value) {
+          if (columnName === shownColumnNames) {
             isMainSchema = true;
           } else {
             this.currentlyShowSchema.keys().forEach((key) => {
               if (
-                this.currentlyShowSchema.get(key)?.includes(value) &&
+                this.currentlyShowSchema.get(key)?.includes(shownColumnNames) &&
                 key !== "main_table"
               ) {
+                if (newShowMap.has(key)) {
+                  if (!newShowMap.get(key)?.includes(shownColumnNames))
+                    newShowMap.get(key)?.push(shownColumnNames);
+                } else {
+                  newShowMap.set(key, [shownColumnNames]);
+                }
                 addForeignTable.add(key);
               }
             });
-            this.currentForeignSchemaToSelect.push(value);
+            this.currentForeignSchemaToSelect.push(shownColumnNames);
           }
         });
         return isMainSchema;
+      });
+
+      newShowMap.forEach((value, key) => {
+        this.currentlyShowSchema.set(key, value);
       });
       const addForeignArray = Array.from(addForeignTable).join(", ");
       mainSchema = mainSchema.concat(addForeignArray);
