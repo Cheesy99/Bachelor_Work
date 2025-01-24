@@ -24,8 +24,8 @@ class MainManager {
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
   private fromDisk: boolean;
-  private mainSchema: Map<string, string[]>;
-  private currentlyShowSchema: Map<string, string[]>;
+  private mainSchema: Map<string, any[]>;
+  private currentlyShowSchema: Map<string, any[]>;
   private indexJump: number = 100;
   private currentForeignSchemaToSelect: string[] = [];
   public static getInstance(browserWindow: BrowserWindow): MainManager {
@@ -72,18 +72,18 @@ class MainManager {
         jsonObject,
         schemaResult.tableSchema
       );
-      for (const [key, value] of Object.entries(schemaResult.tableSchema)) {
-        this.mainSchema.set(key, value);
-        this.currentlyShowSchema.set(key, value);
+      await this.dataBase.sqlCommand(mainInsert);
+
+      for (const [key, _] of Object.entries(schemaResult.tableSchema)) {
+        const schemaQuery = `PRAGMA table_info(${key})`;
+        const schemaResult = await this.dataBase.sqlCommandWithReponse(
+          schemaQuery
+        );
+        let schema: any[] = schemaResult.map((row: any) => row.name);
+        this.mainSchema.set(key, schema);
       }
 
-      this.mainSchema.keys().forEach((key) => {
-        if (!this.mainSchema.get(key)?.includes("id"))
-          this.mainSchema.get(key)?.unshift("id");
-      });
-      if (!this.currentlyShowSchema.get("main_table")?.includes("id"))
-        this.currentlyShowSchema.get("main_table")?.unshift("id");
-      await this.dataBase.sqlCommand(mainInsert);
+      this.currentlyShowSchema = new Map(this.mainSchema);
 
       const fromID = { startId: 0, endId: this.indexJump };
       const tableData = await this.getTableDataObject(fromID, "main_table");
