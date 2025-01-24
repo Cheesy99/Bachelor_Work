@@ -79,10 +79,10 @@ class MainManager {
 
       this.mainSchema.keys().forEach((key) => {
         if (!this.mainSchema.get(key)?.includes("id"))
-          this.mainSchema.get(key)?.push("id");
+          this.mainSchema.get(key)?.unshift("id");
       });
       if (!this.currentlyShowSchema.get("main_table")?.includes("id"))
-        this.currentlyShowSchema.get("main_table")?.push("id");
+        this.currentlyShowSchema.get("main_table")?.unshift("id");
       await this.dataBase.sqlCommand(mainInsert);
 
       const fromID = { startId: 0, endId: this.indexJump };
@@ -252,10 +252,18 @@ class MainManager {
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
-    const schemaQuery = `PRAGMA table_info(${tableName})`;
-    const schemaResult = await this.dataBase.sqlCommandWithReponse(schemaQuery);
-    const schema = schemaResult.map((row: any) => row.name);
-
+    let schema: string[];
+    if (this.currentlyShowSchema.get(tableName)) {
+      console.log("currentlyShowSchema: ", this.currentlyShowSchema);
+      schema = this.currentlyShowSchema.get(tableName)!;
+    } else {
+      const schemaQuery = `PRAGMA table_info(${tableName})`;
+      const schemaResult = await this.dataBase.sqlCommandWithReponse(
+        schemaQuery
+      );
+      schema = schemaResult.map((row: any) => row.name);
+    }
+    console.log("Schema: ", schema);
     return schema;
   }
 
