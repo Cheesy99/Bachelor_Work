@@ -149,6 +149,15 @@ class MainManager {
     }
   }
 
+  private saveSchemaToDiskDataJson(): void {
+    const schemaFilePath = path.resolve(this.persistencePath, "data.json");
+    const fileData = {
+      schema: this.mainSchema.get("main_table"),
+    };
+    fs.writeFileSync(schemaFilePath, JSON.stringify(fileData), "utf-8");
+    console.log("Schema saved to disk.");
+  }
+
   public async getTableDataObject(
     fromID: FromId,
     tableName: string
@@ -156,6 +165,7 @@ class MainManager {
     const { startId, endId } = fromID;
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
     const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
+    console.log("Please don't be stupid", dataResult);
     const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
 
@@ -179,10 +189,11 @@ class MainManager {
     if (this.canInsertData) {
       try {
         let mainSchema: string[];
+
+        this.currentForeignSchemaToSelect = [];
+        const addForeignTable: Set<string> = new Set();
+        const newShowMap: Map<string, string[]> = new Map();
         if (inputSchema) {
-          this.currentForeignSchemaToSelect = [];
-          const addForeignTable: Set<string> = new Set();
-          const newShowMap: Map<string, string[]> = new Map();
           mainSchema = inputSchema.filter((shownColumnNames) => {
             let isMainSchema = false;
             this.currentlyShowSchema
@@ -218,12 +229,14 @@ class MainManager {
           });
           const addForeignArray = Array.from(addForeignTable).join(", ");
           mainSchema = mainSchema.concat(addForeignArray);
-          let finalCommand = `SELECT ${mainSchema} `;
-          console.log("result", finalCommand);
-          sqlCommand = finalCommand.concat(sqlCommand);
         } else {
           mainSchema = this.currentlyShowSchema.get("main_table")!;
         }
+        let finalCommand = `SELECT ${mainSchema} `;
+        console.log("result", finalCommand);
+        sqlCommand = finalCommand.concat(sqlCommand);
+
+        console.log("command", sqlCommand);
         let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
         const table = result.map((row: string | number) => Object.values(row));
 
@@ -460,19 +473,19 @@ class MainManager {
     }
 
     const updateQuery = `ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
-    console.log("this is the query", updateQuery);
+
     await this.dataBase.sqlCommand([updateQuery]);
 
     for (const key of this.mainSchema.keys()) {
       const columns = this.mainSchema.get(key);
       if (columns?.includes(oldColumnName)) {
         const columnIndex = columns.indexOf(oldColumnName);
+        console.log("name", newColumnName);
         if (columnIndex !== -1) {
           columns[columnIndex] = newColumnName;
         }
       }
     }
-
     for (const key of this.currentlyShowSchema.keys()) {
       const columns = this.currentlyShowSchema.get(key);
       if (columns?.includes(oldColumnName)) {
@@ -488,7 +501,7 @@ class MainManager {
     if (foreignSchemaIndex !== -1) {
       this.currentForeignSchemaToSelect[foreignSchemaIndex] = newColumnName;
     }
-
+    this.saveSchemaToDiskDataJson();
     await this.uiSqlCommand(commandStack);
   }
 
@@ -496,7 +509,14 @@ class MainManager {
 
   async getAllValues(columnName: string): Promise<String[]> {
     try {
-      const tableName = this.mainSchema.get(columnName);
+      let tableName;
+      for (const key of this.mainSchema.keys()) {
+        if (this.mainSchema.get(key)?.includes(columnName)) {
+          tableName = key;
+
+          break;
+        }
+      }
       if (!tableName) {
         throw new Error(`Table for column ${columnName} not found in schema.`);
       }
