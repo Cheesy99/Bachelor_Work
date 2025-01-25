@@ -357,7 +357,7 @@ class MainManager {
         "utf-8"
       )
     );
-    this.currentlyShowSchema = new Map(Object.entries(shownSchemaData));
+    this.currentlyShowSchema = new Map(shownSchemaData);
 
     const mainSchemaData = JSON.parse(
       fs.readFileSync(
@@ -365,7 +365,8 @@ class MainManager {
         "utf-8"
       )
     );
-    this.mainSchema = new Map(Object.entries(mainSchemaData));
+    this.mainSchema = new Map(mainSchemaData);
+    console.log("This is mainshcema", this.mainSchema);
     return data;
   }
 
