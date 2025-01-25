@@ -90,19 +90,16 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle(
-    "removeColumn",
-    async (_, commandStack: string, columnName: string) => {
-      return await mainManager.removeColumn(commandStack, columnName);
-    }
-  );
-
   ipcMain.handle("getAllValues", async (_, columnName: string) => {
     return await mainManager.getAllValues(columnName);
   });
 
   ipcMain.handle("setJump", async (_, jump: number) => {
     return await mainManager.setJumper(jump);
+  });
+
+  mainWindow.on("close", async (event) => {
+    await mainManager.saveSqlCommand();
   });
 });
 
