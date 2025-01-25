@@ -460,6 +460,7 @@ class MainManager {
     }
 
     const updateQuery = `ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
+    console.log("this is the query", updateQuery);
     await this.dataBase.sqlCommand([updateQuery]);
 
     for (const key of this.mainSchema.keys()) {
