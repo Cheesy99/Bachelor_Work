@@ -31,14 +31,12 @@ class UiManager {
     this.setLoading = setLoading;
     this.tableType = tableType;
     this.sqlCommandStack = sqlCommandStack;
-    window.electronAPI.subscribeToListener(
-      async (tableData: TableData, fromDisk: boolean) => {
-        if (this.setTableData) {
-          sessionStorage.setItem("TableData", JSON.stringify(tableData));
-          this.setTableData(await this.convert(this.tableType));
-        }
+    window.electronAPI.subscribeToListener(async (tableData: TableData) => {
+      if (this.setTableData) {
+        sessionStorage.setItem("TableData", JSON.stringify(tableData));
+        this.setTableData(await this.convert(this.tableType));
       }
-    );
+    });
   }
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -107,8 +105,7 @@ class UiManager {
     console.log("Schema", this.tableRef?.schema!);
     let reponse = await window.electronAPI.executeSqlCommandStack(
       createSqlQuery(this.sqlCommandStack),
-      schema,
-      "main_table"
+      schema
     );
 
     if (reponse !== "ok") {

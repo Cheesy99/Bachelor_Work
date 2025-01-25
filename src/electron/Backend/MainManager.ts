@@ -23,11 +23,11 @@ class MainManager {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
-  private fromDisk: boolean;
   private mainSchema: Map<string, any[]>;
   private currentlyShowSchema: Map<string, any[]>;
   private indexJump: number = 100;
   private currentForeignSchemaToSelect: string[] = [];
+  private canInsertData: boolean = true;
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -36,21 +36,29 @@ class MainManager {
   }
 
   private constructor(browserWindow: BrowserWindow) {
+    this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
     this.dataBase = DataBaseConnector.getInstance();
     this.tableBuilder = new TableBuilder();
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
     this.excelExporter = new ExcelExporter();
-    this.fromDisk = false;
     this.browserWindow = browserWindow;
     this.mainSchema = new Map();
     this.currentlyShowSchema = new Map();
-    this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
   }
 
   setJumper(jump: number): void {
     this.indexJump = jump;
   }
 
+  checkForDisk(): boolean {
+    const filePath = path.join(this.persistencePath, "data.json");
+    const filePath2 = path.join(this.persistencePath, "schema.json");
+    const filePath3 = path.join(this.persistencePath, "shownSchema.json");
+    if (!fs.existsSync(filePath2)) console.warn("schema.json is missing");
+    if (!fs.existsSync(filePath3)) console.warn("shownSchema.json is missing");
+
+    return fs.existsSync(filePath);
+  }
   get dataBaseExist() {
     return this.dataBase.databaseExists();
   }
@@ -87,12 +95,10 @@ class MainManager {
 
       const fromID = { startId: 0, endId: this.indexJump };
       const tableData = await this.getTableDataObject(fromID, "main_table");
-      this.browserWindow.webContents.send(
-        "tableDataFromBackend",
-        tableData,
-        false
-      );
-      this.fromDisk = false;
+      this.saveTableDataToDisk(tableData);
+      this.saveSchemasToDiskWhenQuit();
+      this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+
       return "ok";
     } catch (error) {
       console.error("Error handling insertJson:", error);
@@ -104,7 +110,7 @@ class MainManager {
     let schema: string[] = [];
     let table: (string | number)[][] = [];
     const { startIndex, endIndex } = from;
-    if (this.fromDisk) {
+    if (this.checkForDisk()) {
       try {
         const data: TableData = await this.getDiskData();
         schema = data.schema;
@@ -120,14 +126,11 @@ class MainManager {
       table = dataResult.map((row: string | number) => Object.values(row));
     }
     const tableData: TableData = { schema: schema, table: table };
-    this.browserWindow.webContents.send(
-      "tableDataFromBackend",
-      tableData,
-      this.fromDisk
-    );
+    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
   }
 
   public saveSchemasToDiskWhenQuit(): void {
+    console.log("This is mainshcema", this.mainSchema);
     const schemaJson = JSON.stringify(Array.from(this.mainSchema));
     const shownSchemaJson = JSON.stringify(
       Array.from(this.currentlyShowSchema)
@@ -171,95 +174,106 @@ class MainManager {
 
   public async uiSqlCommand(
     sqlCommand: any,
-    inputSchema: string[],
-    tableName: string
+    inputSchema?: string[]
   ): Promise<string> {
-    try {
-      this.currentForeignSchemaToSelect = [];
-      const addForeignTable: Set<string> = new Set();
-      const newShowMap: Map<string, string[]> = new Map();
-      console.log("inputSchema: ", inputSchema);
-      console.log("currentlyShowSchema: ", this.currentlyShowSchema);
-      let mainSchema: string[] = inputSchema.filter((shownColumnNames) => {
-        let isMainSchema = false;
-        this.currentlyShowSchema.get("main_table")?.forEach((columnName) => {
-          if (columnName === shownColumnNames) {
-            isMainSchema = true;
-          } else {
-            this.currentlyShowSchema.keys().forEach((key) => {
-              if (
-                this.currentlyShowSchema.get(key)?.includes(shownColumnNames) &&
-                key !== "main_table"
-              ) {
-                if (newShowMap.has(key)) {
-                  if (!newShowMap.get(key)?.includes(shownColumnNames))
-                    newShowMap.get(key)?.push(shownColumnNames);
+    if (this.canInsertData) {
+      try {
+        let mainSchema: string[];
+        if (inputSchema) {
+          this.currentForeignSchemaToSelect = [];
+          const addForeignTable: Set<string> = new Set();
+          const newShowMap: Map<string, string[]> = new Map();
+          mainSchema = inputSchema.filter((shownColumnNames) => {
+            let isMainSchema = false;
+            this.currentlyShowSchema
+              .get("main_table")
+              ?.forEach((columnName) => {
+                if (columnName === shownColumnNames) {
+                  isMainSchema = true;
                 } else {
-                  newShowMap.set(key, [shownColumnNames]);
+                  this.currentlyShowSchema.keys().forEach((key) => {
+                    if (
+                      this.currentlyShowSchema
+                        .get(key)
+                        ?.includes(shownColumnNames) &&
+                      key !== "main_table"
+                    ) {
+                      if (newShowMap.has(key)) {
+                        if (!newShowMap.get(key)?.includes(shownColumnNames))
+                          newShowMap.get(key)?.push(shownColumnNames);
+                      } else {
+                        newShowMap.set(key, [shownColumnNames]);
+                      }
+                      addForeignTable.add(key);
+                    }
+                  });
+                  this.currentForeignSchemaToSelect.push(shownColumnNames);
                 }
-                addForeignTable.add(key);
-              }
-            });
-            this.currentForeignSchemaToSelect.push(shownColumnNames);
-          }
-        });
-        return isMainSchema;
-      });
+              });
+            return isMainSchema;
+          });
 
-      newShowMap.forEach((value, key) => {
-        this.currentlyShowSchema.set(key, value);
-      });
-      const addForeignArray = Array.from(addForeignTable).join(", ");
-      mainSchema = mainSchema.concat(addForeignArray);
-      let finalCommand = `SELECT ${mainSchema} `;
-      console.log("result", finalCommand);
-      sqlCommand = finalCommand.concat(sqlCommand);
-
-      let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
-      const table = result.map((row: string | number) => Object.values(row));
-      const tableData = { schema: mainSchema, table: table };
-
-      //These worker are obviouly asychronous they save on another thread so the resource are free on the main thread
-      //Only works because of speed of application !!!WARNING big bugg potention as there is no queue for income messages
-      //While workers are busy
-      const worker = new Worker(path.resolve(__dirname, "./SaveWorker.js"));
-      worker.postMessage({
-        filePath: path.resolve(this.persistencePath, "data.json"),
-        content: tableData,
-      });
-
-      worker.on("message", (message) => {
-        if (message.status === "success") {
-          console.log("Data saved successfully");
+          newShowMap.forEach((value, key) => {
+            this.currentlyShowSchema.set(key, value);
+          });
+          const addForeignArray = Array.from(addForeignTable).join(", ");
+          mainSchema = mainSchema.concat(addForeignArray);
+          let finalCommand = `SELECT ${mainSchema} `;
+          console.log("result", finalCommand);
+          sqlCommand = finalCommand.concat(sqlCommand);
         } else {
-          console.error("Error saving data:", message.error);
+          mainSchema = this.currentlyShowSchema.get("main_table")!;
         }
-      });
+        let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
+        const table = result.map((row: string | number) => Object.values(row));
 
-      worker.on("error", (error) => {
-        console.error("Worker error:", error);
-      });
+        const tableData: TableData = { schema: mainSchema, table: table };
+        this.saveTableDataToDisk(tableData);
 
-      const maxValue =
-        table.length >= this.indexJump ? this.indexJump : table.length;
+        const maxValue =
+          table.length >= this.indexJump ? this.indexJump : table.length;
 
-      const partialTableData = {
-        schema: mainSchema,
-        table: table.slice(0, maxValue),
-      };
-      this.browserWindow.webContents.send(
-        "tableDataFromBackend",
-        partialTableData,
-        true
-      );
+        const partialTableData = {
+          schema: mainSchema,
+          table: table.slice(0, maxValue),
+        };
+        this.browserWindow.webContents.send(
+          "tableDataFromBackend",
+          partialTableData,
+          true
+        );
 
-      this.fromDisk = true;
-      return "ok";
-    } catch (error) {
-      this.fromDisk = false;
-      console.error("Error executing SQL command:", error);
-      return "An error occurred while executing the SQL command";
+        return "ok";
+      } catch (error) {
+        console.error("Error executing SQL command:", error);
+        return "An error occurred while executing the SQL command";
+      }
+    } else {
+      return "Please wait while data is being process please try again later";
     }
+  }
+
+  public saveTableDataToDisk(tableData: TableData) {
+    this.canInsertData = false;
+    const worker = new Worker(path.resolve(__dirname, "./SaveWorker.js"));
+    worker.postMessage({
+      filePath: path.resolve(this.persistencePath, "data.json"),
+      content: tableData,
+    });
+
+    worker.on("message", (message) => {
+      if (message.status === "success") {
+        console.log("Data saved successfully");
+      } else {
+        console.error("Error saving data:", message.error);
+      }
+      this.canInsertData = true;
+    });
+
+    worker.on("error", (error) => {
+      console.error("Worker error:", error);
+      this.canInsertData = true;
+    });
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
@@ -285,7 +299,7 @@ class MainManager {
   }
 
   public async exportToExcel() {
-    const mainTable = await this.getDiskData();
+    const mainTable = this.getDiskData();
     if (mainTable) {
       const fullTable: TableData = await this.getFullTable(mainTable);
       const filePath = `${this.persistencePath}excelData.xlsx`;
@@ -337,18 +351,21 @@ class MainManager {
     const data = JSON.parse(
       fs.readFileSync(path.resolve(this.persistencePath, "data.json"), "utf-8")
     );
-    this.currentlyShowSchema = JSON.parse(
+    const shownSchemaData = JSON.parse(
       fs.readFileSync(
         path.resolve(this.persistencePath, "shownSchema.json"),
         "utf-8"
       )
     );
-    this.mainSchema = JSON.parse(
+    this.currentlyShowSchema = new Map(Object.entries(shownSchemaData));
+
+    const mainSchemaData = JSON.parse(
       fs.readFileSync(
         path.resolve(this.persistencePath, "schema.json"),
         "utf-8"
       )
     );
+    this.mainSchema = new Map(Object.entries(mainSchemaData));
     return data;
   }
 
@@ -410,18 +427,68 @@ class MainManager {
         console.warn(`File not found: ${file2Path}`);
       }
 
+      if (fs.existsSync(file3Path)) {
+        fs.unlinkSync(file3Path);
+        console.log(`Deleted file: ${file3Path}`);
+      } else {
+        console.warn(`File not found: ${file3Path}`);
+      }
       console.log("Database file deleted successfully.");
     } catch (error) {
       console.error("Error deleting the database file:", error);
       throw new Error("Failed to delete the database file.");
     }
-  }
-
+  } // Constraint has to be added to not call the column by the same name
   async renameColumn(
     commandStack: string,
     newColumnName: string,
     oldColumnName: string
-  ): Promise<void> {}
+  ): Promise<void> {
+    let tableName: string | undefined;
+    for (const key of this.mainSchema.keys()) {
+      if (this.mainSchema.get(key)?.includes(oldColumnName)) {
+        tableName = key;
+
+        break;
+      }
+    }
+
+    if (!tableName) {
+      console.log("mainSchema", this.mainSchema);
+      throw new Error(`Column ${oldColumnName} not found in any table.`);
+    }
+
+    const updateQuery = `ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
+    await this.dataBase.sqlCommand([updateQuery]);
+
+    for (const key of this.mainSchema.keys()) {
+      const columns = this.mainSchema.get(key);
+      if (columns?.includes(oldColumnName)) {
+        const columnIndex = columns.indexOf(oldColumnName);
+        if (columnIndex !== -1) {
+          columns[columnIndex] = newColumnName;
+        }
+      }
+    }
+
+    for (const key of this.currentlyShowSchema.keys()) {
+      const columns = this.currentlyShowSchema.get(key);
+      if (columns?.includes(oldColumnName)) {
+        const columnIndex = columns.indexOf(oldColumnName);
+        if (columnIndex !== -1) {
+          columns[columnIndex] = newColumnName;
+        }
+      }
+    }
+
+    const foreignSchemaIndex =
+      this.currentForeignSchemaToSelect.indexOf(oldColumnName);
+    if (foreignSchemaIndex !== -1) {
+      this.currentForeignSchemaToSelect[foreignSchemaIndex] = newColumnName;
+    }
+
+    await this.uiSqlCommand(commandStack);
+  }
 
   async removeColumn(commandStack: string, columnName: string): Promise<void> {}
 

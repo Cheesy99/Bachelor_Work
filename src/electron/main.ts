@@ -49,12 +49,9 @@ app.on("ready", () => {
     return await mainManager.initTableData(from);
   });
 
-  ipcMain.handle(
-    "sqlCommand",
-    async (_, command: any, schema: string[], tableName: string) => {
-      return await mainManager.uiSqlCommand(command, schema, tableName);
-    }
-  );
+  ipcMain.handle("sqlCommand", async (_, command: any, schema: string[]) => {
+    return await mainManager.uiSqlCommand(command, schema);
+  });
 
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
     return await mainManager.getRow(id, tableName);
@@ -110,7 +107,6 @@ app.on("ready", () => {
 });
 
 app.on("before-quit", () => {
-  // ipcRenderer.removeAllListeners("tableDataFromBackend");
   if (mainManager) {
     mainManager.saveSchemasToDiskWhenQuit();
   }

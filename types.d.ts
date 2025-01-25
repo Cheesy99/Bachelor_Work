@@ -40,14 +40,8 @@ interface Window {
     initTableData: (from: From) => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
-    subscribeToListener: (
-      callback: (tableData: TableData, fromDisk: boolean) => void
-    ) => void;
-    executeSqlCommandStack: (
-      command: any,
-      schema: string[],
-      tableName: string
-    ) => Promise<string>;
+    subscribeToListener: (callback: (tableData: TableData) => void) => void;
+    executeSqlCommandStack: (command: any, schema: string[]) => Promise<string>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => Promise<void>;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;

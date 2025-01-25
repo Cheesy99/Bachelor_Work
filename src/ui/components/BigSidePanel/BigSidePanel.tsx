@@ -56,7 +56,7 @@ function BigSidePanel({
     const history = sqlCommandStack;
     history.push(command);
     setSqlCommandStack(history);
-    await uiManager.executeStack();
+    await uiManager.executeStack(tableData?.schema!);
   };
 
   const handleColumnCheckbox = (value: string | number) => {
@@ -72,7 +72,7 @@ function BigSidePanel({
     const history = sqlCommandStack;
     history.push(command);
     setSqlCommandStack(history);
-    await uiManager.executeStack();
+    await uiManager.executeStack(tableData?.schema!);
   };
 
   const handleDeleteColumn = async () => {

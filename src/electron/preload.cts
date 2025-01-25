@@ -10,20 +10,14 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getNestedTableData: (fromID: FromId, tableName: string) =>
     ipcRenderer.invoke("getNestedTableData", fromID, tableName),
 
-  executeSqlCommandStack: (
-    command: any,
-    schema: string[],
-    tableName: string
-  ): Promise<string> => {
-    return ipcRenderer.invoke("sqlCommand", command, schema, tableName);
+  executeSqlCommandStack: (command: any, schema: string[]): Promise<string> => {
+    return ipcRenderer.invoke("sqlCommand", command, schema);
   },
 
-  subscribeToListener: (
-    callback: (tableData: TableData, fromDisk: boolean) => void
-  ) => {
+  subscribeToListener: (callback: (tableData: TableData) => void) => {
     ipcRenderer.removeAllListeners("tableDataFromBackend");
-    ipcRenderer.on("tableDataFromBackend", (_, tableData, fromDisk) => {
-      callback(tableData, fromDisk);
+    ipcRenderer.on("tableDataFromBackend", (_, tableData) => {
+      callback(tableData);
     });
   },
 
