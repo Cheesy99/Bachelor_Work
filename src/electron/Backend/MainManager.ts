@@ -377,16 +377,16 @@ class MainManager {
       this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
       this.excelExporter = new ExcelExporter();
       this.mainSchema = new Map();
+      this.currentlyShowSchema = new Map();
+      this.currentForeignSchemaToSelect = [];
+      this.sqlCommand = "SELECT * FROM main_table";
       const file1Path = path.resolve(
         this.persistencePath,
         "foreignColumn.json"
       );
       const file2Path = path.resolve(this.persistencePath, "schema.json");
       const file3Path = path.resolve(this.persistencePath, "shownSchema.json");
-      const file4Path = path.resolve(
-        this.persistencePath,
-        "foreignColumn.json"
-      );
+      const file4Path = path.resolve(this.persistencePath, "sqlcommand.json");
 
       if (fs.existsSync(file1Path)) {
         fs.unlinkSync(file1Path);
