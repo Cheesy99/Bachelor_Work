@@ -48,8 +48,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("getSaveResult");
   },
 
-  initTableData: (from: From) => {
-    return ipcRenderer.invoke("initTableData", from);
+  initTableData: () => {
+    return ipcRenderer.invoke("initTableData");
   },
   cleanDatabase: () => {
     return ipcRenderer.invoke("cleanDatabase");

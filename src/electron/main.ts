@@ -45,8 +45,8 @@ app.on("ready", () => {
     }
   );
 
-  ipcMain.handle("initTableData", async (_, from: From) => {
-    return await mainManager.initTableData(from);
+  ipcMain.handle("initTableData", async (_) => {
+    return await mainManager.initTableData();
   });
 
   ipcMain.handle("sqlCommand", async (_, command: any, schema: string[]) => {

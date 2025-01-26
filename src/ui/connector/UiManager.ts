@@ -66,15 +66,14 @@ class UiManager {
 
   //THis is a bugg this should be done over another endpoint e.g. nextIndex here the disk data is
   //Being loaded here is a BIG BUGG!!!!!!!!!!!!
-  public async getTableData(from: From) {
-    await window.electronAPI.initTableData(from);
+  public async getTableData() {
+    await window.electronAPI.initTableData();
   }
 
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists && this.setTableData) {
-      const from: From = { startIndex: 0, endIndex: this.amountToTake };
-      await window.electronAPI.initTableData(from);
+      await window.electronAPI.initTableData();
     }
   }
 

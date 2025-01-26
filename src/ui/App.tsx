@@ -33,10 +33,7 @@ function App() {
   );
   const [loading, setLoading] = useState(false);
   const [amountOfShownRows, setAmountOfShownRows] = useState<number>(100);
-  const [index, setIndex] = useState<{ startIndex: number; endIndex: number }>({
-    startIndex: 1,
-    endIndex: amountOfShownRows,
-  });
+  const [indexStart, setIndexStart] = useState<number>(0);
   const [showSidePanel, setShowSidePanel] = useState<boolean>(false);
   const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
   const [lastClicked, setLastClicked] = useState<
@@ -89,26 +86,12 @@ function App() {
 
   const handleIndexChange = (direction: IndexDirection) => {
     if (direction === IndexDirection.RIGHT) {
-      const newIdex = {
-        startIndex: index.startIndex + amountOfShownRows,
-        endIndex: index.endIndex + amountOfShownRows,
-      };
-      setIndex(newIdex);
-      uiManager.getTableData(newIdex);
+      setIndexStart(indexStart + amountOfShownRows);
+      uiManager.executeStack(tableData?.schema!);
     } else {
-      if (index.startIndex <= 0) {
-        console.log("start index is less then 0", index.startIndex);
-      } else {
-        const newIdex = {
-          startIndex: Math.max(0, index.startIndex - amountOfShownRows),
-          endIndex: Math.max(
-            index.endIndex - amountOfShownRows,
-            amountOfShownRows
-          ),
-        };
-        setIndex(newIdex);
-        uiManager.getTableData(newIdex);
-      }
+      const newIdex = Math.max(0, indexStart - amountOfShownRows);
+      setIndexStart(newIdex);
+      uiManager.getTableData();
     }
   };
   const toggleSqlInput = () => {
@@ -123,7 +106,7 @@ function App() {
     setShowSidePanel(false);
     const amountIndex = amountOfShownRows;
     setAmountOfShownRows(amountIndex);
-    setIndex({ startIndex: 1, endIndex: amountIndex });
+    setIndexStart(0);
     setLastClicked(Clicked.Column);
     setLoading(false);
   };

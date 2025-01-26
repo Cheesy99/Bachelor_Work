@@ -35,7 +35,6 @@ function MainWindow({
   const [viewType, setViewType] = useState<Display>(Display.TABLE);
   const context: ContextType | undefined = useContext(Context);
   const [sqlCommand, setSqlCommand] = useState("");
-  const [currentRowIndex, setCurrentRowIndex] = useState<number>(0);
   const contextCommandStack: ContextStack | undefined =
     useContext(ContextCommandStack);
   if (!context) {
@@ -85,19 +84,13 @@ function MainWindow({
   };
 
   const handleRight = () => {
-    if (tableData)
-      if (currentRowIndex < tableData.table.length - 1) {
-        setCurrentRowIndex(currentRowIndex + 1);
-        index(IndexDirection.RIGHT);
-      }
+    if (tableData) index(IndexDirection.RIGHT);
   };
 
   const handleLeft = () => {
-    if (currentRowIndex > 0) {
-      setCurrentRowIndex(currentRowIndex - 1);
-      index(IndexDirection.LEFT);
-    }
+    if (tableData) index(IndexDirection.LEFT);
   };
+
   async function handleUndo(): Promise<void> {
     let history: any[] = sqlCommandStack;
     if (history.length !== 0) {
@@ -120,7 +113,6 @@ function MainWindow({
   }, [showSqlInput, sqlCommandStack]);
 
   async function handleReset(): Promise<void> {
-    //HERE BUG IN THAT NOW WHOLE TABLE SAVED ON DISK
     const confirmed = window.confirm(
       "Are you sure you want to reset all changes will be removed"
     );
