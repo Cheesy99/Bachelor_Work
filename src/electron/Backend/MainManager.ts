@@ -50,20 +50,35 @@ class MainManager {
     this.indexJump = jump;
   }
 
-  async saveSqlCommand(): Promise<void> {
-    const filePath = path.join(this.persistencePath, "sqlcommand.json");
-    fs.writeFileSync(filePath, JSON.stringify(this.sqlCommand));
-  }
+  async saveSqlCommand(): Promise<void> {}
 
   checkForDisk(): boolean {
-    const filePath2 = path.join(this.persistencePath, "schema.json");
-    const filePath3 = path.join(this.persistencePath, "shownSchema.json");
+    let everthing: boolean = true;
+    const filePath1 = path.join(this.persistencePath, "schema.json");
+    const filePath2 = path.join(this.persistencePath, "shownSchema.json");
+    const filePath3 = path.join(this.persistencePath, "sqlcommand.json");
+    const filePath4 = path.join(this.persistencePath, "foreignColumn.json");
 
-    if (!fs.existsSync(filePath2)) console.warn("schema.json is missing");
-    if (!fs.existsSync(filePath3)) console.warn("shownSchema.json is missing");
+    if (!fs.existsSync(filePath1)) {
+      console.warn("schema.json is missing");
+      everthing = false;
+    }
+    if (!fs.existsSync(filePath2)) {
+      console.warn("shownSchema.json is missing");
+      everthing = false;
+    }
+    if (!fs.existsSync(filePath3)) {
+      console.warn("sqlcommand.json is missing");
+      everthing = false;
+    }
+    if (!fs.existsSync(filePath4)) {
+      console.warn("sqlcommand.json is missing");
+      everthing = false;
+    }
 
-    return false;
+    return everthing;
   }
+
   get dataBaseExist() {
     return this.dataBase.databaseExists();
   }
@@ -100,7 +115,7 @@ class MainManager {
 
       const fromID = { startId: 0, endId: this.indexJump };
       const tableData = await this.getTableDataObject(fromID, "main_table");
-      this.saveSchemasToDiskWhenQuit();
+      this.saveToDiskWhenQuit();
       this.browserWindow.webContents.send("tableDataFromBackend", tableData);
 
       return "ok";
@@ -115,26 +130,21 @@ class MainManager {
     let table: (string | number)[][] = [];
     const { startIndex, endIndex } = from;
     if (this.checkForDisk()) {
-      try {
-        const data: TableData = await this.getDiskData();
-        schema = data.schema;
-        table = data.table.slice(startIndex, endIndex + 1);
-      } catch (error) {
-        console.error("Error reading data from disk:", error);
-        return;
-      }
+      this.getDiskData();
+      console.log("I got this from disk", this.sqlCommand);
+      this.uiSqlCommand(this.sqlCommand);
     } else {
       const dataQuery = `SELECT * FROM main_table WHERE id BETWEEN ${startIndex} AND ${endIndex}`;
       const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
       schema = await this.getTableSchema("main_table");
       table = dataResult.map((row: string | number) => Object.values(row));
+
+      const tableData: TableData = { schema: schema, table: table };
+      this.browserWindow.webContents.send("tableDataFromBackend", tableData);
     }
-    const tableData: TableData = { schema: schema, table: table };
-    this.browserWindow.webContents.send("tableDataFromBackend", tableData);
   }
 
-  public saveSchemasToDiskWhenQuit(): void {
-    console.log("This is mainshcema", this.mainSchema);
+  public saveToDiskWhenQuit(): void {
     const schemaJson = JSON.stringify(Array.from(this.mainSchema));
     const shownSchemaJson = JSON.stringify(
       Array.from(this.currentlyShowSchema)
@@ -151,7 +161,10 @@ class MainManager {
       this.persistencePath,
       "foreignColumn.json"
     );
+    const filePath = path.join(this.persistencePath, "sqlcommand.json");
+
     try {
+      fs.writeFileSync(filePath, JSON.stringify(this.sqlCommand));
       fs.writeFileSync(schemaFilePath, schemaJson);
       fs.writeFileSync(currentlyShow, shownSchemaJson);
       fs.writeFileSync(shownForeignColumnpath, shownForeignColumn);
@@ -159,15 +172,6 @@ class MainManager {
     } catch (err) {
       console.error("Error writing schema to disk:", err);
     }
-  }
-
-  private saveSchemaToDiskDataJson(): void {
-    const schemaFilePath = path.resolve(this.persistencePath, "data.json");
-    const fileData = {
-      schema: this.mainSchema.get("main_table"),
-    };
-    fs.writeFileSync(schemaFilePath, JSON.stringify(fileData), "utf-8");
-    console.log("Schema saved to disk.");
   }
 
   public async getTableDataObject(
@@ -237,12 +241,13 @@ class MainManager {
         });
         const addForeignArray = Array.from(addForeignTable).join(", ");
         mainSchema = mainSchema.concat(addForeignArray);
+        let finalCommand = `SELECT ${mainSchema} `;
+        console.log("result", finalCommand);
+        sqlCommand = finalCommand.concat(sqlCommand);
       } else {
         mainSchema = this.currentlyShowSchema.get("main_table")!;
+        console.log("I wnet here," + sqlCommand);
       }
-      let finalCommand = `SELECT ${mainSchema} `;
-      console.log("result", finalCommand);
-      sqlCommand = finalCommand.concat(sqlCommand);
 
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       this.sqlCommand = sqlCommand;
@@ -291,82 +296,51 @@ class MainManager {
   }
 
   public async exportToExcel() {
-    const mainTable = this.getDiskData();
-    if (mainTable) {
-      const fullTable: TableData = await this.getFullTable(mainTable);
-      const filePath = `${this.persistencePath}excelData.xlsx`;
+    const fullTable: TableData = { schema: [], table: [] };
+    const filePath = `${this.persistencePath}excelData.xlsx`;
 
-      await this.excelExporter.exportResultToExcel(fullTable, filePath);
-    } else {
-      console.error("No data available to export");
-    }
+    await this.excelExporter.exportResultToExcel(fullTable, filePath);
   }
 
-  private async getFullTable(mainTable: TableData): Promise<TableData> {
-    const resultTable: (string | number)[][] = mainTable.table;
-    const resultSchema: string[] = mainTable.schema;
-    const addSchema: Set<string> = new Set();
-    for (let i = 0; i < mainTable.table.length; i++) {
-      for (let j = 1; j < mainTable.table[i].length; j++) {
-        if (typeof mainTable.table[i][j] === "number") {
-          if (mainTable.schema[j]) {
-            resultTable.splice(i, 0);
-            resultTable[i].push(
-              ...(await this.getRow(
-                mainTable.table[i][j] as number,
-                mainTable.schema[j]
-              ))
-            );
-            if (!addSchema.has(mainTable.schema[j])) {
-              addSchema.add(mainTable.schema[j]);
-            }
-          }
-        }
-      }
+  private async getFullTable() {}
+
+  public getDiskData() {
+    try {
+      const sqlCommandData = fs.readFileSync(
+        path.resolve(this.persistencePath, "sqlcommand.json"),
+        "utf-8"
+      );
+      console.log("SQL Command data:", sqlCommandData);
+
+      this.sqlCommand = JSON.parse(sqlCommandData);
+
+      const shownSchemaData = JSON.parse(
+        fs.readFileSync(
+          path.resolve(this.persistencePath, "shownSchema.json"),
+          "utf-8"
+        )
+      );
+      this.currentlyShowSchema = new Map(shownSchemaData);
+
+      const mainSchemaData = JSON.parse(
+        fs.readFileSync(
+          path.resolve(this.persistencePath, "schema.json"),
+          "utf-8"
+        )
+      );
+      this.mainSchema = new Map(mainSchemaData);
+      console.log("This is mainshcema", this.mainSchema);
+
+      this.currentForeignSchemaToSelect = JSON.parse(
+        fs.readFileSync(
+          path.resolve(this.persistencePath, "foreignColumn.json"),
+          "utf-8"
+        )
+      );
+    } catch (error) {
+      console.error("Error parsing JSON data:", error);
+      throw error;
     }
-
-    for (const schema of addSchema) {
-      if (schema) {
-        try {
-          const schemaResult = await this.getTableSchema(schema);
-          resultSchema.push(...schemaResult);
-        } catch (error) {
-          console.error(`Error fetching schema for table ${schema}:`, error);
-        }
-      }
-    }
-
-    return { schema: resultSchema, table: resultTable };
-  }
-
-  public getDiskData(): TableData {
-    const data = JSON.parse(
-      fs.readFileSync(path.resolve(this.persistencePath, "data.json"), "utf-8")
-    );
-    const shownSchemaData = JSON.parse(
-      fs.readFileSync(
-        path.resolve(this.persistencePath, "shownSchema.json"),
-        "utf-8"
-      )
-    );
-    this.currentlyShowSchema = new Map(shownSchemaData);
-
-    const mainSchemaData = JSON.parse(
-      fs.readFileSync(
-        path.resolve(this.persistencePath, "schema.json"),
-        "utf-8"
-      )
-    );
-    this.mainSchema = new Map(mainSchemaData);
-    console.log("This is mainshcema", this.mainSchema);
-
-    this.currentForeignSchemaToSelect = JSON.parse(
-      fs.readFileSync(
-        path.resolve(this.persistencePath, "foreignColumn.json"),
-        "utf-8"
-      )
-    );
-    return data;
   }
 
   public async amountOfRows(tableName: string): Promise<number> {
@@ -403,14 +377,17 @@ class MainManager {
       this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
       this.excelExporter = new ExcelExporter();
       this.mainSchema = new Map();
-
-      const file1Path = path.resolve(this.persistencePath, "data.json");
+      const file1Path = path.resolve(
+        this.persistencePath,
+        "foreignColumn.json"
+      );
       const file2Path = path.resolve(this.persistencePath, "schema.json");
       const file3Path = path.resolve(this.persistencePath, "shownSchema.json");
       const file4Path = path.resolve(
         this.persistencePath,
         "foreignColumn.json"
       );
+
       if (fs.existsSync(file1Path)) {
         fs.unlinkSync(file1Path);
         console.log(`Deleted file: ${file1Path}`);
@@ -443,7 +420,8 @@ class MainManager {
       console.error("Error deleting the database file:", error);
       throw new Error("Failed to delete the database file.");
     }
-  } // Constraint has to be added to not call the column by the same name
+  }
+
   async renameColumn(
     commandStack: string,
     newColumnName: string,
@@ -453,7 +431,6 @@ class MainManager {
     for (const key of this.mainSchema.keys()) {
       if (this.mainSchema.get(key)?.includes(oldColumnName)) {
         tableName = key;
-
         break;
       }
     }
@@ -491,7 +468,6 @@ class MainManager {
     if (foreignSchemaIndex !== -1) {
       this.currentForeignSchemaToSelect[foreignSchemaIndex] = newColumnName;
     }
-    this.saveSchemaToDiskDataJson();
     await this.uiSqlCommand(commandStack);
   }
 

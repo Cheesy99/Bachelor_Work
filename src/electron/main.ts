@@ -105,6 +105,6 @@ app.on("ready", () => {
 
 app.on("before-quit", () => {
   if (mainManager) {
-    mainManager.saveSchemasToDiskWhenQuit();
+    mainManager.saveToDiskWhenQuit();
   }
 });
