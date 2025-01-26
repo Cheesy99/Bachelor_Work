@@ -27,7 +27,7 @@ class MainManager {
   private currentlyShowSchema: Map<string, any[]>;
   private indexJump: number = 100;
   private currentForeignSchemaToSelect: string[] = [];
-  private sqlCommand: string = "";
+  private sqlCommand: string = "SELECT * FROM main_table";
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
