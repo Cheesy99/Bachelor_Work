@@ -55,7 +55,7 @@ function MainWindow({
       });
     }
   };
-  //BUGG WHEN CHANGING NAME WITH INVALID STACK
+
   const onDoubleClick = async (
     newColumnName: string,
     oldColumnName: string
@@ -101,7 +101,6 @@ function MainWindow({
 
   const handleSqlInputField = (value: string) => {
     setSqlCommand(value);
-    console.log(value);
   };
 
   useEffect(() => {

@@ -101,7 +101,6 @@ class UiManager {
   }
 
   public async executeStack(schema: string[]) {
-    console.log("Schema", this.tableRef?.schema!);
     let reponse = await window.electronAPI.executeSqlCommandStack(
       createSqlQuery(this.sqlCommandStack),
       schema
