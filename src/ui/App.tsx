@@ -44,7 +44,7 @@ function App() {
   );
   const [loading, setLoading] = useState(false);
   const [amountOfShownRows, setAmountOfShownRows] = useState<number>(100);
-  const [indexStart, setIndexStart] = useState<number>(0);
+  const [indexStart, setIndexStart] = useState<number>(100);
   const [showSidePanel, setShowSidePanel] = useState<boolean>(false);
   const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
   const [lastClicked, setLastClicked] = useState<
@@ -55,7 +55,9 @@ function App() {
     setTableData,
     setLoading,
     tableType,
-    sqlCommandStack
+    sqlCommandStack,
+    amountOfShownRows,
+    indexStart
   );
   useEffect(() => {
     uiManager.getInitTableData();

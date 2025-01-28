@@ -58,14 +58,19 @@ export const removeId = (
   return table.map((row) => row.slice(1));
 };
 
-export const createSqlQuery = (command: any[]): string => {
+export const createSqlQuery = (
+  command: any[],
+  limit: number,
+  offset: number
+): string => {
   console.log("Reformating", command);
   let result: string = "";
   if (command.length !== 0) {
     result = command.join(" ");
     result = result.replace(/AND/, "WHERE");
   }
-
+  result = `${result} LIMIT ${limit} OFFSET ${offset}`;
+  console.log("What", result);
   result = `FROM main_table ${result}`;
   return result;
 };

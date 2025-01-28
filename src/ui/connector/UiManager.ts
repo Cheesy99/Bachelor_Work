@@ -13,18 +13,25 @@ class UiManager {
   > | null;
   private readonly tableType: ViewSetting;
   private sqlCommandStack: any[];
+  private limit: number;
+  private offset: number;
   public constructor(
     converter: Converter,
     setterTableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     tableType: ViewSetting,
-    sqlCommandStack: any[]
+    sqlCommandStack: any[],
+    limit: number,
+    offset: number
   ) {
+    this.limit = limit;
+    this.offset = offset;
     this.converter = converter;
     this.setTableData = setterTableRef;
     this.setLoading = setLoading;
     this.tableType = tableType;
     this.sqlCommandStack = sqlCommandStack;
+
     window.electronAPI.subscribeToListener(async (tableData: TableData) => {
       if (this.setTableData) {
         sessionStorage.setItem("TableData", JSON.stringify(tableData));
@@ -95,8 +102,12 @@ class UiManager {
   }
 
   public async executeStack(schema: string[]) {
+    console.log(
+      "this is the command",
+      createSqlQuery(this.sqlCommandStack, this.limit, this.offset)
+    );
     let reponse = await window.electronAPI.executeSqlCommandStack(
-      createSqlQuery(this.sqlCommandStack),
+      createSqlQuery(this.sqlCommandStack, this.limit, this.offset),
       schema
     );
 
@@ -114,7 +125,7 @@ class UiManager {
     oldColumnName: string
   ) {
     await window.electronAPI.renameNamingColumn(
-      createSqlQuery(this.sqlCommandStack),
+      createSqlQuery(this.sqlCommandStack, this.limit, this.offset),
       newColumnName,
       oldColumnName
     );

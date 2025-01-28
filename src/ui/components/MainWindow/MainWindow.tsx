@@ -96,11 +96,15 @@ function MainWindow({
   };
 
   const handleRight = () => {
-    if (tableData) index(IndexDirection.RIGHT);
+    if (tableData) {
+      index(IndexDirection.RIGHT);
+    }
   };
 
   const handleLeft = () => {
-    if (tableData) index(IndexDirection.LEFT);
+    if (tableData) {
+      index(IndexDirection.LEFT);
+    }
   };
 
   async function handleUndo(): Promise<void> {

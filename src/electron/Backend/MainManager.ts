@@ -27,7 +27,7 @@ class MainManager {
   private currentlyShowSchema: Map<string, any[]>;
   private indexJump: number = 100;
   private currentForeignSchemaToSelect: string[] = [];
-  private sqlCommand: string = "SELECT * FROM main_table LIMIT 100";
+  private sqlCommand: string = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -113,7 +113,7 @@ class MainManager {
 
       this.currentlyShowSchema = new Map(this.mainSchema);
 
-      const fromID = { startId: 0, endId: this.indexJump };
+      const fromID = { startId: 0, endId: 100 };
       const tableData = await this.getTableDataObject(fromID, "main_table");
       this.saveToDiskWhenQuit();
       this.browserWindow.webContents.send("tableDataFromBackend", tableData);
@@ -134,7 +134,7 @@ class MainManager {
       console.log("I got this from disk", this.sqlCommand);
       this.uiSqlCommand(this.sqlCommand);
     } else {
-      const dataQuery = "SELECT * FROM main_table LIMIT 100";
+      const dataQuery = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
       const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
       schema = await this.getTableSchema("main_table");
       table = dataResult.map((row: string | number) => Object.values(row));
