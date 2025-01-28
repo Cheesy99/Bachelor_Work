@@ -21,8 +21,19 @@ interface MainWindowProps {
   setTable: React.Dispatch<React.SetStateAction<Table | null>>;
   setTableType: React.Dispatch<React.SetStateAction<ViewSetting>>;
 }
-type ContextStack = [any[], React.Dispatch<React.SetStateAction<any[]>>];
-type ContextType = [Table | null, ViewSetting, boolean, UiManager];
+type ContextStack = [
+  any[],
+  React.Dispatch<React.SetStateAction<any[]>>,
+  number,
+  number
+];
+type ContextType = [
+  Table | null,
+  ViewSetting,
+  boolean,
+  UiManager,
+  React.Dispatch<React.SetStateAction<Table | null>>
+];
 
 function MainWindow({
   showSqlInput,
@@ -43,7 +54,8 @@ function MainWindow({
   if (!contextCommandStack) {
     throw new Error("contextCommandStack is not defined");
   }
-  const [sqlCommandStack, setSqlCommandStack] = contextCommandStack;
+  const [sqlCommandStack, setSqlCommandStack, amountOfShownRows, indexStart] =
+    contextCommandStack;
   const [tableData, tableType, loading, uiManager] = context;
 
   const handleHeaderClick = (columnIndex: number) => {
@@ -106,7 +118,14 @@ function MainWindow({
   useEffect(() => {
     if (showSqlInput) {
       if (tableData)
-        setSqlCommand(createSqlQueryForView(sqlCommandStack, tableData.schema));
+        setSqlCommand(
+          createSqlQueryForView(
+            sqlCommandStack,
+            tableData.schema,
+            amountOfShownRows,
+            indexStart
+          )
+        );
       else setSqlCommand("");
     }
   }, [showSqlInput, sqlCommandStack]);
@@ -179,6 +198,7 @@ function MainWindow({
             value={sqlCommand}
             onChange={(e) => handleSqlInputField(e.target.value)}
             placeholder="Enter SQL command"
+            spellCheck={false}
           />
           <button onClick={handleSqlSubmit}>Execute</button>
         </div>

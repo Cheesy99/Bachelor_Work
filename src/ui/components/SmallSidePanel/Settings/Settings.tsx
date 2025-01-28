@@ -38,7 +38,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const setStepAmount = async () => {
     setterAmountSetting(saveBetween);
-    await uiManager.setJump(amountSetted);
     await uiManager.executeStack(table?.schema!);
   };
   useContext(Context);

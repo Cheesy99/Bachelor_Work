@@ -59,6 +59,7 @@ export const removeId = (
 };
 
 export const createSqlQuery = (command: any[]): string => {
+  console.log("Reformating", command);
   let result: string = "";
   if (command.length !== 0) {
     result = command.join(" ");
@@ -71,7 +72,9 @@ export const createSqlQuery = (command: any[]): string => {
 
 export const createSqlQueryForView = (
   command: any[],
-  schema: string[]
+  schema: string[],
+  amountOfRows: number,
+  indexStart: number
 ): string => {
   let result: string = "";
   if (command.length !== 0) {
@@ -79,6 +82,8 @@ export const createSqlQueryForView = (
     result = result.replace(/AND/, "WHERE");
   }
 
-  result = `SELECT ${schema.join(", ")} FROM main_table ${result}`;
+  result = `SELECT ${schema.join(
+    ", "
+  )} FROM main_table LIMIT ${amountOfRows} OFFSET ${indexStart}`;
   return result;
 };

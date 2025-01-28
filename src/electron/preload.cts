@@ -40,9 +40,9 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("checkIfTable");
   },
 
-  howManyRows: (tableName: string) => {
-    return ipcRenderer.invoke("howManyRows", tableName);
-  },
+  // howManyRows: (tableName: string) => {
+  //   return ipcRenderer.invoke("howManyRows", tableName);
+  // },
 
   getSaveResult: () => {
     return ipcRenderer.invoke("getSaveResult");

@@ -202,6 +202,9 @@ class MainManager {
     inputSchema?: string[]
   ): Promise<string> {
     try {
+      console.log("Sqlcommand: ", sqlCommand);
+      console.log("inputSchema: ", inputSchema);
+
       let mainSchema: string[];
 
       this.currentForeignSchemaToSelect = [];
@@ -253,12 +256,9 @@ class MainManager {
       this.sqlCommand = sqlCommand;
       const table = result.map((row: string | number) => Object.values(row));
 
-      const maxValue =
-        table.length >= this.indexJump ? this.indexJump : table.length;
-
       const partialTableData = {
         schema: mainSchema,
-        table: table.slice(0, maxValue),
+        table: table,
       };
       this.browserWindow.webContents.send(
         "tableDataFromBackend",

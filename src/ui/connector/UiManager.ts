@@ -13,20 +13,14 @@ class UiManager {
   > | null;
   private readonly tableType: ViewSetting;
   private sqlCommandStack: any[];
-  private amountToTake: number;
-  private tableRef: Table | null;
   public constructor(
     converter: Converter,
     setterTableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    tableRef: Table | null,
     tableType: ViewSetting,
-    sqlCommandStack: any[],
-    amountToTake: number
+    sqlCommandStack: any[]
   ) {
-    this.amountToTake = amountToTake;
     this.converter = converter;
-    this.tableRef = tableRef;
     this.setTableData = setterTableRef;
     this.setLoading = setLoading;
     this.tableType = tableType;
@@ -126,18 +120,9 @@ class UiManager {
     );
   }
 
-  public async deleteColumn(columnName: string) {
-    await window.electronAPI.deleteColumn(
-      createSqlQuery(this.sqlCommandStack),
-      columnName
-    );
-  }
-
   async getAllValue(columnName: string): Promise<string[]> {
     return await window.electronAPI.getAllColumnValues(columnName);
   }
-
-  async setJump(jump: number): Promise<void> {}
 }
 
 export default UiManager;

@@ -40,7 +40,7 @@ interface Window {
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => Promise<void>;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
-    howManyRows: (tableName: string) => Promise<number>;
+    // howManyRows: (tableName: string) => Promise<number>;
     getSaveResult: () => Promise<TableData | boolean>;
     cleanDatabase: () => Promise<void>;
     renameNamingColumn: (

@@ -11,14 +11,27 @@ enum Clicked {
 
 interface BigSidePanelProps {
   columnValues: { values: (string | number | TableData)[]; columnName: string };
+  closeSidePanel: React.Dispatch<React.SetStateAction<boolean>>;
   rowValues: (string | number)[];
   lastClicked: Clicked | undefined;
 }
 
-type ContextType = [Table | null, ViewSetting, boolean, UiManager];
-type ContextStack = [any[], React.Dispatch<React.SetStateAction<any[]>>];
+type ContextType = [
+  Table | null,
+  ViewSetting,
+  boolean,
+  UiManager,
+  React.Dispatch<React.SetStateAction<Table | null>>
+];
+type ContextStack = [
+  any[],
+  React.Dispatch<React.SetStateAction<any[]>>,
+  number,
+  number
+];
 function BigSidePanel({
   columnValues,
+  closeSidePanel,
   rowValues,
   lastClicked,
 }: BigSidePanelProps) {
@@ -31,7 +44,7 @@ function BigSidePanel({
   if (!contextCommandStack) {
     throw new Error("contextCommandStack is not defined");
   }
-  const [tableData, tableType, loading, uiManager] = context;
+  const [tableData, tableType, loading, uiManager, setTableData] = context;
   const [sqlCommandStack, setSqlCommandStack] = contextCommandStack;
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
@@ -67,16 +80,30 @@ function BigSidePanel({
     );
   };
 
-  const handleDeleteRow = async (id: number, tableName: string) => {
+  const handleDeleteRow = async (id: number) => {
     const command: string = `AND id != ${id}`;
     const history = sqlCommandStack;
     history.push(command);
     setSqlCommandStack(history);
     await uiManager.executeStack(tableData?.schema!);
+    closeSidePanel(false);
   };
 
   const handleDeleteColumn = async () => {
-    await uiManager.deleteColumn(columnValues.columnName);
+    const deleteThisColumn = columnValues.columnName;
+    let index = tableData?.schema.findIndex((col) => col === deleteThisColumn);
+    let newSchema = tableData!.schema;
+    if (index !== -1 && index) {
+      newSchema.splice(index, 1);
+    }
+
+    setTableData({
+      schema: newSchema,
+      table: tableData?.table!,
+    });
+
+    await uiManager.executeStack(newSchema);
+    closeSidePanel(false);
   };
 
   const handleSelectAll = async () => {
@@ -95,9 +122,7 @@ function BigSidePanel({
       <div className="list">
         {lastClicked === Clicked.RowId ? (
           <button
-            onClick={() =>
-              handleDeleteRow(rowValues[0] as number, "main_table")
-            }
+            onClick={() => handleDeleteRow(rowValues[0] as number)}
             className="delete-button"
           >
             Delete Row
@@ -105,7 +130,7 @@ function BigSidePanel({
         ) : (
           <div className="header-column-values">
             <button
-              onClick={() => handleDeleteColumn}
+              onClick={() => handleDeleteColumn()}
               className="delete-button"
             >
               Delete Column

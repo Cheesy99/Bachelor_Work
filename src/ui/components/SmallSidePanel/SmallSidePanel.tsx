@@ -2,7 +2,6 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
 import { Context } from "../../App";
-import UiManager from "../../connector/UiManager";
 import SettingsModal from "./Settings/Settings";
 import React from "react";
 import { ViewSetting } from "../../connector/Enum/Setting";

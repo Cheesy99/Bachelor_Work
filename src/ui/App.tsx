@@ -14,8 +14,19 @@ enum Clicked {
   RowId,
   Column,
 }
-type ContextType = [Table | null, ViewSetting, boolean, UiManager];
-type ContextStack = [any[], React.Dispatch<React.SetStateAction<any[]>>];
+type ContextType = [
+  Table | null,
+  ViewSetting,
+  boolean,
+  UiManager,
+  React.Dispatch<React.SetStateAction<Table | null>>
+];
+type ContextStack = [
+  any[],
+  React.Dispatch<React.SetStateAction<any[]>>,
+  number,
+  number
+];
 export const Context = React.createContext<ContextType | undefined>(undefined);
 export const ContextCommandStack = React.createContext<
   ContextStack | undefined
@@ -43,10 +54,8 @@ function App() {
     new Converter(),
     setTableData,
     setLoading,
-    tableData,
     tableType,
-    sqlCommandStack,
-    amountOfShownRows
+    sqlCommandStack
   );
   useEffect(() => {
     uiManager.getInitTableData();
@@ -91,7 +100,7 @@ function App() {
     } else {
       const newIdex = Math.max(0, indexStart - amountOfShownRows);
       setIndexStart(newIdex);
-      uiManager.getTableData();
+      uiManager.executeStack(tableData?.schema!);
     }
   };
   const toggleSqlInput = () => {
@@ -115,9 +124,16 @@ function App() {
     setShowSidePanel((prev) => !prev);
   };
   return (
-    <Context.Provider value={[tableData, tableType, loading, uiManager]}>
+    <Context.Provider
+      value={[tableData, tableType, loading, uiManager, setTableData]}
+    >
       <ContextCommandStack.Provider
-        value={[sqlCommandStack, setSqlCommandStack]}
+        value={[
+          sqlCommandStack,
+          setSqlCommandStack,
+          amountOfShownRows,
+          indexStart,
+        ]}
       >
         <div className="app-container">
           <div className="small-side-panel">
@@ -133,6 +149,7 @@ function App() {
             <div className="big-side-panel">
               <BigSidePanel
                 columnValues={selectedColumnValues}
+                closeSidePanel={setShowSidePanel}
                 rowValues={selectedRowData}
                 lastClicked={lastClicked}
               />
