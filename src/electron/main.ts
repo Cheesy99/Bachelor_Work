@@ -98,7 +98,11 @@ app.on("ready", () => {
     return await mainManager.setJumper(jump);
   });
 
-  mainWindow.on("close", async (event) => {
+  ipcMain.handle("getMaxRowNumber", async (_) => {
+    return await mainManager.getMaxRowValue();
+  });
+
+  mainWindow.on("close", async (_) => {
     await mainManager.saveSqlCommand();
   });
 });

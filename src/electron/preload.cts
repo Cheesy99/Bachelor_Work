@@ -76,4 +76,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   setJump: (jump: number) => {
     return ipcRenderer.invoke("setJump", jump);
   },
+  getMaxRowValue: () => {
+    return ipcRenderer.invoke("getMaxRowNumber");
+  },
 } satisfies Window["electronAPI"]);

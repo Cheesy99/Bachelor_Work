@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import { ViewSetting } from "../../../connector/Enum/Setting";
 import "./Settings.css";
+import { Context, ContextCommandStack } from "../../../App";
 import { useContext } from "react";
-import { Context } from "../../../App";
 import UiManager from "../../../connector/UiManager";
 interface SettingsModalProps {
   isOpen: boolean;
@@ -17,6 +17,15 @@ interface SettingsModalProps {
   setterAmountSetting: React.Dispatch<React.SetStateAction<number>>;
 }
 
+type ContextStack = [
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
+  React.Dispatch<React.SetStateAction<string[]>>,
+  number,
+  React.Dispatch<React.SetStateAction<number>>,
+  number
+];
+
 const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onRequestClose,
@@ -28,6 +37,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   table,
   deleteDatabase,
 }) => {
+  const contextCommandStack: ContextStack | undefined =
+    useContext(ContextCommandStack);
+  if (!contextCommandStack) {
+    throw new Error("contextCommandStack is not defined");
+  }
+  const [
+    sqlCommand,
+    setSqlCommand,
+    setSqlCommandStack,
+    amountOfShownRows,
+    setIndexStart,
+    indexStart,
+  ] = contextCommandStack;
+
   const [saveBetween, setSaveBetween] = useState<number>(amountSetted);
   const setAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount: number = parseInt(event.target.value, 10);
@@ -37,8 +60,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const setStepAmount = async () => {
-    setterAmountSetting(saveBetween);
-    await uiManager.executeStack(table?.schema!);
+    let newValue = saveBetween;
+    if (saveBetween === -1) {
+      newValue = await uiManager.getMaxColumnValue();
+    }
+
+    setterAmountSetting(newValue);
+    setIndexStart(0);
+    const newSqlCommand = sqlCommand.replace(
+      /LIMIT\s+\d+/,
+      `LIMIT ${newValue}`
+    );
+    setSqlCommand(newSqlCommand);
+    await uiManager.executeStack(newSqlCommand);
   };
   useContext(Context);
   return (
@@ -68,7 +102,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           One View
         </label>
         <label>Max Row's:</label>
-        To many row value can lead to decreased preformance
+        To many row value can lead to decreased preformance, if you want all
+        rows incert -1
         <input type="number" value={saveBetween} onChange={setAmount}></input>
         <button onClick={setStepAmount}>Change</button>
       </div>

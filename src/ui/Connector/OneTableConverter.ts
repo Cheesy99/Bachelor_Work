@@ -16,7 +16,7 @@ class OneTableConverter implements ConversionStrategy {
       for (let index1 = 1; index1 < row.length; index1++) {
         const element = row[index1];
         if (typeof element === "number" && index1 !== 0) {
-          const tableName = data.schema[index1];
+          const tableName: string = data.schema[index1];
 
           const foreignRow: (string | number)[] =
             await window.electronAPI.getRow(element, tableName);

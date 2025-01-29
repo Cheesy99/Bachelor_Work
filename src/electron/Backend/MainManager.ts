@@ -7,7 +7,6 @@ import SchemaBuilder from "./SchemaBuilder.js";
 import TableBuilder from "./TableBuilder.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
 import { BrowserWindow } from "electron";
-import { Worker } from "worker_threads";
 import { fileURLToPath } from "url";
 import path from "path";
 import { isDev } from "../util.js";
@@ -131,7 +130,6 @@ class MainManager {
 
     if (this.checkForDisk()) {
       this.getDiskData();
-      console.log("I got this from disk", this.sqlCommand);
       this.uiSqlCommand(this.sqlCommand);
     } else {
       const dataQuery = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
@@ -161,14 +159,19 @@ class MainManager {
       this.persistencePath,
       "foreignColumn.json"
     );
-    const filePath = path.join(this.persistencePath, "sqlcommand.json");
-
+    const sqlCommandFilePath = path.join(
+      this.persistencePath,
+      "sqlcommand.json"
+    );
+    let sqlCommandSave = this.sqlCommand;
+    sqlCommandSave = sqlCommandSave.replace(/LIMIT\s+\d+/i, "LIMIT 100");
+    sqlCommandSave = sqlCommandSave.replace(/OFFSET\s+\d+/i, "OFFSET 0");
     try {
-      fs.writeFileSync(filePath, JSON.stringify(this.sqlCommand));
+      fs.writeFileSync(sqlCommandFilePath, sqlCommandSave);
       fs.writeFileSync(schemaFilePath, schemaJson);
       fs.writeFileSync(currentlyShow, shownSchemaJson);
       fs.writeFileSync(shownForeignColumnpath, shownForeignColumn);
-      console.log("Schema saved to disk successfully.");
+      console.info("Schema saved to disk successfully.");
     } catch (err) {
       console.error("Error writing schema to disk:", err);
     }
@@ -202,9 +205,6 @@ class MainManager {
     inputSchema?: string[]
   ): Promise<string> {
     try {
-      console.log("Sqlcommand: ", sqlCommand);
-      console.log("inputSchema: ", inputSchema);
-
       let mainSchema: string[];
 
       this.currentForeignSchemaToSelect = [];
@@ -245,11 +245,9 @@ class MainManager {
         const addForeignArray = Array.from(addForeignTable).join(", ");
         mainSchema = mainSchema.concat(addForeignArray);
         let finalCommand = `SELECT ${mainSchema} `;
-        console.log("result", finalCommand);
         sqlCommand = finalCommand.concat(sqlCommand);
       } else {
         mainSchema = this.currentlyShowSchema.get("main_table")!;
-        console.log("I wnet here," + sqlCommand);
       }
 
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
@@ -262,8 +260,7 @@ class MainManager {
       };
       this.browserWindow.webContents.send(
         "tableDataFromBackend",
-        partialTableData,
-        true
+        partialTableData
       );
 
       return "ok";
@@ -276,7 +273,6 @@ class MainManager {
   public async getTableSchema(tableName: string): Promise<string[]> {
     let schema: string[];
     if (this.currentlyShowSchema.get(tableName)) {
-      console.log("currentlyShowSchema: ", this.currentlyShowSchema);
       schema = this.currentlyShowSchema.get(tableName)!;
     } else {
       const schemaQuery = `PRAGMA table_info(${tableName})`;
@@ -285,7 +281,6 @@ class MainManager {
       );
       schema = schemaResult.map((row: any) => row.name);
     }
-    console.log("Schema: ", schema);
     return schema;
   }
 
@@ -310,7 +305,7 @@ class MainManager {
         path.resolve(this.persistencePath, "sqlcommand.json"),
         "utf-8"
       );
-      console.log("SQL Command data:", sqlCommandData);
+      console.info("SQL Command data:", sqlCommandData);
 
       this.sqlCommand = JSON.parse(sqlCommandData);
 
@@ -329,7 +324,6 @@ class MainManager {
         )
       );
       this.mainSchema = new Map(mainSchemaData);
-      console.log("This is mainshcema", this.mainSchema);
 
       this.currentForeignSchemaToSelect = JSON.parse(
         fs.readFileSync(
@@ -390,32 +384,32 @@ class MainManager {
 
       if (fs.existsSync(file1Path)) {
         fs.unlinkSync(file1Path);
-        console.log(`Deleted file: ${file1Path}`);
+        console.info(`Deleted file: ${file1Path}`);
       } else {
         console.warn(`File not found: ${file1Path}`);
       }
 
       if (fs.existsSync(file2Path)) {
         fs.unlinkSync(file2Path);
-        console.log(`Deleted file: ${file2Path}`);
+        console.info(`Deleted file: ${file2Path}`);
       } else {
         console.warn(`File not found: ${file2Path}`);
       }
 
       if (fs.existsSync(file3Path)) {
         fs.unlinkSync(file3Path);
-        console.log(`Deleted file: ${file3Path}`);
+        console.info(`Deleted file: ${file3Path}`);
       } else {
         console.warn(`File not found: ${file3Path}`);
       }
 
       if (fs.existsSync(file4Path)) {
         fs.unlinkSync(file4Path);
-        console.log(`Deleted file: ${file4Path}`);
+        console.info(`Deleted file: ${file4Path}`);
       } else {
         console.warn(`File not found: ${file4Path}`);
       }
-      console.log("Database file deleted successfully.");
+      console.info("Database file deleted successfully.");
     } catch (error) {
       console.error("Error deleting the database file:", error);
       throw new Error("Failed to delete the database file.");
@@ -447,7 +441,6 @@ class MainManager {
       const columns = this.mainSchema.get(key);
       if (columns?.includes(oldColumnName)) {
         const columnIndex = columns.indexOf(oldColumnName);
-        console.log("name", newColumnName);
         if (columnIndex !== -1) {
           columns[columnIndex] = newColumnName;
         }
@@ -495,6 +488,17 @@ class MainManager {
         error
       );
       throw new Error(`Failed to get all values for column ${columnName}`);
+    }
+  }
+
+  async getMaxRowValue(): Promise<number> {
+    try {
+      const query = `SELECT MAX(id) AS max_id FROM main_table;`;
+      const result = await this.dataBase.sqlCommandWithReponse(query);
+      return result[0].max_id;
+    } catch (error) {
+      console.error("Error getting the maximum row value:", error);
+      throw new Error("Failed to get the maximum row value");
     }
   }
 }

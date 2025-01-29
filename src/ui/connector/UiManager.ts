@@ -43,6 +43,10 @@ class UiManager {
 
     window.electronAPI.subscribeToListener(async (tableData: TableData) => {
       if (this.setTableData) {
+        const newSchema = tableData.schema.flatMap((entry) =>
+          entry.includes(",") ? entry.split(",").map((e) => e.trim()) : entry
+        );
+        tableData.schema = newSchema;
         sessionStorage.setItem("TableData", JSON.stringify(tableData));
         this.setTableData(await this.convert(this.tableType));
       }
@@ -74,8 +78,6 @@ class UiManager {
     }
   }
 
-  //THis is a bugg this should be done over another endpoint e.g. nextIndex here the disk data is
-  //Being loaded here is a BIG BUGG!!!!!!!!!!!!
   public async getTableData() {
     await window.electronAPI.initTableData();
   }
@@ -119,14 +121,12 @@ class UiManager {
     );
 
     if (reponse !== "ok") {
+      this.setSqlCommand(this.sqlCommand);
       alert("Sql Error occured please try again");
     } else {
-      console.log("This was the comand", this.sqlCommand);
       const stack = this.sqlCommandStack;
       stack.push(this.sqlCommand);
       this.setSqlCommandStack(stack);
-      console.log("What the stack looks like", this.sqlCommandStack);
-      alert("Successful");
     }
   }
 
@@ -139,6 +139,10 @@ class UiManager {
       newColumnName,
       oldColumnName
     );
+  }
+
+  async getMaxColumnValue(): Promise<number> {
+    return await window.electronAPI.getMaxRowValue();
   }
 
   async getAllValue(columnName: string): Promise<string[]> {
