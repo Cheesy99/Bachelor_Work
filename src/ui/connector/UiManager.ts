@@ -135,7 +135,8 @@ class UiManager {
     oldColumnName: string
   ) {
     await window.electronAPI.renameNamingColumn(
-      this.sqlCommand,
+      createSqlQuery(this.sqlCommand),
+      extractSchema(this.sqlCommand),
       newColumnName,
       oldColumnName
     );

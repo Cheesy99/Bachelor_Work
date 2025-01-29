@@ -81,8 +81,19 @@ app.on("ready", () => {
 
   ipcMain.handle(
     "renameColumn",
-    async (_, sqlCommand: string, tableName: string, columnName: string) => {
-      return await mainManager.renameColumn(sqlCommand, tableName, columnName);
+    async (
+      _,
+      sqlCommand: string,
+      schema: string[],
+      newColumnName: string,
+      oldColumnName: string
+    ) => {
+      return await mainManager.renameColumn(
+        sqlCommand,
+        schema,
+        newColumnName,
+        oldColumnName
+      );
     }
   );
 

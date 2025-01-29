@@ -167,7 +167,10 @@ class MainManager {
     sqlCommandSave = sqlCommandSave.replace(/LIMIT\s+\d+/i, "LIMIT 100");
     sqlCommandSave = sqlCommandSave.replace(/OFFSET\s+\d+/i, "OFFSET 0");
     try {
-      fs.writeFileSync(sqlCommandFilePath, JSON.stringify(sqlCommandSave));
+      fs.writeFileSync(
+        sqlCommandFilePath,
+        JSON.stringify({ sqlCommand: sqlCommandSave })
+      );
       fs.writeFileSync(schemaFilePath, schemaJson);
       fs.writeFileSync(currentlyShow, shownSchemaJson);
       fs.writeFileSync(shownForeignColumnpath, shownForeignColumn);
@@ -307,7 +310,7 @@ class MainManager {
       );
       console.info("SQL Command data:", sqlCommandData);
 
-      this.sqlCommand = JSON.parse(sqlCommandData);
+      this.sqlCommand = JSON.parse(sqlCommandData).sqlCommand;
 
       const shownSchemaData = JSON.parse(
         fs.readFileSync(
@@ -418,6 +421,7 @@ class MainManager {
 
   async renameColumn(
     sqlCommand: string,
+    schema: string[],
     newColumnName: string,
     oldColumnName: string
   ): Promise<void> {
@@ -461,11 +465,11 @@ class MainManager {
     if (foreignSchemaIndex !== -1) {
       this.currentForeignSchemaToSelect[foreignSchemaIndex] = newColumnName;
     }
-    const updatedSqlCommand = sqlCommand.replace(
-      new RegExp(`\\b${oldColumnName}\\b`, "g"),
-      newColumnName
+    const newSchema = schema.map((col) =>
+      col === oldColumnName ? newColumnName : col
     );
-    await this.uiSqlCommand(updatedSqlCommand);
+    console.log("sqlcommand from rename", sqlCommand);
+    await this.uiSqlCommand(sqlCommand, newSchema);
   }
 
   async getAllValues(columnName: string): Promise<String[]> {

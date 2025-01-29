@@ -53,12 +53,14 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
 
   renameNamingColumn: (
     sqlCommand: string,
+    schema: string[],
     newColumnName: string,
     oldColumnName: string
   ) => {
     return ipcRenderer.invoke(
       "renameColumn",
       sqlCommand,
+      schema,
       newColumnName,
       oldColumnName
     );

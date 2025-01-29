@@ -44,6 +44,7 @@ interface Window {
     cleanDatabase: () => Promise<void>;
     renameNamingColumn: (
       sqlCommand: string,
+      schema: string[],
       newColumnName: string,
       oldColumnName: string
     ) => Promise<void>;
