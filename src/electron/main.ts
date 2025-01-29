@@ -81,12 +81,8 @@ app.on("ready", () => {
 
   ipcMain.handle(
     "renameColumn",
-    async (_, commandStack: string, tableName: string, columnName: string) => {
-      return await mainManager.renameColumn(
-        commandStack,
-        tableName,
-        columnName
-      );
+    async (_, sqlCommand: string, tableName: string, columnName: string) => {
+      return await mainManager.renameColumn(sqlCommand, tableName, columnName);
     }
   );
 

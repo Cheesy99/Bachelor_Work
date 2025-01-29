@@ -40,10 +40,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("checkIfTable");
   },
 
-  // howManyRows: (tableName: string) => {
-  //   return ipcRenderer.invoke("howManyRows", tableName);
-  // },
-
   getSaveResult: () => {
     return ipcRenderer.invoke("getSaveResult");
   },
@@ -56,13 +52,13 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   },
 
   renameNamingColumn: (
-    commandStack: string,
+    sqlCommand: string,
     newColumnName: string,
     oldColumnName: string
   ) => {
     return ipcRenderer.invoke(
       "renameColumn",
-      commandStack,
+      sqlCommand,
       newColumnName,
       oldColumnName
     );

@@ -43,7 +43,7 @@ interface Window {
     getSaveResult: () => Promise<TableData | boolean>;
     cleanDatabase: () => Promise<void>;
     renameNamingColumn: (
-      commandStack: string,
+      sqlCommand: string,
       newColumnName: string,
       oldColumnName: string
     ) => Promise<void>;
