@@ -65,6 +65,15 @@ function App() {
     sqlCommand,
     setSqlCommand
   );
+
+  useEffect(() => {
+    if (tableData) {
+      const newSqlCommand = `SELECT ${tableData.schema.join(
+        ", "
+      )} FROM main_table LIMIT ${amountOfShownRows} OFFSET ${indexStart};`;
+      setSqlCommand(newSqlCommand);
+    }
+  }, [tableData, amountOfShownRows, indexStart]);
   useEffect(() => {
     uiManager.getInitTableData();
   }, []);
@@ -102,13 +111,24 @@ function App() {
   };
 
   const handleIndexChange = (direction: IndexDirection) => {
+    let newIndexStart = indexStart;
+
     if (direction === IndexDirection.RIGHT) {
-      setIndexStart(indexStart + amountOfShownRows);
-      uiManager.executeStack();
+      newIndexStart = indexStart + amountOfShownRows;
     } else {
-      const newIdex = Math.max(0, indexStart - amountOfShownRows);
-      setIndexStart(newIdex);
-      uiManager.executeStack();
+      newIndexStart = Math.max(0, indexStart - amountOfShownRows);
+    }
+
+    setIndexStart(newIndexStart);
+
+    if (tableData) {
+      const newSqlCommand = sqlCommand.replace(
+        /OFFSET\s+\d+/,
+        `OFFSET ${newIndexStart}`
+      );
+      setSqlCommand(newSqlCommand);
+      console.log(newSqlCommand);
+      uiManager.executeStack(newSqlCommand);
     }
   };
   const toggleSqlInput = () => {
@@ -132,11 +152,11 @@ function App() {
     setShowSidePanel((prev) => !prev);
   };
   const handleUndo = async (): Promise<void> => {
-    if (sqlCommandStack.length > 1) return;
+    if (sqlCommandStack.length > 1) alert("This is the original Data");
 
     const oldCommand = sqlCommandStack.pop();
     setSqlCommand(oldCommand!);
-    uiManager.executeStack;
+    await uiManager.executeStack(oldCommand);
   };
 
   return (

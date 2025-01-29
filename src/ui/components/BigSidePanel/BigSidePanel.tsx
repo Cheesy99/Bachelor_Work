@@ -93,7 +93,7 @@ function BigSidePanel({
     }
 
     setSqlCommand(newSqlCommand);
-    await uiManager.executeStack();
+    await uiManager.executeStack(newSqlCommand);
   };
 
   const handleColumnCheckbox = (value: string | number) => {
@@ -125,38 +125,45 @@ function BigSidePanel({
 
     setSqlCommand(newSqlCommand);
 
-    await uiManager.executeStack();
+    await uiManager.executeStack(newSqlCommand);
     closeSidePanel(false);
   };
 
   const handleDeleteColumn = async () => {
-    const deleteThisColumn = columnValues.columnName;
-    let index = tableData?.schema.findIndex((col) => col === deleteThisColumn);
-    let newSchema = tableData!.schema;
-    if (index !== -1 && index) {
-      newSchema.splice(index, 1);
-    }
-
-    setTableData({
-      schema: newSchema,
-      table: tableData?.table!,
-    });
-
-    let newSqlCommand = sqlCommand;
-    const selectColumnsMatch = newSqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
-    if (selectColumnsMatch && selectColumnsMatch[1]) {
-      let selectColumns = selectColumnsMatch[1]
-        .split(",")
-        .map((col) => col.trim());
-      selectColumns = selectColumns.filter((col) => col !== deleteThisColumn);
-      newSqlCommand = newSqlCommand.replace(
-        /SELECT\s+(.*?)\s+FROM/i,
-        `SELECT ${selectColumns.join(", ")} FROM`
+    if (tableData) {
+      const deleteThisColumn = columnValues.columnName;
+      console.log("Delete this column", deleteThisColumn);
+      let index = tableData?.schema.findIndex(
+        (col) => col === deleteThisColumn
       );
+      console.log("index", index);
+      let newSchema = tableData!.schema;
+      if (index !== -1 && index) {
+        newSchema.splice(index, 1);
+      }
+
+      setTableData({
+        schema: newSchema,
+        table: tableData?.table!,
+      });
+
+      let newSqlCommand = sqlCommand;
+      const selectColumnsMatch = newSqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
+      if (selectColumnsMatch && selectColumnsMatch[1]) {
+        let selectColumns = selectColumnsMatch[1]
+          .split(",")
+          .map((col) => col.trim());
+        selectColumns = selectColumns.filter((col) => col !== deleteThisColumn);
+        newSqlCommand = newSqlCommand.replace(
+          /SELECT\s+(.*?)\s+FROM/i,
+          `SELECT ${selectColumns.join(", ")} FROM`
+        );
+      }
+
+      setSqlCommand(newSqlCommand);
+      await uiManager.executeStack(newSqlCommand);
+      closeSidePanel(false);
     }
-    setSqlCommand(newSqlCommand);
-    await uiManager.executeStack();
-    closeSidePanel(false);
   };
 
   const handleSelectAll = async () => {

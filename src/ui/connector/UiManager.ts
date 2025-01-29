@@ -45,20 +45,8 @@ class UiManager {
       if (this.setTableData) {
         sessionStorage.setItem("TableData", JSON.stringify(tableData));
         this.setTableData(await this.convert(this.tableType));
-        this.updateSqlCommand();
       }
     });
-  }
-
-  private updateSqlCommand() {
-    const tableData = sessionStorage.getItem("TableData");
-    if (tableData) {
-      const parsedTableData: Table = JSON.parse(tableData);
-      const newSqlCommand = `SELECT ${parsedTableData.schema.join(
-        ", "
-      )} FROM main_table LIMIT ${this.limit} OFFSET ${this.offset};`;
-      this.setSqlCommand(newSqlCommand);
-    }
   }
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -122,21 +110,22 @@ class UiManager {
     }
   }
 
-  public async executeStack() {
+  public async executeStack(updatedSqlCommand?: string) {
+    const commandToExecute = updatedSqlCommand || this.sqlCommand;
+    console.log("what is coming in", commandToExecute);
     let reponse = await window.electronAPI.executeSqlCommandStack(
-      createSqlQuery(this.sqlCommand),
-      extractSchema(this.sqlCommand)
+      createSqlQuery(commandToExecute),
+      extractSchema(commandToExecute)
     );
 
     if (reponse !== "ok") {
-      const stack = this.sqlCommandStack;
-      const oldCommand = stack.pop();
-      this.setSqlCommand(oldCommand);
       alert("Sql Error occured please try again");
     } else {
+      console.log("This was the comand", this.sqlCommand);
       const stack = this.sqlCommandStack;
       stack.push(this.sqlCommand);
       this.setSqlCommandStack(stack);
+      console.log("What the stack looks like", this.sqlCommandStack);
       alert("Successful");
     }
   }
