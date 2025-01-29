@@ -1,7 +1,7 @@
 import Converter from "./Converter";
 import NestedTableConverter from "./NestedTableConverter";
 import OneTableConverter from "./OneTableConverter";
-import { translateUmlauts, createSqlQuery } from "./Utils";
+import { translateUmlauts, createSqlQuery, extractSchema } from "./Utils";
 import { ViewSetting } from "./Enum/Setting";
 import React from "react";
 
@@ -15,15 +15,24 @@ class UiManager {
   private sqlCommandStack: any[];
   private limit: number;
   private offset: number;
+  private setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>;
+  private sqlCommand: string;
+  private setSqlCommand: React.Dispatch<React.SetStateAction<string>>;
   public constructor(
     converter: Converter,
     setterTableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     tableType: ViewSetting,
-    sqlCommandStack: any[],
     limit: number,
-    offset: number
+    offset: number,
+    sqlCommandStack: string[],
+    setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>,
+    sqlCommand: string,
+    setSqlCommand: React.Dispatch<React.SetStateAction<string>>
   ) {
+    this.setSqlCommandStack = setSqlCommandStack;
+    this.sqlCommand = sqlCommand;
+    this.setSqlCommand = setSqlCommand;
     this.limit = limit;
     this.offset = offset;
     this.converter = converter;
@@ -36,8 +45,20 @@ class UiManager {
       if (this.setTableData) {
         sessionStorage.setItem("TableData", JSON.stringify(tableData));
         this.setTableData(await this.convert(this.tableType));
+        this.updateSqlCommand();
       }
     });
+  }
+
+  private updateSqlCommand() {
+    const tableData = sessionStorage.getItem("TableData");
+    if (tableData) {
+      const parsedTableData: Table = JSON.parse(tableData);
+      const newSqlCommand = `SELECT ${parsedTableData.schema.join(
+        ", "
+      )} FROM main_table LIMIT ${this.limit} OFFSET ${this.offset};`;
+      this.setSqlCommand(newSqlCommand);
+    }
   }
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -101,23 +122,23 @@ class UiManager {
     }
   }
 
-  public async executeStack(schema: string[]) {
-    console.log(
-      "this is the command",
-      createSqlQuery(this.sqlCommandStack, this.limit, this.offset)
-    );
+  public async executeStack() {
     let reponse = await window.electronAPI.executeSqlCommandStack(
-      createSqlQuery(this.sqlCommandStack, this.limit, this.offset),
-      schema
+      createSqlQuery(this.sqlCommand),
+      extractSchema(this.sqlCommand)
     );
 
     if (reponse !== "ok") {
-      alert("Sql Error occured please press undo or reset");
+      const stack = this.sqlCommandStack;
+      const oldCommand = stack.pop();
+      this.setSqlCommand(oldCommand);
+      alert("Sql Error occured please try again");
+    } else {
+      const stack = this.sqlCommandStack;
+      stack.push(this.sqlCommand);
+      this.setSqlCommandStack(stack);
+      alert("Successful");
     }
-  }
-
-  async restart() {
-    throw new Error("Method not implemented.");
   }
 
   public async changingSchemaName(
@@ -125,7 +146,7 @@ class UiManager {
     oldColumnName: string
   ) {
     await window.electronAPI.renameNamingColumn(
-      createSqlQuery(this.sqlCommandStack, this.limit, this.offset),
+      createSqlQuery(this.sqlCommand),
       newColumnName,
       oldColumnName
     );

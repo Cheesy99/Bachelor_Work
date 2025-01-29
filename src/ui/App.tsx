@@ -22,9 +22,11 @@ type ContextType = [
   React.Dispatch<React.SetStateAction<Table | null>>
 ];
 type ContextStack = [
-  any[],
-  React.Dispatch<React.SetStateAction<any[]>>,
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
+  React.Dispatch<React.SetStateAction<string[]>>,
   number,
+  React.Dispatch<React.SetStateAction<number>>,
   number
 ];
 export const Context = React.createContext<ContextType | undefined>(undefined);
@@ -44,9 +46,10 @@ function App() {
   );
   const [loading, setLoading] = useState(false);
   const [amountOfShownRows, setAmountOfShownRows] = useState<number>(100);
-  const [indexStart, setIndexStart] = useState<number>(100);
+  const [indexStart, setIndexStart] = useState<number>(0);
   const [showSidePanel, setShowSidePanel] = useState<boolean>(false);
   const [sqlCommandStack, setSqlCommandStack] = useState<string[]>([]);
+  const [sqlCommand, setSqlCommand] = useState<string>("");
   const [lastClicked, setLastClicked] = useState<
     Clicked.RowId | Clicked.Column | undefined
   >(undefined);
@@ -55,9 +58,12 @@ function App() {
     setTableData,
     setLoading,
     tableType,
-    sqlCommandStack,
     amountOfShownRows,
-    indexStart
+    indexStart,
+    sqlCommandStack,
+    setSqlCommandStack,
+    sqlCommand,
+    setSqlCommand
   );
   useEffect(() => {
     uiManager.getInitTableData();
@@ -98,11 +104,11 @@ function App() {
   const handleIndexChange = (direction: IndexDirection) => {
     if (direction === IndexDirection.RIGHT) {
       setIndexStart(indexStart + amountOfShownRows);
-      uiManager.executeStack(tableData?.schema!);
+      uiManager.executeStack();
     } else {
       const newIdex = Math.max(0, indexStart - amountOfShownRows);
       setIndexStart(newIdex);
-      uiManager.executeStack(tableData?.schema!);
+      uiManager.executeStack();
     }
   };
   const toggleSqlInput = () => {
@@ -125,15 +131,25 @@ function App() {
   const toggleSidePanel = () => {
     setShowSidePanel((prev) => !prev);
   };
+  const handleUndo = async (): Promise<void> => {
+    if (sqlCommandStack.length > 1) return;
+
+    const oldCommand = sqlCommandStack.pop();
+    setSqlCommand(oldCommand!);
+    uiManager.executeStack;
+  };
+
   return (
     <Context.Provider
       value={[tableData, tableType, loading, uiManager, setTableData]}
     >
       <ContextCommandStack.Provider
         value={[
-          sqlCommandStack,
+          sqlCommand,
+          setSqlCommand,
           setSqlCommandStack,
           amountOfShownRows,
+          setIndexStart,
           indexStart,
         ]}
       >
@@ -169,6 +185,7 @@ function App() {
               showSqlInput={showSqlInput}
               index={handleIndexChange}
               setSelectedColumnValues={handleColumnClick}
+              handleUndo={handleUndo}
               onIdClick={handleIdClick}
               setTable={setTableData}
               setTableType={setTableType}

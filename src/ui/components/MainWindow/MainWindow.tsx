@@ -17,14 +17,17 @@ interface MainWindowProps {
     values: (string | number | TableData)[];
     columnName: string;
   }) => void;
+  handleUndo: () => Promise<void>;
   onIdClick: (values: (string | number)[]) => void;
   setTable: React.Dispatch<React.SetStateAction<Table | null>>;
   setTableType: React.Dispatch<React.SetStateAction<ViewSetting>>;
 }
 type ContextStack = [
-  any[],
-  React.Dispatch<React.SetStateAction<any[]>>,
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
+  React.Dispatch<React.SetStateAction<string[]>>,
   number,
+  React.Dispatch<React.SetStateAction<number>>,
   number
 ];
 type ContextType = [
@@ -39,13 +42,13 @@ function MainWindow({
   showSqlInput,
   index,
   setSelectedColumnValues,
+  handleUndo,
   onIdClick,
   setTable,
   setTableType,
 }: MainWindowProps) {
   const [viewType, setViewType] = useState<Display>(Display.TABLE);
   const context: ContextType | undefined = useContext(Context);
-  const [sqlCommand, setSqlCommand] = useState("");
   const contextCommandStack: ContextStack | undefined =
     useContext(ContextCommandStack);
   if (!context) {
@@ -54,8 +57,14 @@ function MainWindow({
   if (!contextCommandStack) {
     throw new Error("contextCommandStack is not defined");
   }
-  const [sqlCommandStack, setSqlCommandStack, amountOfShownRows, indexStart] =
-    contextCommandStack;
+  const [
+    sqlCommand,
+    setSqlCommand,
+    setSqlCommandStack,
+    amountOfShownRows,
+    setIndexStart,
+    indexStart,
+  ] = contextCommandStack;
   const [tableData, tableType, loading, uiManager] = context;
 
   const handleHeaderClick = (columnIndex: number) => {
@@ -79,15 +88,7 @@ function MainWindow({
 
   const handleSqlSubmit = async () => {
     if (tableData) {
-      const selectColumnsMatch = sqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
-      let selectColumns: string[] = [];
-      if (selectColumnsMatch && selectColumnsMatch[1]) {
-        selectColumns = selectColumnsMatch[1]
-          .split(",")
-          .map((col) => col.trim());
-      }
-
-      await uiManager.executeStack(selectColumns);
+      await uiManager.executeStack();
     } else alert("Table Data is not been uploaded");
   };
 
@@ -107,32 +108,9 @@ function MainWindow({
     }
   };
 
-  async function handleUndo(): Promise<void> {
-    let history: any[] = sqlCommandStack;
-    if (history.length !== 0) {
-      history.pop();
-      await uiManager.executeStack(tableData?.schema!);
-    }
-  }
-
   const handleSqlInputField = (value: string) => {
     setSqlCommand(value);
   };
-
-  useEffect(() => {
-    if (showSqlInput) {
-      if (tableData)
-        setSqlCommand(
-          createSqlQueryForView(
-            sqlCommandStack,
-            tableData.schema,
-            amountOfShownRows,
-            indexStart
-          )
-        );
-      else setSqlCommand("");
-    }
-  }, [showSqlInput, sqlCommandStack]);
 
   async function handleReset(): Promise<void> {
     const confirmed = window.confirm(
@@ -140,7 +118,14 @@ function MainWindow({
     );
     if (confirmed) {
       setSqlCommandStack([]);
-      await uiManager.restart();
+      setIndexStart(0);
+      setSqlCommand(
+        tableData
+          ? `SELECT ${tableData?.schema!} FROM main_table LIMIT ${amountOfShownRows} OFFSET ${indexStart} ;`
+          : ""
+      );
+
+      await uiManager.executeStack();
     }
   }
 

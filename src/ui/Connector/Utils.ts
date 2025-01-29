@@ -58,21 +58,21 @@ export const removeId = (
   return table.map((row) => row.slice(1));
 };
 
-export const createSqlQuery = (
-  command: any[],
-  limit: number,
-  offset: number
-): string => {
+export const createSqlQuery = (command: string): string => {
   console.log("Reformating", command);
-  let result: string = "";
-  if (command.length !== 0) {
-    result = command.join(" ");
-    result = result.replace(/AND/, "WHERE");
+  // Remove the SELECT clause but keep the FROM part
+  command = command.replace(/SELECT\s+.*?\s+(FROM)/i, "$1");
+  console.log("End result", command);
+  return command;
+};
+
+export const extractSchema = (sqlCommand: string): string[] => {
+  const selectColumnsMatch = sqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
+  let selectColumns: string[] = [];
+  if (selectColumnsMatch && selectColumnsMatch[1]) {
+    selectColumns = selectColumnsMatch[1].split(",").map((col) => col.trim());
   }
-  result = `${result} LIMIT ${limit} OFFSET ${offset}`;
-  console.log("What", result);
-  result = `FROM main_table ${result}`;
-  return result;
+  return selectColumns;
 };
 
 export const createSqlQueryForView = (

@@ -24,9 +24,11 @@ type ContextType = [
   React.Dispatch<React.SetStateAction<Table | null>>
 ];
 type ContextStack = [
-  any[],
-  React.Dispatch<React.SetStateAction<any[]>>,
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
+  React.Dispatch<React.SetStateAction<string[]>>,
   number,
+  React.Dispatch<React.SetStateAction<number>>,
   number
 ];
 function BigSidePanel({
@@ -45,7 +47,14 @@ function BigSidePanel({
     throw new Error("contextCommandStack is not defined");
   }
   const [tableData, tableType, loading, uiManager, setTableData] = context;
-  const [sqlCommandStack, setSqlCommandStack] = contextCommandStack;
+  const [
+    sqlCommand,
+    setSqlCommand,
+    setSqlCommandStack,
+    amountOfShownRows,
+    setIndexStart,
+    indexStart,
+  ] = contextCommandStack;
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
   >([]);
@@ -65,11 +74,26 @@ function BigSidePanel({
     const formattedValues = value
       .map((value) => (typeof value === "string" ? `'${value}'` : value))
       .join(", ");
-    let command = `AND ${columnName} IN (${formattedValues})`;
-    const history = sqlCommandStack;
-    history.push(command);
-    setSqlCommandStack(history);
-    await uiManager.executeStack(tableData?.schema!);
+    const newCondition = `${columnName} IN (${formattedValues})`;
+
+    let newSqlCommand = sqlCommand;
+
+    if (newSqlCommand.includes("WHERE")) {
+      // If there's already a WHERE clause, add the new condition with AND
+      newSqlCommand = newSqlCommand.replace(
+        "WHERE",
+        `WHERE ${newCondition} AND`
+      );
+    } else {
+      // If there's no WHERE clause, add one with the new condition
+      newSqlCommand = newSqlCommand.replace(
+        "FROM",
+        `FROM WHERE ${newCondition}`
+      );
+    }
+
+    setSqlCommand(newSqlCommand);
+    await uiManager.executeStack();
   };
 
   const handleColumnCheckbox = (value: string | number) => {
@@ -81,11 +105,27 @@ function BigSidePanel({
   };
 
   const handleDeleteRow = async (id: number) => {
-    const command: string = `AND id != ${id}`;
-    const history = sqlCommandStack;
-    history.push(command);
-    setSqlCommandStack(history);
-    await uiManager.executeStack(tableData?.schema!);
+    const newCondition = `id != ${id}`;
+
+    let newSqlCommand = sqlCommand;
+
+    if (newSqlCommand.includes("WHERE")) {
+      // If there's already a WHERE clause, add the new condition with AND
+      newSqlCommand = newSqlCommand.replace(
+        "WHERE",
+        `WHERE ${newCondition} AND`
+      );
+    } else {
+      // If there's no WHERE clause, add one with the new condition
+      newSqlCommand = newSqlCommand.replace(
+        "FROM",
+        `FROM WHERE ${newCondition}`
+      );
+    }
+
+    setSqlCommand(newSqlCommand);
+
+    await uiManager.executeStack();
     closeSidePanel(false);
   };
 
@@ -102,7 +142,20 @@ function BigSidePanel({
       table: tableData?.table!,
     });
 
-    await uiManager.executeStack(newSchema);
+    let newSqlCommand = sqlCommand;
+    const selectColumnsMatch = newSqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
+    if (selectColumnsMatch && selectColumnsMatch[1]) {
+      let selectColumns = selectColumnsMatch[1]
+        .split(",")
+        .map((col) => col.trim());
+      selectColumns = selectColumns.filter((col) => col !== deleteThisColumn);
+      newSqlCommand = newSqlCommand.replace(
+        /SELECT\s+(.*?)\s+FROM/i,
+        `SELECT ${selectColumns.join(", ")} FROM`
+      );
+    }
+    setSqlCommand(newSqlCommand);
+    await uiManager.executeStack();
     closeSidePanel(false);
   };
 
