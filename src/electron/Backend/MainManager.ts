@@ -294,13 +294,16 @@ class MainManager {
   }
 
   public async exportToExcel() {
-    const fullTable: TableData = { schema: [], table: [] };
+    const fullTable: TableData = {
+      schema: this.currentlyShowSchema.get("main_table")!,
+      table: [],
+    };
     const filePath = `${this.persistencePath}excelData.xlsx`;
 
     await this.excelExporter.exportResultToExcel(fullTable, filePath);
   }
 
-  private async getFullTable() {}
+  private async getFullTable(): Promise<Table> {}
 
   public getDiskData() {
     try {
