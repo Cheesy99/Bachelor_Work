@@ -71,9 +71,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getAllColumnValues: (columnName: string) => {
     return ipcRenderer.invoke("getAllValues", columnName);
   },
-  setJump: (jump: number) => {
-    return ipcRenderer.invoke("setJump", jump);
-  },
   getMaxRowValue: () => {
     return ipcRenderer.invoke("getMaxRowNumber");
   },

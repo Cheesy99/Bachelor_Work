@@ -14,6 +14,7 @@ class TableBuilder {
         await this.recursive(object, tableSchema, "main_table");
       })
     );
+    // console.log("collectMainInserts", this.collectMainInserts);
     return this.collectMainInserts;
   }
 
@@ -26,7 +27,7 @@ class TableBuilder {
     const insertOrderMain: string[] = [];
     const insertOrderForeign: string[] = [];
     const insertValues: string[] = [];
-    const totalRes: Promise<number>[][] = [];
+    const totalRes: number[][] = [];
 
     for (const columnName of columnNames) {
       const realKey = columnName.includes("_")
@@ -40,7 +41,10 @@ class TableBuilder {
         const res: Promise<number>[] = value.map(async (Innererow) => {
           return await this.recursive(Innererow, tableSchema, columnName);
         });
-        totalRes.push(res);
+
+        const results = await Promise.all(res);
+
+        totalRes.push(results);
         insertOrderForeign.push(columnName);
       } else if (typeof value === "object") {
         await this.recursive(value, tableSchema, columnName);
@@ -64,12 +68,16 @@ class TableBuilder {
       const resolvedTotalRes = await Promise.all(
         totalRes.map((res) => Promise.all(res))
       );
-      result = this.joinCrossProduct(insertValues, resolvedTotalRes);
+      // console.log("InsertValues: ", insertValues);
+      console.log("resolveValues: ", resolvedTotalRes);
+      result = await this.joinCrossProduct(insertValues, resolvedTotalRes);
+      // console.log("Result: ", result);
       await Promise.all(
         result.map(async (statement) => {
           const insertStatement: any = `INSERT INTO ${tableName} (${insertColumnString}) VALUES (${statement.join(
             ", "
           )});`;
+
           this.collectMainInserts.push(insertStatement);
         })
       );
@@ -85,22 +93,33 @@ class TableBuilder {
   private async insertWithIdReponse(statment: any): Promise<number> {
     return await this.databaseConnector.sqlCommandWithIdResponse(statment);
   }
-  private joinCrossProduct(baseArray: any[], foreignIds: any[][]): any[][] {
-    const result: any[][] = [];
+  private async joinCrossProduct(
+    baseArray: any[],
+    foreignIds: any[][]
+  ): Promise<any[][]> {
+    return new Promise((resolve) => {
+      const result: any[][] = [];
 
-    function accumulator(current: any[], index: number) {
-      if (index === foreignIds.length) {
-        result.push([...baseArray, ...current]);
-        return;
+      // Replace empty arrays with ['null']
+      const processedForeignIds = foreignIds.map((arr) =>
+        arr.length === 0 ? ["null"] : arr
+      );
+
+      function accumulator(current: any[], index: number) {
+        if (index === processedForeignIds.length) {
+          result.push([...baseArray, ...current]);
+          return;
+        }
+
+        for (const foreignKeys of processedForeignIds[index]) {
+          accumulator([...current, foreignKeys], index + 1);
+        }
       }
 
-      for (const foreignKeys of foreignIds[index]) {
-        accumulator([...current, foreignKeys], index + 1);
-      }
-    }
-
-    accumulator([], 0);
-    return result;
+      accumulator([], 0);
+      console.log("Processed result:", result); // Debug log
+      resolve(result);
+    });
   }
 }
 export default TableBuilder;

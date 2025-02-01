@@ -86,13 +86,11 @@ class MainManager {
       });
 
       const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-
+      console.log("Checking: ", jsonObject[0]);
       let schemaResult: {
         command: string[];
         tableSchema: TableSchema;
       } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
-      console.log("Schema command: ", schemaResult.command);
-      console.log("Schema table: ", schemaResult.tableSchema);
 
       await this.dataBase.sqlCommand(schemaResult.command);
       const mainInsert: any[] = await this.tableBuilder.build(

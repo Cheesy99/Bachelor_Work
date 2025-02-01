@@ -114,7 +114,7 @@ class DataBaseConnector {
               reject(err);
               process.exit(1);
             } else {
-              console.log("SQL command executed successfully.");
+              // console.log("SQL command executed successfully.");
             }
           });
         });
