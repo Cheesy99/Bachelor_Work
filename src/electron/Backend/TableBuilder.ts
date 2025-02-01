@@ -27,7 +27,7 @@ class TableBuilder {
     const insertOrderMain: string[] = [];
     const insertOrderForeign: string[] = [];
     const insertValues: string[] = [];
-    const totalRes: number[][] = [];
+    const totalRes: Promise<number>[][] = [];
 
     for (const columnName of columnNames) {
       const realKey = columnName.includes("_")
@@ -42,9 +42,7 @@ class TableBuilder {
           return await this.recursive(Innererow, tableSchema, columnName);
         });
 
-        const results = await Promise.all(res);
-
-        totalRes.push(results);
+        totalRes.push(res);
         insertOrderForeign.push(columnName);
       } else if (typeof value === "object") {
         await this.recursive(value, tableSchema, columnName);
@@ -68,10 +66,9 @@ class TableBuilder {
       const resolvedTotalRes = await Promise.all(
         totalRes.map((res) => Promise.all(res))
       );
-      // console.log("InsertValues: ", insertValues);
-      console.log("resolveValues: ", resolvedTotalRes);
+
       result = await this.joinCrossProduct(insertValues, resolvedTotalRes);
-      // console.log("Result: ", result);
+      console.log("Result: ", result);
       await Promise.all(
         result.map(async (statement) => {
           const insertStatement: any = `INSERT INTO ${tableName} (${insertColumnString}) VALUES (${statement.join(
@@ -100,7 +97,6 @@ class TableBuilder {
     return new Promise((resolve) => {
       const result: any[][] = [];
 
-      // Replace empty arrays with ['null']
       const processedForeignIds = foreignIds.map((arr) =>
         arr.length === 0 ? ["null"] : arr
       );
@@ -117,7 +113,6 @@ class TableBuilder {
       }
 
       accumulator([], 0);
-      console.log("Processed result:", result); // Debug log
       resolve(result);
     });
   }
