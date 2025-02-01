@@ -293,11 +293,18 @@ class MainManager {
 
   public async exportToExcel() {
     try {
-      console.log("What is wrong");
       const table = await this.getFullTable();
+      const keySet = new Set(this.currentlyShowSchema.keys());
+      const schema: string[] = Array.from(
+        this.currentlyShowSchema.values()
+      ).flat();
+
+      const cleanedSchema = schema.filter(
+        (value) => !keySet.has(value) && !value.toLowerCase().includes("id")
+      );
 
       const fullTable: TableData = {
-        schema: this.currentlyShowSchema.get("main_table")!,
+        schema: cleanedSchema,
         table: table,
       };
       const filePath = `${this.persistencePath}excelData.xlsx`;
@@ -310,26 +317,32 @@ class MainManager {
 
   private async getFullTable(): Promise<(string | number)[][]> {
     try {
-      console.log("What is wrong");
-      const lastSqlCommand = this.sqlCommand;
+      let lastSqlCommand = this.sqlCommand;
       if (!lastSqlCommand) {
         throw new Error("No SQL command available");
       }
-      console.log("What is wrong", lastSqlCommand);
+
+      lastSqlCommand = lastSqlCommand
+        .replace(/\bLIMIT\s+\d+(\s*,\s*\d+)?/gi, "")
+        .replace(/\bOFFSET\s+\d+/gi, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      console.log("SQL command after cleaning:", lastSqlCommand);
+
       const result = await this.dataBase.sqlCommandWithReponse(lastSqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
       const schema = this.currentlyShowSchema.get("main_table")!;
       for (const [rowIndex, row] of table.entries()) {
         for (let colIndex = 1; colIndex < row.length; colIndex++) {
           const element = row[colIndex];
-          console.log("input ", element, schema[colIndex]);
 
           if (typeof element === "number" && colIndex !== 0) {
             const foreignRow: (string | number)[] = await this.getRow(
               element,
               schema[colIndex]
             );
-            console.log("man: ", foreignRow);
+
             table[rowIndex].splice(colIndex, 1);
             const foreignValues = foreignRow.slice(1);
             table[rowIndex].splice(colIndex, 0, ...foreignValues);
@@ -337,7 +350,7 @@ class MainManager {
         }
       }
 
-      return table;
+      return table.map((row) => row.slice(1));
     } catch (error) {
       console.error("Error getting full table data:", error);
       return []; // Return empty array on error
