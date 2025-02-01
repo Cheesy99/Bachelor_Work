@@ -84,16 +84,19 @@ class MainManager {
 
   public async insertJson(json: string): Promise<string> {
     try {
-      const cleanedJson = json.replace(/"([^"]+)":/g, (_, p1) => {
+      const cleanedJsonString = json.replace(/\\"/g, "");
+      const cleanedJson = cleanedJsonString.replace(/"([^"]+)":/g, (_, p1) => {
         const cleanedKey = DataCleaner.cleanName(p1);
         return `"${cleanedKey}":`;
       });
 
       const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
+
       let schemaResult: {
         command: string[];
         tableSchema: TableSchema;
       } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
+
       await this.dataBase.sqlCommand(schemaResult.command);
       const mainInsert: any[] = await this.tableBuilder.build(
         jsonObject,
@@ -303,7 +306,7 @@ class MainManager {
     await this.excelExporter.exportResultToExcel(fullTable, filePath);
   }
 
-  private async getFullTable(): Promise<Table> {}
+  // private async getFullTable(): Promise<Table> {}
 
   public getDiskData() {
     try {

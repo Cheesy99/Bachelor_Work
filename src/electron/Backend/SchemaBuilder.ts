@@ -44,6 +44,9 @@ class SchemaBuilder {
     json: JsonObject,
     tableName: string | number
   ): TableSchema[] {
+    if (!json) {
+      return [];
+    }
     const keys = Object.keys(json);
     const result = [{ [tableName]: keys }];
     keys.forEach((key) => {
