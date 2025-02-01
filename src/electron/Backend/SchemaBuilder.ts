@@ -48,8 +48,9 @@ class SchemaBuilder {
       return [];
     }
     const keys = Object.keys(json);
-    const result = [{ [tableName]: keys }];
-    keys.forEach((key) => {
+    const cleanKeys = keys.map((key) => DataCleaner.cleanName(key));
+    const result = [{ [tableName]: cleanKeys }];
+    cleanKeys.forEach((key) => {
       const value = json[key];
       if (Array.isArray(value)) {
         value.forEach((obj) => {

@@ -101,10 +101,6 @@ app.on("ready", () => {
     return await mainManager.getAllValues(columnName);
   });
 
-  ipcMain.handle("setJump", async (_, jump: number) => {
-    return await mainManager.setJumper(jump);
-  });
-
   ipcMain.handle("getMaxRowNumber", async (_) => {
     return await mainManager.getMaxRowValue();
   });

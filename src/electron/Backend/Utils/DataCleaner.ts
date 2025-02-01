@@ -3,7 +3,13 @@ import TableSchema from "../Interfaces/TableSchema.js";
 
 class DataCleaner {
   public static cleanName(name: string): string {
-    return name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9_]/g, "");
+    return name
+      .replace(/\s+/g, "")
+      .replace(/[^a-zA-Z0-9_]/g, "")
+      .replace(/(\w+)\s*-\s*(\w+)/g, "$1$2")
+      .replace(/-\s*/g, "")
+      .replace(/\.\s*/g, "")
+      .replace(/\//g, "");
   }
 
   public static formatValue(value: any): string {

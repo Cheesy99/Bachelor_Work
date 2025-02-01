@@ -24,7 +24,6 @@ class MainManager {
   private readonly persistencePath: string;
   private mainSchema: Map<string, any[]>;
   private currentlyShowSchema: Map<string, any[]>;
-  private indexJump: number = 100;
   private currentForeignSchemaToSelect: string[] = [];
   private sqlCommand: string = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
   public static getInstance(browserWindow: BrowserWindow): MainManager {
@@ -43,10 +42,6 @@ class MainManager {
     this.browserWindow = browserWindow;
     this.mainSchema = new Map();
     this.currentlyShowSchema = new Map();
-  }
-
-  setJumper(jump: number): void {
-    this.indexJump = jump;
   }
 
   async saveSqlCommand(): Promise<void> {}
@@ -96,6 +91,8 @@ class MainManager {
         command: string[];
         tableSchema: TableSchema;
       } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
+      console.log("Schema command: ", schemaResult.command);
+      console.log("Schema table: ", schemaResult.tableSchema);
 
       await this.dataBase.sqlCommand(schemaResult.command);
       const mainInsert: any[] = await this.tableBuilder.build(
@@ -126,6 +123,49 @@ class MainManager {
       return "Invalid Json object please give valid json object";
     }
   }
+  // cleanSchema(schemaResult: { command: string[]; tableSchema: TableSchema }): {
+  //   command: string[];
+  //   tableSchema: TableSchema;
+  // } {
+  //   console.log("command: ", schemaResult.command);
+  //   console.log("tableSchema: ", schemaResult.tableSchema);
+  //   const newComand: string[] = [];
+  //   schemaResult.command.forEach((tableSchema) => {
+  //     // prettier-ignore
+  //     const array = tableSchema.split('\n');
+  //     const processedArray = array.map((str) =>
+  //       str.replace(/(\w)(VARCHAR\(255\))/g, "$1 $2")
+  //     );
+  //     const joinedString = processedArray.join("\n");
+  //     newComand.push(joinedString);
+  //   });
+
+  //   const cleanedTableSchema: TableSchema = {};
+  //   for (const table in schemaResult.tableSchema) {
+  //     // prettier-ignore
+  //     if (schemaResult.tableSchema.hasOwnProperty(table)) {
+  //       cleanedTableSchema[table] = schemaResult.tableSchema[table].map(
+  //         (column) =>
+  //           column
+
+  //         .replace(/(\w+)\s*-\s*(\w+)/g, "$1$2")
+  //         .replace(/-\s*/g, "")
+  //         .replace(/\.\s*/g, "")
+  //         .replace(/\//g, "")
+  //         .replace(/(\w)(VARCHAR\(255\))/g, "$1 $2")
+
+  //       );
+  //     }
+  //   }
+
+  //   console.log("Schema: ", cleanedTableSchema);
+  //   console.log("command: ", newComand);
+
+  //   return {
+  //     command: newComand,
+  //     tableSchema: cleanedTableSchema,
+  //   };
+  // }
 
   public async initTableData(): Promise<void> {
     let schema: string[] = [];
