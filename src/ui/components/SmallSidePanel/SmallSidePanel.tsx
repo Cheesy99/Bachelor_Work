@@ -31,7 +31,7 @@ function SmallSidePanel({
   const [tableData, tableType, loading, uiManager] = context;
 
   const exportToExcel = async () => {
-    await window.electronAPI.exportToExcel();
+    uiManager.export();
   };
 
   const deleteDatabase = async () => {

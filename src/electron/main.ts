@@ -56,7 +56,7 @@ app.on("ready", () => {
   ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
     return await mainManager.getRow(id, tableName);
   });
-  ipcMain.handle("exportToExcel", async (_, result: TableData) => {
+  ipcMain.handle("exportToExcel", async (_) => {
     await mainManager.exportToExcel();
   });
 

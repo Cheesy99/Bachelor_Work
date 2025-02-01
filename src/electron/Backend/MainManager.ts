@@ -121,49 +121,6 @@ class MainManager {
       return "Invalid Json object please give valid json object";
     }
   }
-  // cleanSchema(schemaResult: { command: string[]; tableSchema: TableSchema }): {
-  //   command: string[];
-  //   tableSchema: TableSchema;
-  // } {
-  //   console.log("command: ", schemaResult.command);
-  //   console.log("tableSchema: ", schemaResult.tableSchema);
-  //   const newComand: string[] = [];
-  //   schemaResult.command.forEach((tableSchema) => {
-  //     // prettier-ignore
-  //     const array = tableSchema.split('\n');
-  //     const processedArray = array.map((str) =>
-  //       str.replace(/(\w)(VARCHAR\(255\))/g, "$1 $2")
-  //     );
-  //     const joinedString = processedArray.join("\n");
-  //     newComand.push(joinedString);
-  //   });
-
-  //   const cleanedTableSchema: TableSchema = {};
-  //   for (const table in schemaResult.tableSchema) {
-  //     // prettier-ignore
-  //     if (schemaResult.tableSchema.hasOwnProperty(table)) {
-  //       cleanedTableSchema[table] = schemaResult.tableSchema[table].map(
-  //         (column) =>
-  //           column
-
-  //         .replace(/(\w+)\s*-\s*(\w+)/g, "$1$2")
-  //         .replace(/-\s*/g, "")
-  //         .replace(/\.\s*/g, "")
-  //         .replace(/\//g, "")
-  //         .replace(/(\w)(VARCHAR\(255\))/g, "$1 $2")
-
-  //       );
-  //     }
-  //   }
-
-  //   console.log("Schema: ", cleanedTableSchema);
-  //   console.log("command: ", newComand);
-
-  //   return {
-  //     command: newComand,
-  //     tableSchema: cleanedTableSchema,
-  //   };
-  // }
 
   public async initTableData(): Promise<void> {
     let schema: string[] = [];
@@ -335,16 +292,57 @@ class MainManager {
   }
 
   public async exportToExcel() {
-    const fullTable: TableData = {
-      schema: this.currentlyShowSchema.get("main_table")!,
-      table: [],
-    };
-    const filePath = `${this.persistencePath}excelData.xlsx`;
+    try {
+      console.log("What is wrong");
+      const table = await this.getFullTable();
 
-    await this.excelExporter.exportResultToExcel(fullTable, filePath);
+      const fullTable: TableData = {
+        schema: this.currentlyShowSchema.get("main_table")!,
+        table: table,
+      };
+      const filePath = `${this.persistencePath}excelData.xlsx`;
+      await this.excelExporter.exportResultToExcel(fullTable, filePath);
+    } catch (error) {
+      console.error("Error during Excel export:", error);
+      throw new Error("Failed to export to Excel");
+    }
   }
 
-  // private async getFullTable(): Promise<Table> {}
+  private async getFullTable(): Promise<(string | number)[][]> {
+    try {
+      console.log("What is wrong");
+      const lastSqlCommand = this.sqlCommand;
+      if (!lastSqlCommand) {
+        throw new Error("No SQL command available");
+      }
+      console.log("What is wrong", lastSqlCommand);
+      const result = await this.dataBase.sqlCommandWithReponse(lastSqlCommand);
+      const table = result.map((row: string | number) => Object.values(row));
+      const schema = this.currentlyShowSchema.get("main_table")!;
+      for (const [rowIndex, row] of table.entries()) {
+        for (let colIndex = 1; colIndex < row.length; colIndex++) {
+          const element = row[colIndex];
+          console.log("input ", element, schema[colIndex]);
+
+          if (typeof element === "number" && colIndex !== 0) {
+            const foreignRow: (string | number)[] = await this.getRow(
+              element,
+              schema[colIndex]
+            );
+            console.log("man: ", foreignRow);
+            table[rowIndex].splice(colIndex, 1);
+            const foreignValues = foreignRow.slice(1);
+            table[rowIndex].splice(colIndex, 0, ...foreignValues);
+          }
+        }
+      }
+
+      return table;
+    } catch (error) {
+      console.error("Error getting full table data:", error);
+      return []; // Return empty array on error
+    }
+  }
 
   public getDiskData() {
     try {
@@ -391,24 +389,30 @@ class MainManager {
   }
 
   async getRow(id: number, tableName: string): Promise<(string | number)[]> {
-    let schema: string[] = [];
-    if (this.currentForeignSchemaToSelect.length !== 0) {
-      schema = this.currentForeignSchemaToSelect.filter((activeColumn) => {
-        if (this.currentlyShowSchema.get(tableName)?.includes(activeColumn))
-          return true;
-        else return false;
-      });
-    }
+    try {
+      let schema: string[] = [];
+      if (this.currentForeignSchemaToSelect.length !== 0) {
+        schema = this.currentForeignSchemaToSelect.filter((activeColumn) => {
+          if (this.currentlyShowSchema.get(tableName)?.includes(activeColumn))
+            return true;
+          else return false;
+        });
+      }
 
-    const finale = schema.length <= 1 ? "*" : schema.join(" ,");
-    const result = await this.dataBase.sqlCommandWithReponse(
-      `SELECT ${finale} FROM ${tableName} WHERE id = ${id}`
-    );
+      const finale = schema.length <= 1 ? "*" : schema.join(" ,");
+      const result = await this.dataBase.sqlCommandWithReponse(
+        `SELECT ${finale} FROM ${tableName} WHERE id = ${id}`
+      );
 
-    if (result.length === 0) {
-      throw new Error(`No row found with id ${id} in table ${tableName}`);
+      if (result.length === 0) {
+        throw new Error(`No row found with id ${id} in table ${tableName}`);
+      }
+      return Object.values(result[0]);
+    } catch (error) {
+      console.error(`Error getting row from ${tableName}:`, error);
+      // Return empty array or default value instead of throwing
+      return ["not found"];
     }
-    return Object.values(result[0]);
   }
 
   async cleanDatabase(): Promise<void> {

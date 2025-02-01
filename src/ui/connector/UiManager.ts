@@ -104,6 +104,9 @@ class UiManager {
     return await window.electronAPI.getTableSchema(tableName);
   }
 
+  public async export(): Promise<void> {
+    return await window.electronAPI.exportToExcel();
+  }
   private setStrategyByViewSetting(viewSetting: ViewSetting) {
     if (viewSetting === ViewSetting.NESTEDTABLES) {
       this.converter.setStrategy(new NestedTableConverter());

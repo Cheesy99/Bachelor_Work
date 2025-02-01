@@ -67,12 +67,12 @@ function MainWindow({
   ] = contextCommandStack;
   const [tableData, tableType, loading, uiManager] = context;
 
-  const handleHeaderClick = (columnIndex: number) => {
+  const handleOneHeaderClick = async (columnIndex: number) => {
     if (tableData) {
-      const columnValues = tableData.table.map((row) => row[columnIndex]);
+      const tableName = tableData.schema[columnIndex];
       setSelectedColumnValues({
-        values: columnValues,
-        columnName: tableData.schema[columnIndex],
+        values: await uiManager.getAllValue(tableName),
+        columnName: tableName,
       });
     }
   };
@@ -162,7 +162,7 @@ function MainWindow({
               data={tableData}
               onDoubleClick={onDoubleClick}
               viewSetting={tableType}
-              onHeaderClick={handleHeaderClick}
+              onHeaderClick={handleOneHeaderClick}
               onIdClick={onIdClick}
             />
           ) : (
