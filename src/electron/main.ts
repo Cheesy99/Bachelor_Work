@@ -109,6 +109,14 @@ app.on("ready", () => {
     return await mainManager.getMaxRowValue();
   });
 
+  ipcMain.handle("hasStack", async (_) => {
+    return await mainManager.hasStack();
+  });
+
+  ipcMain.handle("getStack", async (_) => {
+    return await mainManager.getStack();
+  });
+
   mainWindow.on("close", async (_) => {
     await mainManager.saveSqlCommand();
   });

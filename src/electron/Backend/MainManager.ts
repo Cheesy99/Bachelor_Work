@@ -581,6 +581,13 @@ class MainManager {
     const result = await this.dataBase.sqlCommandWithReponse(query);
     return result.length > 0;
   }
+
+  getStack(): any {
+    throw new Error("Method not implemented.");
+  }
+  hasStack(): any {
+    throw new Error("Method not implemented.");
+  }
 }
 
 export default MainManager;

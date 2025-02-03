@@ -74,6 +74,7 @@ function App() {
       setSqlCommand(newSqlCommand);
     }
   }, [tableData, amountOfShownRows, indexStart]);
+
   useEffect(() => {
     uiManager.getInitTableData();
   }, []);

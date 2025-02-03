@@ -52,5 +52,7 @@ interface Window {
     deleteColumn: (commandStack: string, columnName: string) => Promise<void>;
     getAllColumnValues: (columnName: string) => Promise<string[]>;
     getMaxRowValue: () => Promise<number>;
+    hasStack: () => Promise<boolean>;
+    getStack: () => Promise<string[]>;
   };
 }

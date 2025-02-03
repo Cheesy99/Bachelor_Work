@@ -87,6 +87,11 @@ class UiManager {
     if (databaseExists && this.setTableData) {
       await window.electronAPI.initTableData();
     }
+    if (await window.electronAPI.hasStack()) {
+      this.setSqlCommandStack(await window.electronAPI.getStack());
+    } else {
+      this.setSqlCommandStack([]);
+    }
   }
 
   public async clearOutDatabase(): Promise<void> {
@@ -128,7 +133,7 @@ class UiManager {
       alert("Sql Error occured please try again");
     } else {
       const stack = this.sqlCommandStack;
-      stack.push(this.sqlCommand);
+      stack.push(commandToExecute);
       this.setSqlCommandStack(stack);
     }
   }

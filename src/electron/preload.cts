@@ -77,4 +77,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   isForeignTable: (tableName: string) => {
     return ipcRenderer.invoke("isForeignTable", tableName);
   },
+  hasStack: () => {
+    return ipcRenderer.invoke("hasStack");
+  },
+
+  getStack: () => {
+    return ipcRenderer.invoke("getStack");
+  },
 } satisfies Window["electronAPI"]);
