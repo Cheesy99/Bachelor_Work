@@ -74,4 +74,10 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getMaxRowValue: () => {
     return ipcRenderer.invoke("getMaxRowNumber");
   },
+  isForeignTable: (tableName: string) => {
+    return ipcRenderer.invoke("isForeignTable", tableName);
+  },
+  getAmountOfColumns: (tableName: string) => {
+    return ipcRenderer.invoke("getColumnAmount", tableName);
+  },
 } satisfies Window["electronAPI"]);

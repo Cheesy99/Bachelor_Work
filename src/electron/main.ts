@@ -97,6 +97,10 @@ app.on("ready", () => {
     }
   );
 
+  ipcMain.handle("isForeignTable", async (_, tableName: string) => {
+    return await mainManager.isForeignTable(tableName);
+  });
+
   ipcMain.handle("getAllValues", async (_, columnName: string) => {
     return await mainManager.getAllValues(columnName);
   });

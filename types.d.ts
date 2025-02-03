@@ -48,7 +48,7 @@ interface Window {
       newColumnName: string,
       oldColumnName: string
     ) => Promise<void>;
-
+    isForeignTable: (tableName: string) => Promise<boolean>;
     deleteColumn: (commandStack: string, columnName: string) => Promise<void>;
     getAllColumnValues: (columnName: string) => Promise<string[]>;
     getMaxRowValue: () => Promise<number>;

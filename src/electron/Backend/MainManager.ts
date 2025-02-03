@@ -86,7 +86,6 @@ class MainManager {
       });
 
       const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-      console.log("Checking: ", jsonObject[0]);
       let schemaResult: {
         command: string[];
         tableSchema: TableSchema;
@@ -205,6 +204,9 @@ class MainManager {
     sqlCommand: any,
     inputSchema?: string[]
   ): Promise<string> {
+    console.log("sqlcommand", sqlCommand);
+    console.log("inputschema", inputSchema);
+
     try {
       let mainSchema: string[];
 
@@ -243,14 +245,16 @@ class MainManager {
         newShowMap.forEach((value, key) => {
           this.currentlyShowSchema.set(key, value);
         });
+        console.log("mainschema: ", mainSchema);
         const addForeignArray = Array.from(addForeignTable).join(", ");
+        console.log("addForeignArray: ", addForeignArray);
         mainSchema = mainSchema.concat(addForeignArray);
         let finalCommand = `SELECT ${mainSchema} `;
         sqlCommand = finalCommand.concat(sqlCommand);
       } else {
         mainSchema = this.currentlyShowSchema.get("main_table")!;
       }
-
+      console.log("sqlcommand", sqlCommand);
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       this.sqlCommand = sqlCommand;
       const table = result.map((row: string | number) => Object.values(row));
@@ -327,8 +331,6 @@ class MainManager {
         .replace(/\bOFFSET\s+\d+/gi, "")
         .replace(/\s+/g, " ")
         .trim();
-
-      console.log("SQL command after cleaning:", lastSqlCommand);
 
       const result = await this.dataBase.sqlCommandWithReponse(lastSqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
@@ -529,7 +531,6 @@ class MainManager {
     const newSchema = schema.map((col) =>
       col === oldColumnName ? newColumnName : col
     );
-    console.log("sqlcommand from rename", sqlCommand);
     await this.uiSqlCommand(sqlCommand, newSchema);
   }
 
@@ -569,6 +570,16 @@ class MainManager {
       console.error("Error getting the maximum row value:", error);
       throw new Error("Failed to get the maximum row value");
     }
+  }
+
+  public async isForeignTable(tableName: string): Promise<boolean> {
+    const query = `SELECT name FROM sqlite_master 
+    WHERE type='table' 
+    AND name != 'main_table' 
+    AND name = '${tableName}';`;
+
+    const result = await this.dataBase.sqlCommandWithReponse(query);
+    return result.length > 0;
   }
 }
 

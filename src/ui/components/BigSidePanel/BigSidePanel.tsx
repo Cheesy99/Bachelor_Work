@@ -71,7 +71,15 @@ function BigSidePanel({
     value: (string | number)[],
     columnName: string
   ) => {
-    const formattedValues = value
+    const nonEmptyValues = value.filter(
+      (val) =>
+        val !== null &&
+        val !== undefined &&
+        val !== "" &&
+        val !== "null" &&
+        val !== "undefined"
+    );
+    const formattedValues = nonEmptyValues
       .map((value) => (typeof value === "string" ? `'${value}'` : value))
       .join(", ");
     const newCondition = `${columnName} IN (${formattedValues})`;
@@ -88,7 +96,7 @@ function BigSidePanel({
       // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
         "FROM",
-        `FROM WHERE ${newCondition}`
+        `FROM main_table WHERE ${newCondition}`
       );
     }
 
