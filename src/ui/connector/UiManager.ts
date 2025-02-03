@@ -117,7 +117,7 @@ class UiManager {
 
   public async executeStack(updatedSqlCommand?: string) {
     const commandToExecute = updatedSqlCommand || this.sqlCommand;
-    console.log("what is coming in", commandToExecute);
+
     let reponse = await window.electronAPI.executeSqlCommandStack(
       createSqlQuery(commandToExecute),
       extractSchema(commandToExecute)

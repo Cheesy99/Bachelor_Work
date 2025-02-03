@@ -62,7 +62,6 @@ export const createSqlQuery = (command: string): string => {
   console.log("Reformating", command);
   // Remove the SELECT clause but keep the FROM part
   command = command.replace(/SELECT\s+.*?\s+(FROM)/i, "$1");
-  console.log("End result", command);
   return command;
 };
 

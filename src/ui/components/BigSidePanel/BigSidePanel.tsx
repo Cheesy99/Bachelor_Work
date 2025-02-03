@@ -85,17 +85,16 @@ function BigSidePanel({
     const newCondition = `${columnName} IN (${formattedValues})`;
 
     let newSqlCommand = sqlCommand;
-
     if (newSqlCommand.includes("WHERE")) {
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
-        "WHERE",
-        `WHERE ${newCondition} AND`
+        /WHERE\s+(.+)/i,
+        `WHERE $1 AND ${newCondition}`
       );
     } else {
       // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
-        "FROM",
+        "FROM main_table",
         `FROM main_table WHERE ${newCondition}`
       );
     }
@@ -120,14 +119,14 @@ function BigSidePanel({
     if (newSqlCommand.includes("WHERE")) {
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
-        "WHERE",
-        `WHERE ${newCondition} AND`
+        /WHERE\s+(.+)/i,
+        `WHERE $1 AND ${newCondition}`
       );
     } else {
       // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
-        "FROM",
-        `FROM WHERE ${newCondition}`
+        "FROM main_table",
+        `FROM main_table WHERE ${newCondition}`
       );
     }
 
