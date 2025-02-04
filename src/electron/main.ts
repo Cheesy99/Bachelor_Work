@@ -117,8 +117,8 @@ app.on("ready", () => {
     return await mainManager.getStack();
   });
 
-  mainWindow.on("close", async (_) => {
-    await mainManager.saveSqlCommand();
+  ipcMain.handle("popStack", async (_) => {
+    return await mainManager.popStack();
   });
 });
 

@@ -6,6 +6,9 @@ import { ViewSetting } from "./Enum/Setting";
 import React from "react";
 
 class UiManager {
+  async popStack() {
+    await window.electronAPI.popStack();
+  }
   private converter: Converter;
   private readonly setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   private setTableData: React.Dispatch<
@@ -16,8 +19,7 @@ class UiManager {
   private limit: number;
   private offset: number;
   private setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>;
-  private sqlCommand: string;
-  private setSqlCommand: React.Dispatch<React.SetStateAction<string>>;
+
   public constructor(
     converter: Converter,
     setterTableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
@@ -26,13 +28,10 @@ class UiManager {
     limit: number,
     offset: number,
     sqlCommandStack: string[],
-    setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>,
-    sqlCommand: string,
-    setSqlCommand: React.Dispatch<React.SetStateAction<string>>
+    setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>
   ) {
     this.setSqlCommandStack = setSqlCommandStack;
-    this.sqlCommand = sqlCommand;
-    this.setSqlCommand = setSqlCommand;
+
     this.limit = limit;
     this.offset = offset;
     this.converter = converter;
@@ -121,7 +120,9 @@ class UiManager {
   }
 
   public async executeStack(updatedSqlCommand?: string) {
-    const commandToExecute = updatedSqlCommand || this.sqlCommand;
+    const commandToExecute =
+      updatedSqlCommand ||
+      this.sqlCommandStack[this.sqlCommandStack.length - 1];
 
     let reponse = await window.electronAPI.executeSqlCommandStack(
       createSqlQuery(commandToExecute),
@@ -129,7 +130,7 @@ class UiManager {
     );
 
     if (reponse !== "ok") {
-      this.setSqlCommand(this.sqlCommand);
+      this.sqlCommandStack.pop();
       alert("Sql Error occured please try again");
     } else {
       const stack = this.sqlCommandStack;
@@ -143,8 +144,8 @@ class UiManager {
     oldColumnName: string
   ) {
     await window.electronAPI.renameNamingColumn(
-      createSqlQuery(this.sqlCommand),
-      extractSchema(this.sqlCommand),
+      createSqlQuery(this.sqlCommandStack[this.sqlCommandStack.length - 1]),
+      extractSchema(this.sqlCommandStack[this.sqlCommandStack.length - 1]),
       newColumnName,
       oldColumnName
     );

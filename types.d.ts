@@ -36,6 +36,7 @@ interface Window {
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
     subscribeToListener: (callback: (tableData: TableData) => void) => void;
+    popStack: () => Promise<void>;
     executeSqlCommandStack: (command: any, schema: string[]) => Promise<string>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => Promise<void>;

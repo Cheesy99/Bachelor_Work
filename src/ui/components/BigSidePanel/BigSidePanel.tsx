@@ -24,8 +24,7 @@ type ContextType = [
   React.Dispatch<React.SetStateAction<Table | null>>
 ];
 type ContextStack = [
-  string,
-  React.Dispatch<React.SetStateAction<string>>,
+  string[],
   React.Dispatch<React.SetStateAction<string[]>>,
   number,
   React.Dispatch<React.SetStateAction<number>>,
@@ -48,8 +47,7 @@ function BigSidePanel({
   }
   const [tableData, tableType, loading, uiManager, setTableData] = context;
   const [
-    sqlCommand,
-    setSqlCommand,
+    sqlCommandStack,
     setSqlCommandStack,
     amountOfShownRows,
     setIndexStart,
@@ -84,7 +82,7 @@ function BigSidePanel({
       .join(", ");
     const newCondition = `${columnName} IN (${formattedValues})`;
 
-    let newSqlCommand = sqlCommand;
+    let newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
     if (newSqlCommand.includes("WHERE")) {
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
@@ -98,8 +96,9 @@ function BigSidePanel({
         `FROM main_table WHERE ${newCondition}`
       );
     }
-
-    setSqlCommand(newSqlCommand);
+    sqlCommandStack.push(newSqlCommand);
+    setSqlCommandStack(sqlCommandStack);
+    console.log("CommandStack: ", sqlCommandStack);
     await uiManager.executeStack(newSqlCommand);
   };
 
@@ -114,14 +113,16 @@ function BigSidePanel({
   const handleDeleteRow = async (id: number) => {
     const newCondition = `id != ${id}`;
 
-    let newSqlCommand = sqlCommand;
-
+    let newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
+    console.log("newSqlCommand: ", newSqlCommand);
     if (newSqlCommand.includes("WHERE")) {
+      console.log("I am in here");
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
         /WHERE\s+(.+)/i,
         `WHERE $1 AND ${newCondition}`
       );
+      console.log("new2: ", newSqlCommand);
     } else {
       // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
@@ -129,8 +130,8 @@ function BigSidePanel({
         `FROM main_table WHERE ${newCondition}`
       );
     }
-
-    setSqlCommand(newSqlCommand);
+    const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
+    setSqlCommandStack(newSqlCommandStack);
 
     await uiManager.executeStack(newSqlCommand);
     closeSidePanel(false);
@@ -154,7 +155,7 @@ function BigSidePanel({
         table: tableData?.table!,
       });
 
-      let newSqlCommand = sqlCommand;
+      let newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
       const selectColumnsMatch = newSqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
       if (selectColumnsMatch && selectColumnsMatch[1]) {
         let selectColumns = selectColumnsMatch[1]
@@ -167,7 +168,8 @@ function BigSidePanel({
         );
       }
 
-      setSqlCommand(newSqlCommand);
+      sqlCommandStack.push(newSqlCommand);
+      setSqlCommandStack(sqlCommandStack);
       await uiManager.executeStack(newSqlCommand);
       closeSidePanel(false);
     }

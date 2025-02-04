@@ -84,4 +84,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getStack: () => {
     return ipcRenderer.invoke("getStack");
   },
+
+  popStack() {
+    return ipcRenderer.invoke("popStack");
+  },
 } satisfies Window["electronAPI"]);

@@ -23,8 +23,7 @@ interface MainWindowProps {
   setTableType: React.Dispatch<React.SetStateAction<ViewSetting>>;
 }
 type ContextStack = [
-  string,
-  React.Dispatch<React.SetStateAction<string>>,
+  string[],
   React.Dispatch<React.SetStateAction<string[]>>,
   number,
   React.Dispatch<React.SetStateAction<number>>,
@@ -58,8 +57,7 @@ function MainWindow({
     throw new Error("contextCommandStack is not defined");
   }
   const [
-    sqlCommand,
-    setSqlCommand,
+    sqlCommandStack,
     setSqlCommandStack,
     amountOfShownRows,
     setIndexStart,
@@ -109,7 +107,8 @@ function MainWindow({
   };
 
   const handleSqlInputField = (value: string) => {
-    setSqlCommand(value);
+    sqlCommandStack.push(value);
+    setSqlCommandStack(sqlCommandStack);
   };
 
   async function handleReset(): Promise<void> {
@@ -117,13 +116,12 @@ function MainWindow({
       "Are you sure you want to reset all changes will be removed"
     );
     if (confirmed) {
-      setSqlCommandStack([]);
-      setIndexStart(0);
-      setSqlCommand(
+      setSqlCommandStack([
         tableData
           ? `SELECT ${tableData?.schema!} FROM main_table LIMIT ${amountOfShownRows} OFFSET ${indexStart} ;`
-          : ""
-      );
+          : "",
+      ]);
+      setIndexStart(0);
 
       await uiManager.executeStack();
     }
@@ -184,7 +182,7 @@ function MainWindow({
       {showSqlInput && (
         <div className="sql-input">
           <textarea
-            value={sqlCommand}
+            value={sqlCommandStack[sqlCommandStack.length - 1]}
             onChange={(e) => handleSqlInputField(e.target.value)}
             placeholder="Enter SQL command"
             spellCheck={false}

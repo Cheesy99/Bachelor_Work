@@ -25,7 +25,9 @@ class MainManager {
   private mainSchema: Map<string, any[]>;
   private currentlyShowSchema: Map<string, any[]>;
   private currentForeignSchemaToSelect: string[] = [];
-  private sqlCommand: string = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
+  private sqlCommandStack: string[] = [
+    "SELECT * FROM main_table LIMIT 100 OFFSET 0;",
+  ];
   public static getInstance(browserWindow: BrowserWindow): MainManager {
     if (!MainManager.instance) {
       MainManager.instance = new MainManager(browserWindow);
@@ -44,13 +46,15 @@ class MainManager {
     this.currentlyShowSchema = new Map();
   }
 
-  async saveSqlCommand(): Promise<void> {}
+  popStack(): void {
+    this.sqlCommandStack.pop();
+  }
 
   checkForDisk(): boolean {
     let everthing: boolean = true;
     const filePath1 = path.join(this.persistencePath, "schema.json");
     const filePath2 = path.join(this.persistencePath, "shownSchema.json");
-    const filePath3 = path.join(this.persistencePath, "sqlcommand.json");
+    const filePath3 = path.join(this.persistencePath, "sqlCommandStack.json");
     const filePath4 = path.join(this.persistencePath, "foreignColumn.json");
 
     if (!fs.existsSync(filePath1)) {
@@ -62,11 +66,11 @@ class MainManager {
       everthing = false;
     }
     if (!fs.existsSync(filePath3)) {
-      console.warn("sqlcommand.json is missing");
+      console.warn("sqlCommandStack.json is missing");
       everthing = false;
     }
     if (!fs.existsSync(filePath4)) {
-      console.warn("sqlcommand.json is missing");
+      console.warn("sqlCommandStack.json is missing");
       everthing = false;
     }
 
@@ -127,7 +131,7 @@ class MainManager {
 
     if (this.checkForDisk()) {
       this.getDiskData();
-      this.uiSqlCommand(this.sqlCommand);
+      this.uiSqlCommand(this.sqlCommandStack[this.sqlCommandStack.length - 1]);
     } else {
       const dataQuery = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
       const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
@@ -158,11 +162,9 @@ class MainManager {
     );
     const sqlCommandFilePath = path.join(
       this.persistencePath,
-      "sqlcommand.json"
+      "sqlCommandStack.json"
     );
-    let sqlCommandSave = this.sqlCommand;
-    sqlCommandSave = sqlCommandSave.replace(/LIMIT\s+\d+/i, "LIMIT 100");
-    sqlCommandSave = sqlCommandSave.replace(/OFFSET\s+\d+/i, "OFFSET 0");
+    let sqlCommandSave = this.sqlCommandStack;
     try {
       fs.writeFileSync(
         sqlCommandFilePath,
@@ -256,7 +258,7 @@ class MainManager {
       }
       console.log("sqlcommand", sqlCommand);
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
-      this.sqlCommand = sqlCommand;
+      this.sqlCommandStack.push(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
 
       const partialTableData = {
@@ -321,7 +323,8 @@ class MainManager {
 
   private async getFullTable(): Promise<(string | number)[][]> {
     try {
-      let lastSqlCommand = this.sqlCommand;
+      let lastSqlCommand =
+        this.sqlCommandStack[this.sqlCommandStack.length - 1];
       if (!lastSqlCommand) {
         throw new Error("No SQL command available");
       }
@@ -362,12 +365,12 @@ class MainManager {
   public getDiskData() {
     try {
       const sqlCommandData = fs.readFileSync(
-        path.resolve(this.persistencePath, "sqlcommand.json"),
+        path.resolve(this.persistencePath, "sqlCommandStack.json"),
         "utf-8"
       );
       console.info("SQL Command data:", sqlCommandData);
 
-      this.sqlCommand = JSON.parse(sqlCommandData).sqlCommand;
+      this.sqlCommandStack = JSON.parse(sqlCommandData).sqlCommand;
 
       const shownSchemaData = JSON.parse(
         fs.readFileSync(
@@ -439,14 +442,17 @@ class MainManager {
       this.mainSchema = new Map();
       this.currentlyShowSchema = new Map();
       this.currentForeignSchemaToSelect = [];
-      this.sqlCommand = "SELECT * FROM main_table";
+      this.sqlCommandStack = ["SELECT * FROM main_table LIMIT 100 OFFSET 0;"];
       const file1Path = path.resolve(
         this.persistencePath,
         "foreignColumn.json"
       );
       const file2Path = path.resolve(this.persistencePath, "schema.json");
       const file3Path = path.resolve(this.persistencePath, "shownSchema.json");
-      const file4Path = path.resolve(this.persistencePath, "sqlcommand.json");
+      const file4Path = path.resolve(
+        this.persistencePath,
+        "sqlCommandStack.json"
+      );
 
       if (fs.existsSync(file1Path)) {
         fs.unlinkSync(file1Path);
@@ -582,11 +588,15 @@ class MainManager {
     return result.length > 0;
   }
 
-  getStack(): any {
-    throw new Error("Method not implemented.");
+  getStack(): string[] {
+    return this.sqlCommandStack;
   }
-  hasStack(): any {
-    throw new Error("Method not implemented.");
+  hasStack(): boolean {
+    const stackFilePath = path.resolve(
+      this.persistencePath,
+      "sqlCommandStack.json"
+    );
+    return fs.existsSync(stackFilePath);
   }
 }
 
