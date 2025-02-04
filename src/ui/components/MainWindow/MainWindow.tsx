@@ -107,8 +107,8 @@ function MainWindow({
   };
 
   const handleSqlInputField = (value: string) => {
-    sqlCommandStack.push(value);
-    setSqlCommandStack(sqlCommandStack);
+    const newSqlCommandStack = [...sqlCommandStack, value];
+    setSqlCommandStack(newSqlCommandStack);
   };
 
   async function handleReset(): Promise<void> {

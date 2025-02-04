@@ -90,8 +90,9 @@ function BigSidePanel({
         `FROM main_table WHERE ${newCondition}`
       );
     }
-    sqlCommandStack.push(newSqlCommand);
-    setSqlCommandStack(sqlCommandStack);
+    const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
+    setSqlCommandStack(newSqlCommandStack);
+
     await uiManager.executeStack(newSqlCommand);
   };
 
@@ -156,8 +157,9 @@ function BigSidePanel({
         );
       }
 
-      sqlCommandStack.push(newSqlCommand);
-      setSqlCommandStack(sqlCommandStack);
+      const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
+      setSqlCommandStack(newSqlCommandStack);
+
       await uiManager.executeStack(newSqlCommand);
       closeSidePanel(false);
     }

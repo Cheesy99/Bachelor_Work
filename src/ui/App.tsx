@@ -68,8 +68,9 @@ function App() {
       const newSqlCommand = `SELECT ${tableData.schema.join(
         ", "
       )} FROM main_table LIMIT ${amountOfShownRows} OFFSET ${indexStart};`;
-      sqlCommandStack.push(newSqlCommand);
-      setSqlCommandStack(sqlCommandStack);
+
+      const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
+      setSqlCommandStack(newSqlCommandStack);
     }
   }, [tableData, amountOfShownRows, indexStart]);
 
@@ -121,12 +122,22 @@ function App() {
     setIndexStart(newIndexStart);
 
     if (tableData) {
-      const newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1].replace(
-        /OFFSET\s+\d+/,
-        `OFFSET ${newIndexStart}`
-      );
-      sqlCommandStack.push(newSqlCommand);
-      setSqlCommandStack(sqlCommandStack);
+      const lastSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
+      console.log("LastsqlCommand: ", lastSqlCommand);
+      let newSqlCommand;
+
+      if (lastSqlCommand.includes("OFFSET")) {
+        newSqlCommand = lastSqlCommand.replace(
+          /OFFSET\s+\d+/,
+          `OFFSET ${newIndexStart}`
+        );
+      } else {
+        newSqlCommand = `${lastSqlCommand} OFFSET ${newIndexStart}`;
+      }
+
+      const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
+      setSqlCommandStack(newSqlCommandStack);
+      console.log("Index command: ", newSqlCommand);
       uiManager.executeStack(newSqlCommand);
     }
   };

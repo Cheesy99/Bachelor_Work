@@ -133,8 +133,8 @@ class UiManager {
       this.sqlCommandStack.pop();
       alert("Sql Error occured please try again");
     } else {
-      const stack = this.sqlCommandStack;
-      stack.push(commandToExecute);
+      console.log("Man: ", commandToExecute);
+      const stack = [...this.sqlCommandStack, commandToExecute];
       this.setSqlCommandStack(stack);
     }
   }
