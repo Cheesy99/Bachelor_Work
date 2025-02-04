@@ -206,9 +206,6 @@ class MainManager {
     sqlCommand: any,
     inputSchema?: string[]
   ): Promise<string> {
-    console.log("sqlcommand", sqlCommand);
-    console.log("inputschema", inputSchema);
-
     try {
       let mainSchema: string[];
 
@@ -247,16 +244,13 @@ class MainManager {
         newShowMap.forEach((value, key) => {
           this.currentlyShowSchema.set(key, value);
         });
-        console.log("mainschema: ", mainSchema);
         const addForeignArray = Array.from(addForeignTable).join(", ");
-        console.log("addForeignArray: ", addForeignArray);
         mainSchema = mainSchema.concat(addForeignArray);
         let finalCommand = `SELECT ${mainSchema} `;
         sqlCommand = finalCommand.concat(sqlCommand);
       } else {
         mainSchema = this.currentlyShowSchema.get("main_table")!;
       }
-      console.log("sqlcommand", sqlCommand);
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       this.sqlCommandStack.push(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));

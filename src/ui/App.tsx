@@ -127,7 +127,6 @@ function App() {
       );
       sqlCommandStack.push(newSqlCommand);
       setSqlCommandStack(sqlCommandStack);
-      console.log(newSqlCommand);
       uiManager.executeStack(newSqlCommand);
     }
   };

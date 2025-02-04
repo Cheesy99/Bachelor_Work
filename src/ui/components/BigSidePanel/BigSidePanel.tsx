@@ -46,13 +46,7 @@ function BigSidePanel({
     throw new Error("contextCommandStack is not defined");
   }
   const [tableData, tableType, loading, uiManager, setTableData] = context;
-  const [
-    sqlCommandStack,
-    setSqlCommandStack,
-    amountOfShownRows,
-    setIndexStart,
-    indexStart,
-  ] = contextCommandStack;
+  const [sqlCommandStack, setSqlCommandStack] = contextCommandStack;
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
   >([]);
@@ -98,7 +92,6 @@ function BigSidePanel({
     }
     sqlCommandStack.push(newSqlCommand);
     setSqlCommandStack(sqlCommandStack);
-    console.log("CommandStack: ", sqlCommandStack);
     await uiManager.executeStack(newSqlCommand);
   };
 
@@ -114,15 +107,12 @@ function BigSidePanel({
     const newCondition = `id != ${id}`;
 
     let newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
-    console.log("newSqlCommand: ", newSqlCommand);
     if (newSqlCommand.includes("WHERE")) {
-      console.log("I am in here");
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
         /WHERE\s+(.+)/i,
         `WHERE $1 AND ${newCondition}`
       );
-      console.log("new2: ", newSqlCommand);
     } else {
       // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
@@ -140,11 +130,9 @@ function BigSidePanel({
   const handleDeleteColumn = async () => {
     if (tableData) {
       const deleteThisColumn = columnValues.columnName;
-      console.log("Delete this column", deleteThisColumn);
       let index = tableData?.schema.findIndex(
         (col) => col === deleteThisColumn
       );
-      console.log("index", index);
       let newSchema = tableData!.schema;
       if (index !== -1 && index) {
         newSchema.splice(index, 1);
