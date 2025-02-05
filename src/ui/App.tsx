@@ -64,17 +64,6 @@ function App() {
   );
 
   useEffect(() => {
-    if (tableData) {
-      const newSqlCommand = `SELECT ${tableData.schema.join(
-        ", "
-      )} FROM main_table LIMIT ${amountOfShownRows} OFFSET ${indexStart};`;
-
-      const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
-      setSqlCommandStack(newSqlCommandStack);
-    }
-  }, [tableData, amountOfShownRows, indexStart]);
-
-  useEffect(() => {
     uiManager.getInitTableData();
   }, []);
 
