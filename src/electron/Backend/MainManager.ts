@@ -364,14 +364,15 @@ class MainManager {
           const element = row[colIndex];
 
           if (typeof element === "number" && colIndex !== 0) {
-            const foreignRow: (string | number)[] = await this.getRow(
+            let foreignRow: (string | number)[] = await this.getRow(
               element,
               schema[colIndex]
             );
-
+            console.log(foreignRow);
             table[rowIndex].splice(colIndex, 1);
-            const foreignValues = foreignRow.slice(1);
-            table[rowIndex].splice(colIndex, 0, ...foreignValues);
+            if (typeof foreignRow[0] === "number")
+              foreignRow = foreignRow.slice(1);
+            table[rowIndex].splice(colIndex, 0, ...foreignRow);
           }
         }
       }
