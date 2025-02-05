@@ -6,6 +6,9 @@ import { ViewSetting } from "./Enum/Setting";
 import React from "react";
 
 class UiManager {
+  async getStack(): Promise<string[]> {
+    return await window.electronAPI.getStack();
+  }
   async popStack() {
     await window.electronAPI.popStack();
   }
@@ -16,8 +19,6 @@ class UiManager {
   > | null;
   private readonly tableType: ViewSetting;
   private sqlCommandStack: any[];
-  private limit: number;
-  private offset: number;
   private setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>;
 
   public constructor(
@@ -25,15 +26,10 @@ class UiManager {
     setterTableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     tableType: ViewSetting,
-    limit: number,
-    offset: number,
     sqlCommandStack: string[],
     setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>
   ) {
     this.setSqlCommandStack = setSqlCommandStack;
-
-    this.limit = limit;
-    this.offset = offset;
     this.converter = converter;
     this.setTableData = setterTableRef;
     this.setLoading = setLoading;

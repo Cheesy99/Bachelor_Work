@@ -95,6 +95,26 @@ class MainManager {
         tableSchema: TableSchema;
       } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
 
+      let mainTableSchema = schemaResult.tableSchema["main_table"];
+      const foreignKeys = mainTableSchema.filter(
+        (column) => column in schemaResult.tableSchema
+      );
+      const nonForeignKeys = mainTableSchema.filter(
+        (column) => !(column in schemaResult.tableSchema)
+      );
+
+      // Replace foreign keys with their respective table schemas
+      const foreignKeyColumns = foreignKeys.flatMap((foreignKey) => {
+        return schemaResult.tableSchema[foreignKey];
+      });
+
+      const columnNames = [...nonForeignKeys, ...foreignKeyColumns].join(", ");
+
+      // Replace * with column names in the sqlCommandStack
+      this.sqlCommandStack = this.sqlCommandStack.map((command) => {
+        return command.replace("*", columnNames);
+      });
+
       await this.dataBase.sqlCommand(schemaResult.command);
       const mainInsert: any[] = await this.tableBuilder.build(
         jsonObject,
@@ -208,7 +228,7 @@ class MainManager {
   ): Promise<string> {
     try {
       let mainSchema: string[];
-
+      console.log("sqlCommand", sqlCommand);
       this.currentForeignSchemaToSelect = [];
       const addForeignTable: Set<string> = new Set();
       const newShowMap: Map<string, string[]> = new Map();
@@ -246,13 +266,20 @@ class MainManager {
         });
         const addForeignArray = Array.from(addForeignTable).join(", ");
         mainSchema = mainSchema.concat(addForeignArray);
+
+        if (!mainSchema.includes("id")) {
+          mainSchema.unshift("id");
+        }
+
         let finalCommand = `SELECT ${mainSchema} `;
         sqlCommand = finalCommand.concat(sqlCommand);
       } else {
         mainSchema = this.currentlyShowSchema.get("main_table")!;
       }
+      console.log("The command", sqlCommand);
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       this.sqlCommandStack.push(sqlCommand);
+      console.log("the result: ", result);
       const table = result.map((row: string | number) => Object.values(row));
 
       const partialTableData = {
@@ -364,8 +391,13 @@ class MainManager {
       );
       console.info("SQL Command data:", sqlCommandData);
 
-      this.sqlCommandStack = JSON.parse(sqlCommandData).sqlCommand;
-
+      const parsedData = JSON.parse(sqlCommandData);
+      if (parsedData && parsedData.sqlCommand) {
+        console.log("I was in here");
+        this.sqlCommandStack = parsedData.sqlCommand;
+      } else {
+        console.error("Parsed data does not contain sqlCommand:", parsedData);
+      }
       const shownSchemaData = JSON.parse(
         fs.readFileSync(
           path.resolve(this.persistencePath, "shownSchema.json"),

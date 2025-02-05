@@ -57,22 +57,15 @@ function App() {
     setTableData,
     setLoading,
     tableType,
-    amountOfShownRows,
-    indexStart,
     sqlCommandStack,
     setSqlCommandStack
   );
 
   useEffect(() => {
-    if (tableData) {
-      const newSqlCommand = `SELECT ${tableData.schema.join(
-        ", "
-      )} FROM main_table LIMIT ${amountOfShownRows} OFFSET ${indexStart};`;
-
-      const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
-      setSqlCommandStack(newSqlCommandStack);
-    }
-  }, [tableData, amountOfShownRows, indexStart]);
+    // This effect will run whenever sqlCommandStack changes
+    console.log("sqlCommandStack changed:", sqlCommandStack);
+    // Add any additional logic you want to run when sqlCommandStack changes
+  }, [sqlCommandStack]);
 
   useEffect(() => {
     uiManager.getInitTableData();

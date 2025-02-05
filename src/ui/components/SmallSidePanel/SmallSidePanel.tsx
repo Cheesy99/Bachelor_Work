@@ -1,7 +1,7 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SmallSidePanel.css";
 import { useContext, useState } from "react";
-import { Context } from "../../App";
+import { Context, ContextCommandStack } from "../../App";
 import SettingsModal from "./Settings/Settings";
 import React from "react";
 import { ViewSetting } from "../../connector/Enum/Setting";
@@ -23,13 +23,20 @@ function SmallSidePanel({
   resetApp,
 }: SmallSidePanelProps) {
   const context = useContext(Context);
+  const contextCommandStack = useContext(ContextCommandStack);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  if (!context) {
+  if (!context || !contextCommandStack) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
 
   const [tableData, tableType, loading, uiManager] = context;
-
+  const [
+    sqlCommandStack,
+    setSqlCommandStack,
+    amountOfShownRows,
+    setIndexStart,
+    indexStart,
+  ] = contextCommandStack;
   const exportToExcel = async () => {
     uiManager.export();
   };
@@ -56,6 +63,15 @@ function SmallSidePanel({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     await uiManager.insertJsonData(event);
+
+    await new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        const stack: string[] = await uiManager.getStack();
+        console.log("stack: ", stack);
+        setSqlCommandStack(stack);
+        resolve();
+      }, 1000);
+    });
   };
 
   return (
