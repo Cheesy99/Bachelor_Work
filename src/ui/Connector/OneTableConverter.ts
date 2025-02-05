@@ -34,7 +34,7 @@ class OneTableConverter implements ConversionStrategy {
           if (typeof element === "number") {
             foreignRow = await window.electronAPI.getRow(element, tableName);
             //Removing id of foreign table now need to also remove it in schema
-            foreignRow.splice(0, 1);
+            if (typeof foreignRow[0] === "number") foreignRow.splice(0, 1);
           } else {
             const schema: string[] = await window.electronAPI.getTableSchema(
               tableName

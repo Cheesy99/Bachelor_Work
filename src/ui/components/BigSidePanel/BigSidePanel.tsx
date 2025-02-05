@@ -80,14 +80,14 @@ function BigSidePanel({
     if (newSqlCommand.includes("WHERE")) {
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
-        /WHERE\s+(.+)/i,
-        `WHERE $1 AND ${newCondition}`
+        /WHERE\s+(.+?)(\s+LIMIT|\s+OFFSET|$)/i,
+        `WHERE $1 AND ${newCondition}$2`
       );
     } else {
       // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
-        "FROM main_table",
-        `FROM main_table WHERE ${newCondition}`
+        /(FROM main_table)(\s+LIMIT|\s+OFFSET|$)/i,
+        `$1 WHERE ${newCondition}$2`
       );
     }
     const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
