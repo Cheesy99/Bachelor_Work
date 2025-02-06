@@ -63,7 +63,8 @@ function BigSidePanel({
     value: (string | number)[],
     columnName: string
   ) => {
-    const nonEmptyValues = value.filter(
+    const uniqueValues = Array.from(new Set(value));
+    const nonEmptyValues = uniqueValues.filter(
       (val) =>
         val !== null &&
         val !== undefined &&

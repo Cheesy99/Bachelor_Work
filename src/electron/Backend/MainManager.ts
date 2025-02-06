@@ -228,7 +228,7 @@ class MainManager {
   ): Promise<string> {
     try {
       let mainSchema: string[];
-      console.log("sqlCommand", sqlCommand);
+
       this.currentForeignSchemaToSelect = [];
       const addForeignTable: Set<string> = new Set();
       const newShowMap: Map<string, string[]> = new Map();
@@ -272,14 +272,73 @@ class MainManager {
         }
 
         let finalCommand = `SELECT ${mainSchema} `;
+
         sqlCommand = finalCommand.concat(sqlCommand);
       } else {
         mainSchema = this.currentlyShowSchema.get("main_table")!;
+
+        if (!mainSchema.includes("id")) {
+          mainSchema.unshift("id");
+        }
       }
-      console.log("The command", sqlCommand);
+
+      const whereClauseMatch = sqlCommand.match(
+        /WHERE\s+([\s\S]+?)(\s+LIMIT|\s+OFFSET|$)/i
+      );
+      console.log("whereClauseMatch: ", whereClauseMatch);
+      await new Promise<void>(async (resolve, reject) => {
+        if (whereClauseMatch) {
+          const whereClause = whereClauseMatch[1];
+          const conditions = whereClause.split(" AND ");
+          console.log("conditions", conditions);
+          console.log("whereClause", whereClause);
+          for (let condition of conditions) {
+            const match = condition.match(/(\w+)\s+IN\s+\(([\s\S]+)\)/i);
+            console.log("match", match);
+            if (match) {
+              const columnName = match[1];
+              const values = match[2]
+                .split(",")
+                .map((val: string) => val.trim().replace(/'/g, ""));
+              if (
+                this.currentlyShowSchema.get("main_table")!.includes(columnName)
+              ) {
+                continue;
+              }
+              let foreignTableName: string | undefined;
+              for (const [
+                tableName,
+                columns,
+              ] of this.currentlyShowSchema.entries()) {
+                if (columns.includes(columnName)) {
+                  foreignTableName = tableName;
+                  break;
+                }
+              }
+
+              if (foreignTableName) {
+                // Query the foreign table to get the ids
+                const foreignIds = await this.getForeignIds(
+                  foreignTableName,
+                  columnName,
+                  values
+                );
+                const idCondition = `${foreignTableName} IN (${foreignIds.join(
+                  ", "
+                )})`;
+                sqlCommand = sqlCommand.replace(condition, idCondition);
+              }
+            }
+          }
+          resolve();
+        } else {
+          reject(new Error("No whereClauseMatch found"));
+        }
+      });
+
+      console.log("Updated sqlCommand", sqlCommand);
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       this.sqlCommandStack.push(sqlCommand);
-      console.log("the result: ", result);
       const table = result.map((row: string | number) => Object.values(row));
 
       const partialTableData = {
@@ -296,6 +355,17 @@ class MainManager {
       console.error("Error executing SQL command:", error);
       return "An error occurred while executing the SQL command";
     }
+  }
+  async getForeignIds(
+    foreignTableName: string,
+    foreignColumnName: string,
+    values: any
+  ): Promise<number[]> {
+    const placeholders = values.map((val: string) => `'${val}'`).join(", ");
+    const query = `SELECT id FROM ${foreignTableName} WHERE ${foreignColumnName} IN (${placeholders})`;
+    const result = await this.dataBase.sqlCommandWithReponse(query);
+
+    return result.map((row: { id: number }) => row.id);
   }
 
   public async getTableSchema(tableName: string): Promise<string[]> {
@@ -368,7 +438,6 @@ class MainManager {
               element,
               schema[colIndex]
             );
-            console.log(foreignRow);
             table[rowIndex].splice(colIndex, 1);
             if (typeof foreignRow[0] === "number")
               foreignRow = foreignRow.slice(1);
@@ -394,7 +463,6 @@ class MainManager {
 
       const parsedData = JSON.parse(sqlCommandData);
       if (parsedData && parsedData.sqlCommand) {
-        console.log("I was in here");
         this.sqlCommandStack = parsedData.sqlCommand;
       } else {
         console.error("Parsed data does not contain sqlCommand:", parsedData);

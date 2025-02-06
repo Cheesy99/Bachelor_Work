@@ -68,7 +68,6 @@ class TableBuilder {
       );
 
       result = await this.joinCrossProduct(insertValues, resolvedTotalRes);
-      console.log("Result: ", result);
       await Promise.all(
         result.map(async (statement) => {
           const insertStatement: any = `INSERT INTO ${tableName} (${insertColumnString}) VALUES (${statement.join(
