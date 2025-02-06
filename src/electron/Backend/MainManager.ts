@@ -285,16 +285,12 @@ class MainManager {
       const whereClauseMatch = sqlCommand.match(
         /WHERE\s+([\s\S]+?)(\s+LIMIT|\s+OFFSET|$)/i
       );
-      console.log("whereClauseMatch: ", whereClauseMatch);
       await new Promise<void>(async (resolve, reject) => {
         if (whereClauseMatch) {
           const whereClause = whereClauseMatch[1];
           const conditions = whereClause.split(" AND ");
-          console.log("conditions", conditions);
-          console.log("whereClause", whereClause);
           for (let condition of conditions) {
             const match = condition.match(/(\w+)\s+IN\s+\(([\s\S]+)\)/i);
-            console.log("match", match);
             if (match) {
               const columnName = match[1];
               const values = match[2]
