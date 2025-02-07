@@ -1,11 +1,8 @@
-import { expect, test, vi, beforeEach, describe } from "vitest";
-import TableBuilder from "../../electron/Backend/TableBuilder.js";
-import DataBaseConnector from "../../electron/Backend/DataBaseConnector.js";
+import { expect, test, beforeEach, describe } from "vitest";
 import JsonObject from "../../electron/Backend/Interfaces/JsonObject.js";
 import TableSchema from "../../electron/Backend/Interfaces/TableSchema.js";
 import SchemaBuilder from "../Backend/SchemaBuilder.js";
 import SqlTextGenerator from "../Backend/SqlTextGenerator.js";
-vi.mock("../../electron/Backend/DataBaseConnector.js");
 
 describe("schemaBuilder", () => {
   let schemaBuilder: SchemaBuilder;
@@ -26,6 +23,7 @@ describe("schemaBuilder", () => {
       command: string[];
       tableSchema: TableSchema;
     } = schemaBuilder.generateSchemaWithCommand(json);
+
     expect(result.tableSchema).toEqual(tableSchema);
     const expectedCommand = [
       "CREATE TABLE main_table (",
@@ -34,6 +32,7 @@ describe("schemaBuilder", () => {
       "  age VARCHAR(255)",
       ")",
     ].join("\n");
+
     expect(result.command.join("\n")).toEqual(expectedCommand);
   });
 
@@ -62,22 +61,29 @@ describe("schemaBuilder", () => {
       command: string[];
       tableSchema: TableSchema;
     } = schemaBuilder.generateSchemaWithCommand(json);
+
     expect(result.tableSchema).toEqual(tableSchema);
 
     const expectedCommandAddressTable = [
-      // "CREATE TABLE main_table (
-      //     id INTEGER PRIMARY KEY AUTOINCREMENT ,
-      //     name VARCHAR(255),
-      //     age VARCHAR(255),
-      //     address INTEGER,
-      //     FOREIGN KEY (address) REFERENCES address(id)
-      //   )
-      //   CREATE TABLE address (
-      //     id INTEGER PRIMARY KEY AUTOINCREMENT ,
-      //     address_city VARCHAR(255),
-      //     address_zip VARCHAR(255)
-      //   )"
+      "CREATE TABLE main_table (",
+      "  id INTEGER PRIMARY KEY AUTOINCREMENT ,",
+      "  name VARCHAR(255),",
+      "  age VARCHAR(255),",
+      "  address INTEGER,",
+      "  FOREIGN KEY (address) REFERENCES address(id)",
+      ")",
+      "CREATE TABLE address (",
+      "  id INTEGER PRIMARY KEY AUTOINCREMENT ,",
+      "  address_city VARCHAR(255),",
+      "  address_zip VARCHAR(255)",
+      ")",
     ].join("\n");
+
+    const normalizeString = (str: string) => str.replace(/\s+/g, " ").trim();
+
+    expect(normalizeString(result.command.join("\n"))).toEqual(
+      normalizeString(expectedCommandAddressTable)
+    );
   });
 
   test("nested object schema with command", async () => {

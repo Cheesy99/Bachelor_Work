@@ -14,7 +14,6 @@ class TableBuilder {
         await this.recursive(object, tableSchema, "main_table");
       })
     );
-    // console.log("collectMainInserts", this.collectMainInserts);
     return this.collectMainInserts;
   }
 
