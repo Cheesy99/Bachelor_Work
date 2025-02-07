@@ -107,9 +107,11 @@ describe("MainManager", () => {
   });
 
   it("should get all values for a column", async () => {
-    // const mockResult = [{ name: 'John Doe' }, { name: 'Jane Doe' }];
-    // sandbox.stub(DataBaseConnector.prototype, 'sqlCommandWithReponse').resolves(mockResult);
-    // const values = await mainManager.getAllValues('name');
-    // expect(values).toEqual(['John Doe', 'Jane Doe']);
+    const mockResult = [{ name: "John Doe" }, { name: "Tom Holland" }];
+    sandbox
+      .stub(DataBaseConnector.prototype, "sqlCommandWithReponse")
+      .resolves(mockResult);
+    const values = await mainManager.getAllValues("name");
+    expect(values).toEqual(["John Doe", "Tom Holland"]);
   });
 });

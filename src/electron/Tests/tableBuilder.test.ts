@@ -23,7 +23,8 @@ describe("TableBuilder", () => {
     // Spy on the insertWithIdReponse method
     const insertWithIdReponseSpy = vi.spyOn(
       tableBuilder as any,
-      "insertWithIdReponse"
+
+      "insertWithIdResponse"
     );
 
     const result = await tableBuilder.build(json, tableSchema);
@@ -115,7 +116,7 @@ describe("TableBuilder", () => {
     // Spy on the insertWithIdReponse method
     const insertWithIdReponseSpy = vi.spyOn(
       tableBuilder as any,
-      "insertWithIdReponse"
+      "insertWithIdResponse"
     );
 
     const result = await tableBuilder.build(json, tableSchema);
