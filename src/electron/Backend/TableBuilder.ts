@@ -50,7 +50,7 @@ class TableBuilder {
           ? (value = `'${value.replace(/'/g, "''")}'`)
           : value;
         insertOrderMain.push(columnName);
-        insertValues.push(value);
+        insertValues.push(value as string);
       }
     }
     let insertColumnString: string = insertOrderMain.join(", ");

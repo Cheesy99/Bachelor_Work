@@ -285,52 +285,55 @@ class MainManager {
       const whereClauseMatch = sqlCommand.match(
         /WHERE\s+([\s\S]+?)(\s+LIMIT|\s+OFFSET|$)/i
       );
-      await new Promise<void>(async (resolve, reject) => {
-        if (whereClauseMatch) {
-          const whereClause = whereClauseMatch[1];
-          const conditions = whereClause.split(" AND ");
-          for (let condition of conditions) {
-            const match = condition.match(/(\w+)\s+IN\s+\(([\s\S]+)\)/i);
-            if (match) {
-              const columnName = match[1];
-              const values = match[2]
-                .split(",")
-                .map((val: string) => val.trim().replace(/'/g, ""));
-              if (
-                this.currentlyShowSchema.get("main_table")!.includes(columnName)
-              ) {
-                continue;
-              }
-              let foreignTableName: string | undefined;
-              for (const [
-                tableName,
-                columns,
-              ] of this.currentlyShowSchema.entries()) {
-                if (columns.includes(columnName)) {
-                  foreignTableName = tableName;
-                  break;
+
+      if (whereClauseMatch) {
+        await new Promise<void>(async (resolve) => {
+          if (whereClauseMatch) {
+            const whereClause = whereClauseMatch[1];
+            const conditions = whereClause.split(" AND ");
+            for (let condition of conditions) {
+              const match = condition.match(/(\w+)\s+IN\s+\(([\s\S]+)\)/i);
+              if (match) {
+                const columnName = match[1];
+                const values = match[2]
+                  .split(",")
+                  .map((val: string) => val.trim().replace(/'/g, ""));
+                if (
+                  this.currentlyShowSchema
+                    .get("main_table")!
+                    .includes(columnName)
+                ) {
+                  continue;
+                }
+                let foreignTableName: string | undefined;
+                for (const [
+                  tableName,
+                  columns,
+                ] of this.currentlyShowSchema.entries()) {
+                  if (columns.includes(columnName)) {
+                    foreignTableName = tableName;
+                    break;
+                  }
+                }
+
+                if (foreignTableName) {
+                  // Query the foreign table to get the ids
+                  const foreignIds = await this.getForeignIds(
+                    foreignTableName,
+                    columnName,
+                    values
+                  );
+                  const idCondition = `${foreignTableName} IN (${foreignIds.join(
+                    ", "
+                  )})`;
+                  sqlCommand = sqlCommand.replace(condition, idCondition);
                 }
               }
-
-              if (foreignTableName) {
-                // Query the foreign table to get the ids
-                const foreignIds = await this.getForeignIds(
-                  foreignTableName,
-                  columnName,
-                  values
-                );
-                const idCondition = `${foreignTableName} IN (${foreignIds.join(
-                  ", "
-                )})`;
-                sqlCommand = sqlCommand.replace(condition, idCondition);
-              }
             }
+            resolve();
           }
-          resolve();
-        } else {
-          reject(new Error("No whereClauseMatch found"));
-        }
-      });
+        });
+      }
 
       console.log("Updated sqlCommand", sqlCommand);
       let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
@@ -451,6 +454,17 @@ class MainManager {
 
   public getDiskData() {
     try {
+      console.log("Reading schema.json...");
+      const mainSchemaData = JSON.parse(
+        fs.readFileSync(
+          path.resolve(this.persistencePath, "schema.json"),
+          "utf-8"
+        )
+      );
+      console.log("Schema data read:", mainSchemaData);
+      this.mainSchema = new Map(mainSchemaData);
+      console.log("Main schema initialized:", this.mainSchema);
+
       const sqlCommandData = fs.readFileSync(
         path.resolve(this.persistencePath, "sqlCommandStack.json"),
         "utf-8"
@@ -470,14 +484,6 @@ class MainManager {
         )
       );
       this.currentlyShowSchema = new Map(shownSchemaData);
-
-      const mainSchemaData = JSON.parse(
-        fs.readFileSync(
-          path.resolve(this.persistencePath, "schema.json"),
-          "utf-8"
-        )
-      );
-      this.mainSchema = new Map(mainSchemaData);
 
       this.currentForeignSchemaToSelect = JSON.parse(
         fs.readFileSync(

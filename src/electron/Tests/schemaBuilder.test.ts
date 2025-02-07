@@ -127,3 +127,45 @@ describe("schemaBuilder", () => {
     // expect(result.command.join("\n")).toEqual(expectedCommandAddressTable);
   });
 });
+
+test("complexer", async () => {
+  const json: JsonObject[] = [
+    {
+      term: "Sommersemester 2024",
+      url: "https://marvin.uni-marburg.de/qisserver/pages/startFlow.xhtml?_flowId=detailView-flow&unitId=69939&periodId=4137&navigationPosition=searchCourses",
+      modulZuordnungen: [],
+      studiengangZuordnungen: [],
+      termine: [
+        {
+          verantwortlicher: "",
+          parallelgruppe: "Advanced Topics in Cryptography",
+          Raum: "04C37 (SR XV C) (Hans-Meerwein-Straße 6, Institutsgebäude (H | 04))",
+          Rhythmus: "wöchentlich",
+          Ausfalltermin: "",
+          "Startdatum - Enddatum": "16.04.2024 - 16.07.2024",
+          "Erw. Tn.": "",
+          Wochentag: "Di",
+          "Durchführende/-r": "",
+          Bemerkung: "",
+          "Von - Bis": "14:00 - 16:00",
+        },
+        {
+          verantwortlicher: "",
+          parallelgruppe: "Advanced Topics in Cryptography",
+          Raum: "04A30 (HS IV A4) (Hans-Meerwein-Straße 6, Institutsgebäude (H | 04))",
+          Rhythmus: "Einzeltermin",
+          Ausfalltermin: "",
+          "Startdatum - Enddatum": "26.07.2024",
+          "Erw. Tn.": "",
+          Wochentag: "Fr",
+          "Durchführende/-r": "",
+          Bemerkung: "Erstklausur",
+          "Von - Bis": "13:00 - 16:00",
+        },
+        {
+          verantwortlicher: "",
+        },
+      ],
+    },
+  ];
+});
