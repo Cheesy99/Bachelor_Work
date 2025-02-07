@@ -51,7 +51,7 @@ class MainManager {
   }
 
   checkForDisk(): boolean {
-    let everthing: boolean = true;
+    let everything: boolean = true;
     const filePath1 = path.join(this.persistencePath, "schema.json");
     const filePath2 = path.join(this.persistencePath, "shownSchema.json");
     const filePath3 = path.join(this.persistencePath, "sqlCommandStack.json");
@@ -59,22 +59,22 @@ class MainManager {
 
     if (!fs.existsSync(filePath1)) {
       console.warn("schema.json is missing");
-      everthing = false;
+      everything = false;
     }
     if (!fs.existsSync(filePath2)) {
       console.warn("shownSchema.json is missing");
-      everthing = false;
+      everything = false;
     }
     if (!fs.existsSync(filePath3)) {
       console.warn("sqlCommandStack.json is missing");
-      everthing = false;
+      everything = false;
     }
     if (!fs.existsSync(filePath4)) {
       console.warn("sqlCommandStack.json is missing");
-      everthing = false;
+      everything = false;
     }
 
-    return everthing;
+    return everything;
   }
 
   get dataBaseExist() {
@@ -90,12 +90,12 @@ class MainManager {
       });
 
       const jsonObject: JsonObject[] = JSON.parse(cleanedJson);
-      let schemaResult: {
+      const schemaResult: {
         command: string[];
         tableSchema: TableSchema;
       } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
 
-      let mainTableSchema = schemaResult.tableSchema["main_table"];
+      const mainTableSchema = schemaResult.tableSchema["main_table"];
       const foreignKeys = mainTableSchema.filter(
         (column) => column in schemaResult.tableSchema
       );
@@ -127,7 +127,7 @@ class MainManager {
         const schemaResult = await this.dataBase.sqlCommandWithReponse(
           schemaQuery
         );
-        let schema: any[] = schemaResult.map((row: any) => row.name);
+        const schema: any[] = schemaResult.map((row: any) => row.name);
         this.mainSchema.set(key, schema);
       }
 
@@ -184,7 +184,7 @@ class MainManager {
       this.persistencePath,
       "sqlCommandStack.json"
     );
-    let sqlCommandSave = this.sqlCommandStack;
+    const sqlCommandSave = this.sqlCommandStack;
     try {
       fs.writeFileSync(
         sqlCommandFilePath,
@@ -212,15 +212,7 @@ class MainManager {
     return { schema: schema, table: table };
   }
 
-  public async getCurrentIndexRange(tableName: string): Promise<FromId> {
-    const minIdQuery = `SELECT MIN(id) as minId FROM ${tableName}`;
-    const maxIdQuery = `SELECT MAX(id) as maxId FROM ${tableName}`;
-    const minIdResult = await this.dataBase.sqlCommandWithReponse(minIdQuery);
-    const maxIdResult = await this.dataBase.sqlCommandWithReponse(maxIdQuery);
-    const startId = minIdResult[0].minId;
-    const endId = maxIdResult[0].maxId;
-    return { startId, endId };
-  }
+
 
   public async uiSqlCommand(
     sqlCommand: any,
@@ -271,7 +263,7 @@ class MainManager {
           mainSchema.unshift("id");
         }
 
-        let finalCommand = `SELECT ${mainSchema} `;
+        const finalCommand = `SELECT ${mainSchema} `;
 
         sqlCommand = finalCommand.concat(sqlCommand);
       } else {
@@ -336,7 +328,7 @@ class MainManager {
       }
 
       console.log("Updated sqlCommand", sqlCommand);
-      let result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
+      const result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
       this.sqlCommandStack.push(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
 
@@ -637,7 +629,7 @@ class MainManager {
     await this.uiSqlCommand(sqlCommand, newSchema);
   }
 
-  async getAllValues(columnName: string): Promise<String[]> {
+  async getAllValues(columnName: string): Promise<string[]> {
     try {
       let tableName;
       for (const key of this.mainSchema.keys()) {

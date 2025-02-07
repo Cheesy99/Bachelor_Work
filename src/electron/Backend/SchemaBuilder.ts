@@ -2,7 +2,6 @@ import TableSchema from "./Interfaces/TableSchema.js";
 import JsonObject from "./Interfaces/JsonObject.js";
 import SqlTextGenerator from "./SqlTextGenerator.js";
 import DataCleaner from "./Utils/DataCleaner.js";
-import { isObject } from "util";
 class SchemaBuilder {
   private sqlTextGenerator: SqlTextGenerator;
 

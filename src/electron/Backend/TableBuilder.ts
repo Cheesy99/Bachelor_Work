@@ -79,14 +79,14 @@ class TableBuilder {
     } else {
       const baseString: string = insertValues.join(", ");
       const insertBase = `INSERT INTO ${tableName} (${insertColumnString}) VALUES (${baseString});`;
-      return await this.insertWithIdReponse(insertBase);
+      return await this.insertWithIdResponse(insertBase);
     }
 
     return -1;
   }
 
-  private async insertWithIdReponse(statment: any): Promise<number> {
-    return await this.databaseConnector.sqlCommandWithIdResponse(statment);
+  private async insertWithIdResponse(statement: any): Promise<number> {
+    return await this.databaseConnector.sqlCommandWithIdResponse(statement);
   }
   private async joinCrossProduct(
     baseArray: any[],
