@@ -117,7 +117,7 @@ class MainManager {
 
       for (const [key, _] of Object.entries(schemaResult.tableSchema)) {
         const schemaQuery = `PRAGMA table_info(${key})`;
-        const schemaResult = await this.dataBase.sqlCommandWithReponse(
+        const schemaResult = await this.dataBase.sqlCommandWithResponse(
           schemaQuery
         );
         const schema: any[] = schemaResult.map((row: any) => row.name);
@@ -147,7 +147,7 @@ class MainManager {
       this.uiSqlCommand(this.sqlCommandStack[this.sqlCommandStack.length - 1]);
     } else {
       const dataQuery = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
-      const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
+      const dataResult = await this.dataBase.sqlCommandWithResponse(dataQuery);
       schema = await this.getTableSchema("main_table");
       table = dataResult.map((row: string | number) => Object.values(row));
 
@@ -198,7 +198,7 @@ class MainManager {
   ): Promise<TableData> {
     const { startId, endId } = fromID;
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
-    const dataResult = await this.dataBase.sqlCommandWithReponse(dataQuery);
+    const dataResult = await this.dataBase.sqlCommandWithResponse(dataQuery);
     const schema = await this.getTableSchema(tableName);
     const table = dataResult.map((row: string | number) => Object.values(row));
 
@@ -321,7 +321,7 @@ class MainManager {
       }
 
       console.log("Updated sqlCommand", sqlCommand);
-      const result = await this.dataBase.sqlCommandWithReponse(sqlCommand);
+      const result = await this.dataBase.sqlCommandWithResponse(sqlCommand);
       this.sqlCommandStack.push(sqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
 
@@ -347,7 +347,7 @@ class MainManager {
   ): Promise<number[]> {
     const placeholders = values.map((val: string) => `'${val}'`).join(", ");
     const query = `SELECT id FROM ${foreignTableName} WHERE ${foreignColumnName} IN (${placeholders})`;
-    const result = await this.dataBase.sqlCommandWithReponse(query);
+    const result = await this.dataBase.sqlCommandWithResponse(query);
 
     return result.map((row: { id: number }) => row.id);
   }
@@ -358,7 +358,7 @@ class MainManager {
       schema = this.currentlyShowSchema.get(tableName)!;
     } else {
       const schemaQuery = `PRAGMA table_info(${tableName})`;
-      const schemaResult = await this.dataBase.sqlCommandWithReponse(
+      const schemaResult = await this.dataBase.sqlCommandWithResponse(
         schemaQuery
       );
       schema = schemaResult.map((row: any) => row.name);
@@ -368,7 +368,7 @@ class MainManager {
 
   public async checkForTable(tableName: string): Promise<boolean> {
     const query = `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`;
-    const result = await this.dataBase.sqlCommandWithReponse(query);
+    const result = await this.dataBase.sqlCommandWithResponse(query);
     return result.length > 0;
   }
 
@@ -410,7 +410,7 @@ class MainManager {
         .replace(/\s+/g, " ")
         .trim();
 
-      const result = await this.dataBase.sqlCommandWithReponse(lastSqlCommand);
+      const result = await this.dataBase.sqlCommandWithResponse(lastSqlCommand);
       const table = result.map((row: string | number) => Object.values(row));
       const schema = this.currentlyShowSchema.get("main_table")!;
       for (const [rowIndex, row] of table.entries()) {
@@ -484,7 +484,7 @@ class MainManager {
 
   public async amountOfRows(tableName: string): Promise<number> {
     const query = `SELECT COUNT(*) as count FROM ${tableName}`;
-    const result = await this.dataBase.sqlCommandWithReponse(query);
+    const result = await this.dataBase.sqlCommandWithResponse(query);
     return result[0].count;
   }
 
@@ -500,7 +500,7 @@ class MainManager {
       }
 
       const finale = schema.length <= 1 ? "*" : schema.join(" ,");
-      const result = await this.dataBase.sqlCommandWithReponse(
+      const result = await this.dataBase.sqlCommandWithResponse(
         `SELECT ${finale} FROM ${tableName} WHERE id = ${id}`
       );
 
@@ -637,7 +637,7 @@ class MainManager {
       }
 
       const query = `SELECT ${columnName} FROM ${tableName};`;
-      const result = await this.dataBase.sqlCommandWithReponse(query);
+      const result = await this.dataBase.sqlCommandWithResponse(query);
 
       return result.map((row: any) => row[columnName]);
     } catch (error) {
@@ -652,7 +652,7 @@ class MainManager {
   async getMaxRowValue(): Promise<number> {
     try {
       const query = `SELECT MAX(id) AS max_id FROM main_table;`;
-      const result = await this.dataBase.sqlCommandWithReponse(query);
+      const result = await this.dataBase.sqlCommandWithResponse(query);
       return result[0].max_id;
     } catch (error) {
       console.error("Error getting the maximum row value:", error);
@@ -666,7 +666,7 @@ class MainManager {
     AND name != 'main_table' 
     AND name = '${tableName}';`;
 
-    const result = await this.dataBase.sqlCommandWithReponse(query);
+    const result = await this.dataBase.sqlCommandWithResponse(query);
     return result.length > 0;
   }
 

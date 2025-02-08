@@ -54,7 +54,7 @@ describe("MainManager", () => {
   it("should get table schema", async () => {
     const mockSchemaResult = [{ name: "id" }, { name: "name" }];
     sandbox
-      .stub(DataBaseConnector.prototype, "sqlCommandWithReponse")
+      .stub(DataBaseConnector.prototype, "sqlCommandWithResponse")
       .resolves(mockSchemaResult);
     const schema = await mainManager.getTableSchema("main_table");
     expect(schema).toEqual(["id", "name"]);
@@ -64,7 +64,7 @@ describe("MainManager", () => {
     const json = JSON.stringify([{ name: "John Doe", age: "30" }]);
     sandbox.stub(DataBaseConnector.prototype, "sqlCommand").resolves();
     sandbox
-      .stub(DataBaseConnector.prototype, "sqlCommandWithReponse")
+      .stub(DataBaseConnector.prototype, "sqlCommandWithResponse")
       .resolves([]);
     sandbox.stub(SchemaBuilder.prototype, "generateSchemaWithCommand").returns({
       command: [],
@@ -84,7 +84,7 @@ describe("MainManager", () => {
   it("should get the maximum row value", async () => {
     const mockResult = [{ max_id: 10 }];
     sandbox
-      .stub(DataBaseConnector.prototype, "sqlCommandWithReponse")
+      .stub(DataBaseConnector.prototype, "sqlCommandWithResponse")
       .resolves(mockResult);
     const maxValue = await mainManager.getMaxRowValue();
     expect(maxValue).toBe(10);
@@ -108,7 +108,7 @@ describe("MainManager", () => {
   it("should get all values for a column", async () => {
     const mockResult = [{ name: "John Doe" }, { name: "Tom Holland" }];
     sandbox
-      .stub(DataBaseConnector.prototype, "sqlCommandWithReponse")
+      .stub(DataBaseConnector.prototype, "sqlCommandWithResponse")
       .resolves(mockResult);
     const values = await mainManager.getAllValues("name");
     expect(values).toEqual(["John Doe", "Tom Holland"]);
