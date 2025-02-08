@@ -22,12 +22,11 @@ describe("MainManager", () => {
         send: sandbox.stub(),
       },
     } as unknown as BrowserWindow;
-    mainManager = MainManager.getInstance(browserWindow);
+    mainManager = new MainManager(browserWindow);
   });
 
   afterEach(() => {
     sandbox.restore();
-    MainManager["instance"] = null as unknown as MainManager;
   });
 
   it("should initialize correctly", () => {

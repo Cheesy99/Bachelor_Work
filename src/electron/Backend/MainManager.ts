@@ -16,7 +16,6 @@ const __dirname = path.dirname(__filename);
 
 class MainManager {
   private browserWindow: BrowserWindow;
-  private static instance: MainManager;
   private dataBase: DataBaseConnector;
   private excelExporter: ExcelExporter;
   private schemaBuilder: SchemaBuilder;
@@ -28,14 +27,8 @@ class MainManager {
   private sqlCommandStack: string[] = [
     "SELECT * FROM main_table LIMIT 100 OFFSET 0;",
   ];
-  public static getInstance(browserWindow: BrowserWindow): MainManager {
-    if (!MainManager.instance) {
-      MainManager.instance = new MainManager(browserWindow);
-    }
-    return MainManager.instance;
-  }
 
-  private constructor(browserWindow: BrowserWindow) {
+  public constructor(browserWindow: BrowserWindow) {
     this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
     this.dataBase = DataBaseConnector.getInstance();
     this.tableBuilder = new TableBuilder();
@@ -46,11 +39,11 @@ class MainManager {
     this.currentlyShowSchema = new Map();
   }
 
-  popStack(): void {
+  public popStack(): void {
     this.sqlCommandStack.pop();
   }
 
-  checkForDisk(): boolean {
+  public checkForDisk(): boolean {
     let everything: boolean = true;
     const filePath1 = path.join(this.persistencePath, "schema.json");
     const filePath2 = path.join(this.persistencePath, "shownSchema.json");
@@ -379,7 +372,7 @@ class MainManager {
     return result.length > 0;
   }
 
-  public async exportToExcel() {
+  public async exportToExcel():Promise<void> {
     try {
       const table = await this.getFullTable();
       const keySet = new Set(this.currentlyShowSchema.keys());

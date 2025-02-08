@@ -3,7 +3,6 @@ import path from "path";
 import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
 import MainManager from "./Backend/MainManager.js";
-import { ipcRenderer } from "electron/renderer";
 
 ipcMain.setMaxListeners(20);
 let mainManager: MainManager;
@@ -19,7 +18,7 @@ app.on("ready", () => {
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
-  mainManager = MainManager.getInstance(mainWindow);
+  mainManager = new MainManager(mainWindow);
 
   ipcMain.handle("databaseExists", async () => {
     return mainManager.dataBaseExist;
