@@ -105,14 +105,13 @@ class MainManager {
         schemaResult.tableSchema
       );
       await this.dataBase.sqlCommand(mainInsert);
-      const sqlCommand = this.constructInitialSqlCommand();
+      const sqlCommand = await this.constructInitialSqlCommand();
 
       const tableObject = await this.dataBase.sqlCommandWithResponse(
-        this.constructInitialSqlCommand
+        sqlCommand
       );
-      this.saveToDiskWhenQuit();
       this.browserWindow.webContents.send("tableDataFromBackend", tableObject);
-
+      this.sqlCommandStack.push(sqlCommand);
       return sqlCommand;
     } catch (error) {
       console.error("Error handling insertJson:", error);
@@ -267,38 +266,12 @@ class MainManager {
       this.tableBuilder = new TableBuilder();
       this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
       this.excelExporter = new ExcelExporter();
-      this.sqlCommandStack = ["SELECT * FROM main_table LIMIT 100 OFFSET 0;"];
-      const file1Path = path.resolve(
-        this.persistencePath,
-        "foreignColumn.json"
-      );
-      const file2Path = path.resolve(this.persistencePath, "schema.json");
-      const file3Path = path.resolve(this.persistencePath, "shownSchema.json");
+      this.sqlCommandStack = [""];
+
       const file4Path = path.resolve(
         this.persistencePath,
         "sqlCommandStack.json"
       );
-
-      if (fs.existsSync(file1Path)) {
-        fs.unlinkSync(file1Path);
-        console.info(`Deleted file: ${file1Path}`);
-      } else {
-        console.warn(`File not found: ${file1Path}`);
-      }
-
-      if (fs.existsSync(file2Path)) {
-        fs.unlinkSync(file2Path);
-        console.info(`Deleted file: ${file2Path}`);
-      } else {
-        console.warn(`File not found: ${file2Path}`);
-      }
-
-      if (fs.existsSync(file3Path)) {
-        fs.unlinkSync(file3Path);
-        console.info(`Deleted file: ${file3Path}`);
-      } else {
-        console.warn(`File not found: ${file3Path}`);
-      }
 
       if (fs.existsSync(file4Path)) {
         fs.unlinkSync(file4Path);

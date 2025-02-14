@@ -14,10 +14,10 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("sqlCommand", command, schema);
   },
 
-  subscribeToListener: (callback: (TableObject: TableObject) => void) => {
+  subscribeToListener: (callback: (tableObject: TableObject[]) => void) => {
     ipcRenderer.removeAllListeners("tableDataFromBackend");
-    ipcRenderer.on("tableDataFromBackend", (_, tableData) => {
-      callback(tableData);
+    ipcRenderer.on("tableDataFromBackend", (_, tableObject) => {
+      callback(tableObject);
     });
   },
 
