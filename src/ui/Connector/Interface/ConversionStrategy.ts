@@ -1,5 +1,5 @@
 interface ConversionStrategy {
-  convert(data: TableData): Promise<TableData | NestedTable>;
+  convert(sqlCommand: string): Promise<TableData | NestedTable>;
 }
 
 export default ConversionStrategy;

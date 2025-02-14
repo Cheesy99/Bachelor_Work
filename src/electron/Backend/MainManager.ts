@@ -53,9 +53,6 @@ class MainManager {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
-  private mainSchema: Map<string, any[]>;
-  private currentlyShowSchema: Map<string, any[]>;
-  private currentForeignSchemaToSelect: string[] = [];
   private sqlCommandStack: string[] = [
     "SELECT * FROM main_table LIMIT 100 OFFSET 0;",
   ];
@@ -67,8 +64,6 @@ class MainManager {
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
     this.excelExporter = new ExcelExporter();
     this.browserWindow = browserWindow;
-    this.mainSchema = new Map();
-    this.currentlyShowSchema = new Map();
   }
 
   public popStack(): void {
@@ -77,24 +72,9 @@ class MainManager {
 
   public checkForDisk(): boolean {
     let everything: boolean = true;
-    const filePath1 = path.join(this.persistencePath, "schema.json");
-    const filePath2 = path.join(this.persistencePath, "shownSchema.json");
     const filePath3 = path.join(this.persistencePath, "sqlCommandStack.json");
-    const filePath4 = path.join(this.persistencePath, "foreignColumn.json");
 
-    if (!fs.existsSync(filePath1)) {
-      console.warn("schema.json is missing");
-      everything = false;
-    }
-    if (!fs.existsSync(filePath2)) {
-      console.warn("shownSchema.json is missing");
-      everything = false;
-    }
     if (!fs.existsSync(filePath3)) {
-      console.warn("sqlCommandStack.json is missing");
-      everything = false;
-    }
-    if (!fs.existsSync(filePath4)) {
       console.warn("sqlCommandStack.json is missing");
       everything = false;
     }
@@ -106,6 +86,7 @@ class MainManager {
     return this.dataBase.databaseExists();
   }
 
+  // Here I should return the starting sql command
   public async insertJson(json: string): Promise<string> {
     try {
       const cleanedJsonString = json.replace(/\\"/g, "");
@@ -147,17 +128,6 @@ class MainManager {
       );
       await this.dataBase.sqlCommand(mainInsert);
 
-      for (const [key, _] of Object.entries(schemaResult.tableSchema)) {
-        const schemaQuery = `PRAGMA table_info(${key})`;
-        const schemaResult = await this.dataBase.sqlCommandWithResponse(
-          schemaQuery
-        );
-        const schema: any[] = schemaResult.map((row: any) => row.name);
-        this.mainSchema.set(key, schema);
-      }
-
-      this.currentlyShowSchema = new Map(this.mainSchema);
-
       const fromID = { startId: 0, endId: 100 };
       const tableData = await this.getTableDataObject(fromID, "main_table");
       this.saveToDiskWhenQuit();
@@ -180,7 +150,7 @@ class MainManager {
     } else {
       const dataQuery = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
       const dataResult = await this.dataBase.sqlCommandWithResponse(dataQuery);
-      schema = await this.getTableSchema("main_table");
+      schema = Object.keys(dataResult[0]);
       table = dataResult.map((row: string | number) => Object.values(row));
 
       const tableData: TableData = { schema: schema, table: table };
@@ -189,22 +159,6 @@ class MainManager {
   }
 
   public saveToDiskWhenQuit(): void {
-    const schemaJson = JSON.stringify(Array.from(this.mainSchema));
-    const shownSchemaJson = JSON.stringify(
-      Array.from(this.currentlyShowSchema)
-    );
-    const shownForeignColumn = JSON.stringify(
-      this.currentForeignSchemaToSelect
-    );
-    const schemaFilePath = path.resolve(this.persistencePath, "schema.json");
-    const currentlyShow = path.resolve(
-      this.persistencePath,
-      "shownSchema.json"
-    );
-    const shownForeignColumnpath = path.resolve(
-      this.persistencePath,
-      "foreignColumn.json"
-    );
     const sqlCommandFilePath = path.join(
       this.persistencePath,
       "sqlCommandStack.json"
@@ -215,9 +169,6 @@ class MainManager {
         sqlCommandFilePath,
         JSON.stringify({ sqlCommand: sqlCommandSave })
       );
-      fs.writeFileSync(schemaFilePath, schemaJson);
-      fs.writeFileSync(currentlyShow, shownSchemaJson);
-      fs.writeFileSync(shownForeignColumnpath, shownForeignColumn);
       console.info("Schema saved to disk successfully.");
     } catch (err) {
       console.error("Error writing schema to disk:", err);
@@ -231,128 +182,17 @@ class MainManager {
     const { startId, endId } = fromID;
     const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
     const dataResult = await this.dataBase.sqlCommandWithResponse(dataQuery);
-    const schema = await this.getTableSchema(tableName);
+    const schema = Object.keys(dataResult[0]);
     const table = dataResult.map((row: string | number) => Object.values(row));
 
     return { schema: schema, table: table };
   }
 
-  public async uiSqlCommand(
-    sqlCommand: any,
-    inputSchema?: string[]
-  ): Promise<string> {
+  public async uiSqlCommand(sqlCommand: string): Promise<string> {
     try {
-      let mainSchema: string[];
-
-      this.currentForeignSchemaToSelect = [];
-      const addForeignTable: Set<string> = new Set();
-      const newShowMap: Map<string, string[]> = new Map();
-      if (inputSchema) {
-        mainSchema = inputSchema.filter((shownColumnNames) => {
-          let isMainSchema = false;
-          this.currentlyShowSchema.get("main_table")?.forEach((columnName) => {
-            if (columnName === shownColumnNames) {
-              isMainSchema = true;
-            } else {
-              this.currentlyShowSchema.keys().forEach((key) => {
-                if (
-                  this.currentlyShowSchema
-                    .get(key)
-                    ?.includes(shownColumnNames) &&
-                  key !== "main_table"
-                ) {
-                  if (newShowMap.has(key)) {
-                    if (!newShowMap.get(key)?.includes(shownColumnNames))
-                      newShowMap.get(key)?.push(shownColumnNames);
-                  } else {
-                    newShowMap.set(key, [shownColumnNames]);
-                  }
-                  addForeignTable.add(key);
-                }
-              });
-              this.currentForeignSchemaToSelect.push(shownColumnNames);
-            }
-          });
-          return isMainSchema;
-        });
-
-        newShowMap.forEach((value, key) => {
-          this.currentlyShowSchema.set(key, value);
-        });
-        const addForeignArray = Array.from(addForeignTable).join(", ");
-        mainSchema = mainSchema.concat(addForeignArray);
-
-        if (!mainSchema.includes("id")) {
-          mainSchema.unshift("id");
-        }
-
-        const finalCommand = `SELECT ${mainSchema} `;
-
-        sqlCommand = finalCommand.concat(sqlCommand);
-      } else {
-        mainSchema = this.currentlyShowSchema.get("main_table")!;
-
-        if (!mainSchema.includes("id")) {
-          mainSchema.unshift("id");
-        }
-      }
-
-      const whereClauseMatch = sqlCommand.match(
-        /WHERE\s+([\s\S]+?)(\s+LIMIT|\s+OFFSET|$)/i
-      );
-
-      if (whereClauseMatch) {
-        await new Promise<void>(async (resolve) => {
-          if (whereClauseMatch) {
-            const whereClause = whereClauseMatch[1];
-            const conditions = whereClause.split(" AND ");
-            for (let condition of conditions) {
-              const match = condition.match(/(\w+)\s+IN\s+\(([\s\S]+)\)/i);
-              if (match) {
-                const columnName = match[1];
-                const values = match[2]
-                  .split(",")
-                  .map((val: string) => val.trim().replace(/'/g, ""));
-                if (
-                  this.currentlyShowSchema
-                    .get("main_table")!
-                    .includes(columnName)
-                ) {
-                  continue;
-                }
-                let foreignTableName: string | undefined;
-                for (const [
-                  tableName,
-                  columns,
-                ] of this.currentlyShowSchema.entries()) {
-                  if (columns.includes(columnName)) {
-                    foreignTableName = tableName;
-                    break;
-                  }
-                }
-
-                if (foreignTableName) {
-                  // Query the foreign table to get the ids
-                  const foreignIds = await this.getForeignIds(
-                    foreignTableName,
-                    columnName,
-                    values
-                  );
-                  const idCondition = `${foreignTableName} IN (${foreignIds.join(
-                    ", "
-                  )})`;
-                  sqlCommand = sqlCommand.replace(condition, idCondition);
-                }
-              }
-            }
-            resolve();
-          }
-        });
-      }
-
-      console.log("Updated sqlCommand", sqlCommand);
       const result = await this.dataBase.sqlCommandWithResponse(sqlCommand);
       this.sqlCommandStack.push(sqlCommand);
+      const mainSchema = Object.keys(result[0]);
       const table = result.map((row: string | number) => Object.values(row));
 
       const partialTableData = {
@@ -382,19 +222,7 @@ class MainManager {
     return result.map((row: { id: number }) => row.id);
   }
 
-  public async getTableSchema(tableName: string): Promise<string[]> {
-    let schema: string[];
-    if (this.currentlyShowSchema.get(tableName)) {
-      schema = this.currentlyShowSchema.get(tableName)!;
-    } else {
-      const schemaQuery = `PRAGMA table_info(${tableName})`;
-      const schemaResult = await this.dataBase.sqlCommandWithResponse(
-        schemaQuery
-      );
-      schema = schemaResult.map((row: any) => row.name);
-    }
-    return schema;
-  }
+  // public async getTableSchema(tableName: string): Promise<string[]> {}
 
   public async checkForTable(tableName: string): Promise<boolean> {
     const query = `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`;
@@ -404,20 +232,8 @@ class MainManager {
 
   public async exportToExcel(): Promise<void> {
     try {
-      const table = await this.getFullTable();
-      const keySet = new Set(this.currentlyShowSchema.keys());
-      const schema: string[] = Array.from(
-        this.currentlyShowSchema.values()
-      ).flat();
-
-      const cleanedSchema = schema.filter(
-        (value) => !keySet.has(value) && !value.toLowerCase().includes("id")
-      );
-
-      const fullTable: TableData = {
-        schema: cleanedSchema,
-        table: table,
-      };
+      // Here we have to get the table
+      const fullTable = { schema: [], table: [] };
       const filePath = `${this.persistencePath}excelData.xlsx`;
       await this.excelExporter.exportResultToExcel(fullTable, filePath);
     } catch (error) {
@@ -426,60 +242,8 @@ class MainManager {
     }
   }
 
-  private async getFullTable(): Promise<(string | number)[][]> {
-    try {
-      let lastSqlCommand =
-        this.sqlCommandStack[this.sqlCommandStack.length - 1];
-      if (!lastSqlCommand) {
-        throw new Error("No SQL command available");
-      }
-
-      lastSqlCommand = lastSqlCommand
-        .replace(/\bLIMIT\s+\d+(\s*,\s*\d+)?/gi, "")
-        .replace(/\bOFFSET\s+\d+/gi, "")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      const result = await this.dataBase.sqlCommandWithResponse(lastSqlCommand);
-      const table = result.map((row: string | number) => Object.values(row));
-      const schema = this.currentlyShowSchema.get("main_table")!;
-      for (const [rowIndex, row] of table.entries()) {
-        for (let colIndex = 1; colIndex < row.length; colIndex++) {
-          const element = row[colIndex];
-
-          if (typeof element === "number" && colIndex !== 0) {
-            let foreignRow: (string | number)[] = await this.getRow(
-              element,
-              schema[colIndex]
-            );
-            table[rowIndex].splice(colIndex, 1);
-            if (typeof foreignRow[0] === "number")
-              foreignRow = foreignRow.slice(1);
-            table[rowIndex].splice(colIndex, 0, ...foreignRow);
-          }
-        }
-      }
-
-      return table.map((row) => row.slice(1));
-    } catch (error) {
-      console.error("Error getting full table data:", error);
-      return []; // Return empty array on error
-    }
-  }
-
   public getDiskData() {
     try {
-      console.log("Reading schema.json...");
-      const mainSchemaData = JSON.parse(
-        fs.readFileSync(
-          path.resolve(this.persistencePath, "schema.json"),
-          "utf-8"
-        )
-      );
-      console.log("Schema data read:", mainSchemaData);
-      this.mainSchema = new Map(mainSchemaData);
-      console.log("Main schema initialized:", this.mainSchema);
-
       const sqlCommandData = fs.readFileSync(
         path.resolve(this.persistencePath, "sqlCommandStack.json"),
         "utf-8"
@@ -492,20 +256,6 @@ class MainManager {
       } else {
         console.error("Parsed data does not contain sqlCommand:", parsedData);
       }
-      const shownSchemaData = JSON.parse(
-        fs.readFileSync(
-          path.resolve(this.persistencePath, "shownSchema.json"),
-          "utf-8"
-        )
-      );
-      this.currentlyShowSchema = new Map(shownSchemaData);
-
-      this.currentForeignSchemaToSelect = JSON.parse(
-        fs.readFileSync(
-          path.resolve(this.persistencePath, "foreignColumn.json"),
-          "utf-8"
-        )
-      );
     } catch (error) {
       console.error("Error parsing JSON data:", error);
       throw error;
@@ -521,13 +271,6 @@ class MainManager {
   async getRow(id: number, tableName: string): Promise<(string | number)[]> {
     try {
       let schema: string[] = [];
-      if (this.currentForeignSchemaToSelect.length !== 0) {
-        schema = this.currentForeignSchemaToSelect.filter((activeColumn) => {
-          if (this.currentlyShowSchema.get(tableName)?.includes(activeColumn))
-            return true;
-          else return false;
-        });
-      }
 
       const finale = schema.length <= 1 ? "*" : schema.join(" ,");
       const result = await this.dataBase.sqlCommandWithResponse(
@@ -551,9 +294,6 @@ class MainManager {
       this.tableBuilder = new TableBuilder();
       this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
       this.excelExporter = new ExcelExporter();
-      this.mainSchema = new Map();
-      this.currentlyShowSchema = new Map();
-      this.currentForeignSchemaToSelect = [];
       this.sqlCommandStack = ["SELECT * FROM main_table LIMIT 100 OFFSET 0;"];
       const file1Path = path.resolve(
         this.persistencePath,
@@ -605,63 +345,11 @@ class MainManager {
     schema: string[],
     newColumnName: string,
     oldColumnName: string
-  ): Promise<void> {
-    let tableName: string | undefined;
-    for (const key of this.mainSchema.keys()) {
-      if (this.mainSchema.get(key)?.includes(oldColumnName)) {
-        tableName = key;
-        break;
-      }
-    }
-
-    if (!tableName) {
-      throw new Error(`Column ${oldColumnName} not found in any table.`);
-    }
-
-    const updateQuery = `ALTER TABLE ${tableName} RENAME COLUMN ${oldColumnName} TO ${newColumnName};`;
-
-    await this.dataBase.sqlCommand([updateQuery]);
-
-    for (const key of this.mainSchema.keys()) {
-      const columns = this.mainSchema.get(key);
-      if (columns?.includes(oldColumnName)) {
-        const columnIndex = columns.indexOf(oldColumnName);
-        if (columnIndex !== -1) {
-          columns[columnIndex] = newColumnName;
-        }
-      }
-    }
-    for (const key of this.currentlyShowSchema.keys()) {
-      const columns = this.currentlyShowSchema.get(key);
-      if (columns?.includes(oldColumnName)) {
-        const columnIndex = columns.indexOf(oldColumnName);
-        if (columnIndex !== -1) {
-          columns[columnIndex] = newColumnName;
-        }
-      }
-    }
-
-    const foreignSchemaIndex =
-      this.currentForeignSchemaToSelect.indexOf(oldColumnName);
-    if (foreignSchemaIndex !== -1) {
-      this.currentForeignSchemaToSelect[foreignSchemaIndex] = newColumnName;
-    }
-    const newSchema = schema.map((col) =>
-      col === oldColumnName ? newColumnName : col
-    );
-    await this.uiSqlCommand(sqlCommand, newSchema);
-  }
+  ): Promise<void> {}
 
   async getAllValues(columnName: string): Promise<string[]> {
     try {
       let tableName;
-      for (const key of this.mainSchema.keys()) {
-        if (this.mainSchema.get(key)?.includes(columnName)) {
-          tableName = key;
-
-          break;
-        }
-      }
       if (!tableName) {
         throw new Error(`Table for column ${columnName} not found in schema.`);
       }
