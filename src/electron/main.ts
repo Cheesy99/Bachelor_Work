@@ -116,8 +116,16 @@ app.on("ready", () => {
     return await mainManager.getStack();
   });
 
+  ipcMain.handle("getTable", async (_, command) => {
+    return await mainManager.getTable(command);
+  });
+
   ipcMain.handle("popStack", async (_) => {
     return await mainManager.popStack();
+  });
+
+  ipcMain.handle("getAllTableNames", async (_) => {
+    return await mainManager.getAllTableName();
   });
 });
 

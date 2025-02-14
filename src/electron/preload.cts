@@ -88,4 +88,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   popStack() {
     return ipcRenderer.invoke("popStack");
   },
+  getAllTableName: () => {
+    return ipcRenderer.invoke("getAllTableNames");
+  },
+
+  getTable: (command: string) => {
+    return ipcRenderer.invoke("getTable", command);
+  },
 } satisfies Window["electronAPI"]);

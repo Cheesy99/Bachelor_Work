@@ -67,7 +67,6 @@ function SmallSidePanel({
     await new Promise<void>((resolve) => {
       setTimeout(async () => {
         const stack: string[] = await uiManager.getStack();
-        console.log("stack: ", stack);
         setSqlCommandStack(stack);
         resolve();
       }, 1000);

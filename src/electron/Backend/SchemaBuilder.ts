@@ -49,7 +49,7 @@ class SchemaBuilder {
     const keys = Object.keys(json);
     const cleanKeys = keys.map((key) => DataCleaner.cleanName(key));
     const result = [{ [tableName]: cleanKeys }];
-    cleanKeys.forEach((key) => {
+    keys.forEach((key) => {
       const value = json[key];
       if (Array.isArray(value)) {
         value.forEach((obj) => {
@@ -67,7 +67,7 @@ class SchemaBuilder {
     // Removes Duplicate object that are exactly the same
     this.removeDuplicates(tableSchema);
 
-    //Here we need to make sure the we only have one table and all the columns types found for a
+    //Here we need to make sure that we only have one table and all the columns types found for a
     //column are collected and are all add to the table
 
     const mergedSchema: { [key: string]: Set<string> } = {};

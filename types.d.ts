@@ -55,5 +55,7 @@ interface Window {
     getMaxRowValue: () => Promise<number>;
     hasStack: () => Promise<boolean>;
     getStack: () => Promise<string[]>;
+    getAllTableName: () => Promise<string[]>;
+    getTable: (command: string) => Promise<Table>;
   };
 }

@@ -3,10 +3,9 @@ import DataCleaner from "./Utils/DataCleaner.js";
 class SqlTextGenerator {
   public createSchemaText(tableSchema: TableSchema): string {
     let sql = "";
-    Object.keys(tableSchema).forEach((columnName) => {
+    Object.keys(tableSchema).forEach((tableName) => {
       sql += this.schemaTextGenerator(
-        columnName,
-        tableSchema[columnName],
+        tableName,
         tableSchema
       );
     });
@@ -16,13 +15,12 @@ class SqlTextGenerator {
 
   private schemaTextGenerator = (
     tableName: string,
-    columns: string[],
     tables: TableSchema
   ) => {
     let stack: string[] = [];
     let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY AUTOINCREMENT ,\n`;
-
-    columns.forEach((column) => {
+    const tableValues =  tables[tableName];
+    tableValues.forEach((column) => {
       if (tables[column]) {
         stack.push(`  ${column} INTEGER,\n`);
         stack.push(`  FOREIGN KEY (${column}) REFERENCES ${column}(id),\n`);

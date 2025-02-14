@@ -6,12 +6,7 @@ import { ViewSetting } from "./Enum/Setting";
 import React from "react";
 
 class UiManager {
-  async getStack(): Promise<string[]> {
-    return await window.electronAPI.getStack();
-  }
-  async popStack() {
-    await window.electronAPI.popStack();
-  }
+
   private converter: Converter;
   private readonly setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   private setTableData: React.Dispatch<
@@ -48,6 +43,13 @@ class UiManager {
     });
   }
 
+  async getStack(): Promise<string[]> {
+    return await window.electronAPI.getStack();
+  }
+  async popStack() {
+    await window.electronAPI.popStack();
+  }
+
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
 
@@ -73,10 +75,6 @@ class UiManager {
     }
   }
 
-  public async getTableData() {
-    await window.electronAPI.initTableData();
-  }
-
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists && this.setTableData) {
@@ -100,9 +98,6 @@ class UiManager {
     return await this.converter.convertBackendData(result);
   }
 
-  public async getSchema(tableName: string): Promise<string[]> {
-    return await window.electronAPI.getTableSchema(tableName);
-  }
 
   public async export(): Promise<void> {
     return await window.electronAPI.exportToExcel();
