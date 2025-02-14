@@ -12,10 +12,10 @@ class OneTableConverter implements ConversionStrategy {
     // Construct the SQL command to join all tables with main_table as the parent
     const sqlCommand = this.constructJoinQuery(getAllTableName);
     console.log("Sqlquery", sqlCommand);
-    const result = await window.electronAPI.getTable(sqlCommand);
+    const result: TableData = await window.electronAPI.getTable(sqlCommand);
     console.log("result", result);
 
-    return { schema: [], table: [] };
+    return result;
   }
 
   private constructJoinQuery(tableNames: string[]): string {

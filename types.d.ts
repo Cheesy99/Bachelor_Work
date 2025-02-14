@@ -56,6 +56,6 @@ interface Window {
     hasStack: () => Promise<boolean>;
     getStack: () => Promise<string[]>;
     getAllTableName: () => Promise<string[]>;
-    getTable: (command: string) => Promise<Table>;
+    getTable: (command: string) => Promise<TableData>;
   };
 }

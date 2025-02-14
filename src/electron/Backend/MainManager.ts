@@ -25,15 +25,27 @@ class MainManager {
       throw new Error("Failed to get all table names");
     }
   }
-  async getTable(command: any): Promise<TableData> {
-    const result: { key: any; value: string }[] =
-      await this.dataBase.sqlCommandWithResponse(command);
-    console.log("Result", result);
-    const table: (string | number)[][] = [];
-    const schema: string[] = [];
-    console.log("table", table);
-    console.log("schema", schema);
-    return { schema: schema, table: table };
+  async getTable(command: string): Promise<TableData> {
+    try {
+      const result = await this.dataBase.sqlCommandWithResponse(command);
+      if (result.length === 0) {
+        return { schema: [], table: [] };
+      }
+
+      const schema = Object.keys(result[0]);
+      const table = result.map((row: any) => {
+        const rowData: (string | number)[] = [];
+        schema.forEach((key) => {
+          rowData.push(row[key]);
+        });
+        return rowData;
+      });
+
+      return { schema, table };
+    } catch (error) {
+      console.error("Error getting table:", error);
+      throw new Error("Failed to get table");
+    }
   }
   private browserWindow: BrowserWindow;
   private dataBase: DataBaseConnector;
