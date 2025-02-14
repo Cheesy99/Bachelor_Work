@@ -111,31 +111,18 @@ class UiManager {
       updatedSqlCommand ||
       this.sqlCommandStack[this.sqlCommandStack.length - 1];
 
-    let reponse = await window.electronAPI.executeSqlCommandStack(
-      createSqlQuery(commandToExecute),
-      extractSchema(commandToExecute)
-    );
+    let reponse = await window.electronAPI.executeSqlCommand(commandToExecute);
 
-    if (reponse !== "ok") {
-      this.sqlCommandStack.pop();
-      alert("Sql Error occured please try again");
-    } else {
-      console.log("Man: ", commandToExecute);
-      const stack = [...this.sqlCommandStack, commandToExecute];
-      this.setSqlCommandStack(stack);
-    }
+    console.log("Man: ", reponse);
+    const stack = [...this.sqlCommandStack, reponse];
+    this.setSqlCommandStack(stack);
   }
 
   public async changingSchemaName(
     newColumnName: string,
     oldColumnName: string
   ) {
-    await window.electronAPI.renameNamingColumn(
-      createSqlQuery(this.sqlCommandStack[this.sqlCommandStack.length - 1]),
-      extractSchema(this.sqlCommandStack[this.sqlCommandStack.length - 1]),
-      newColumnName,
-      oldColumnName
-    );
+    await window.electronAPI.renameNamingColumn(newColumnName, oldColumnName);
   }
 
   async getMaxColumnValue(): Promise<number> {

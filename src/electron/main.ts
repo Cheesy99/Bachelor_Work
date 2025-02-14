@@ -48,19 +48,12 @@ app.on("ready", () => {
     return await mainManager.initTableData();
   });
 
-  ipcMain.handle("sqlCommand", async (_, command: any, schema: string[]) => {
-    return await mainManager.uiSqlCommand(command, schema);
+  ipcMain.handle("sqlCommand", async (_, command: string) => {
+    return await mainManager.uiSqlCommand(command);
   });
 
-  ipcMain.handle("getRow", async (_, id: number, tableName: string) => {
-    return await mainManager.getRow(id, tableName);
-  });
   ipcMain.handle("exportToExcel", async (_) => {
     await mainManager.exportToExcel();
-  });
-
-  ipcMain.handle("getTableSchema", async (_, tableName: string) => {
-    return await mainManager.getTableSchema(tableName);
   });
 
   ipcMain.handle("checkIfTable", async (_, tableName: string) => {
@@ -80,19 +73,8 @@ app.on("ready", () => {
 
   ipcMain.handle(
     "renameColumn",
-    async (
-      _,
-      sqlCommand: string,
-      schema: string[],
-      newColumnName: string,
-      oldColumnName: string
-    ) => {
-      return await mainManager.renameColumn(
-        sqlCommand,
-        schema,
-        newColumnName,
-        oldColumnName
-      );
+    async (_, newColumnName: string, oldColumnName: string) => {
+      return await mainManager.renameColumn(newColumnName, oldColumnName);
     }
   );
 

@@ -39,20 +39,17 @@ interface Window {
     ) => Promise<TableData>;
     initTableData: () => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
-    getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
     subscribeToListener: (
       callback: (TableObject: TableObject[]) => void
     ) => void;
     popStack: () => Promise<void>;
-    executeSqlCommandStack: (command: any, schema: string[]) => Promise<string>;
+    executeSqlCommand: (command: string) => Promise<string>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => Promise<void>;
     checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
     getSaveResult: () => Promise<TableData | boolean>;
     cleanDatabase: () => Promise<void>;
     renameNamingColumn: (
-      sqlCommand: string,
-      schema: string[],
       newColumnName: string,
       oldColumnName: string
     ) => Promise<void>;

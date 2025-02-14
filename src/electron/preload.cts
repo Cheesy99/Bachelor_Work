@@ -10,8 +10,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   getNestedTableData: (fromID: FromId, tableName: string) =>
     ipcRenderer.invoke("getNestedTableData", fromID, tableName),
 
-  executeSqlCommandStack: (command: any, schema: string[]): Promise<string> => {
-    return ipcRenderer.invoke("sqlCommand", command, schema);
+  executeSqlCommand: (command: string): Promise<string> => {
+    return ipcRenderer.invoke("sqlCommand", command);
   },
 
   subscribeToListener: (callback: (tableObject: TableObject[]) => void) => {
@@ -32,10 +32,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("getTableSchema", tableName);
   },
 
-  getRow: (id: number, tableName: string) => {
-    return ipcRenderer.invoke("getRow", id, tableName);
-  },
-
   checkIfColumnIsTable: (tableName: string) => {
     return ipcRenderer.invoke("checkIfTable");
   },
@@ -51,19 +47,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("cleanDatabase");
   },
 
-  renameNamingColumn: (
-    sqlCommand: string,
-    schema: string[],
-    newColumnName: string,
-    oldColumnName: string
-  ) => {
-    return ipcRenderer.invoke(
-      "renameColumn",
-      sqlCommand,
-      schema,
-      newColumnName,
-      oldColumnName
-    );
+  renameNamingColumn: (newColumnName: string, oldColumnName: string) => {
+    return ipcRenderer.invoke("renameColumn", newColumnName, oldColumnName);
   },
   deleteColumn: (commandStack: string, columnName: string) => {
     return ipcRenderer.invoke("removeColumn", commandStack, columnName);

@@ -240,26 +240,6 @@ class MainManager {
     return result[0].count;
   }
 
-  async getRow(id: number, tableName: string): Promise<(string | number)[]> {
-    try {
-      let schema: string[] = [];
-
-      const finale = schema.length <= 1 ? "*" : schema.join(" ,");
-      const result = await this.dataBase.sqlCommandWithResponse(
-        `SELECT ${finale} FROM ${tableName} WHERE id = ${id}`
-      );
-
-      if (result.length === 0) {
-        throw new Error(`No row found with id ${id} in table ${tableName}`);
-      }
-      return Object.values(result[0]);
-    } catch (error) {
-      console.error(`Error getting row from ${tableName}:`, error);
-      // Return empty array or default value instead of throwing
-      return ["not found"];
-    }
-  }
-
   async cleanDatabase(): Promise<void> {
     try {
       await this.dataBase.recreateDatabase();
@@ -287,8 +267,6 @@ class MainManager {
   }
 
   async renameColumn(
-    sqlCommand: string,
-    schema: string[],
     newColumnName: string,
     oldColumnName: string
   ): Promise<void> {}
