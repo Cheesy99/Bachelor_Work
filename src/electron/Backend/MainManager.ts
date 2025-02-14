@@ -15,6 +15,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class MainManager {
+  async getAllTableName(): Promise<string[]> {
+    try {
+      const query = `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';`;
+      const result = await this.dataBase.sqlCommandWithResponse(query);
+      return result.map((row: any) => row.name);
+    } catch (error) {
+      console.error("Error getting all table names:", error);
+      throw new Error("Failed to get all table names");
+    }
+  }
+  async getTable(command: any): Promise<TableData> {
+    const result: { key: any; value: string }[] =
+      await this.dataBase.sqlCommandWithResponse(command);
+    console.log("Result", result);
+    const table: (string | number)[][] = [];
+    const schema: string[] = [];
+    console.log("table", table);
+    console.log("schema", schema);
+    return { schema: schema, table: table };
+  }
   private browserWindow: BrowserWindow;
   private dataBase: DataBaseConnector;
   private excelExporter: ExcelExporter;
@@ -205,8 +225,6 @@ class MainManager {
     return { schema: schema, table: table };
   }
 
-
-
   public async uiSqlCommand(
     sqlCommand: any,
     inputSchema?: string[]
@@ -372,7 +390,7 @@ class MainManager {
     return result.length > 0;
   }
 
-  public async exportToExcel():Promise<void> {
+  public async exportToExcel(): Promise<void> {
     try {
       const table = await this.getFullTable();
       const keySet = new Set(this.currentlyShowSchema.keys());
