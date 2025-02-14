@@ -6,7 +6,6 @@ import { ViewSetting } from "./Enum/Setting";
 import React from "react";
 
 class UiManager {
-
   private converter: Converter;
   private readonly setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   private setTableData: React.Dispatch<
@@ -31,16 +30,14 @@ class UiManager {
     this.tableType = tableType;
     this.sqlCommandStack = sqlCommandStack;
 
-    window.electronAPI.subscribeToListener(async (tableData: TableData) => {
-      if (this.setTableData) {
-        const newSchema = tableData.schema.flatMap((entry) =>
-          entry.includes(",") ? entry.split(",").map((e) => e.trim()) : entry
-        );
-        tableData.schema = newSchema;
-        sessionStorage.setItem("TableData", JSON.stringify(tableData));
-        this.setTableData(await this.convert(this.tableType));
+    window.electronAPI.subscribeToListener(
+      async (tableObject: TableObject[]) => {
+        if (this.setTableData) {
+          sessionStorage.setItem("TableData", JSON.stringify(tableObject));
+          this.setTableData(await this.convert(this.tableType));
+        }
       }
-    });
+    );
   }
 
   async getStack(): Promise<string[]> {
@@ -91,13 +88,12 @@ class UiManager {
     sessionStorage.clear();
     return await window.electronAPI.cleanDatabase();
   }
-  public async convert(tableView: ViewSetting): Promise<Table> {
+  public convert(tableView: ViewSetting): Table {
     const table = sessionStorage.getItem("TableData");
-    const result: TableData = JSON.parse(table!);
+    const result: TableObject[] = JSON.parse(table!);
     this.setStrategyByViewSetting(tableView);
-    return await this.converter.convertBackendData(result);
+    return this.converter.convertBackendData(result);
   }
-
 
   public async export(): Promise<void> {
     return await window.electronAPI.exportToExcel();

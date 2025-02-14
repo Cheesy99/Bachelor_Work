@@ -20,6 +20,11 @@ type NestedTable = {
   table: (string | number | TableData)[][];
 };
 
+type TableObject = {
+  key: any;
+  value: string;
+};
+
 type FromId = {
   startId: number;
   endId: number;
@@ -35,7 +40,9 @@ interface Window {
     initTableData: () => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
     getRow: (id: number, tableName: string) => Promise<(string | number)[]>;
-    subscribeToListener: (callback: (tableData: TableData) => void) => void;
+    subscribeToListener: (
+      callback: (TableObject: TableObject[]) => void
+    ) => void;
     popStack: () => Promise<void>;
     executeSqlCommandStack: (command: any, schema: string[]) => Promise<string>;
     databaseExists: () => Promise<boolean>;

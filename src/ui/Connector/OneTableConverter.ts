@@ -1,14 +1,20 @@
 import ConversionStrategy from "./Interface/ConversionStrategy";
 
 class OneTableConverter implements ConversionStrategy {
-  public async convert(sqlCommand: string): Promise<TableData> {
-    return await this.createOneTable(sqlCommand);
+  public convert(tableObject: TableObject[]): TableData {
+    return this.createOneTable(tableObject);
   }
 
-  // Here we can check for lazy loading in order to keep application consistent
-  private async createOneTable(sqlCommand: string): Promise<TableData> {
-    const result: TableData = await window.electronAPI.getTable(sqlCommand);
-    return result;
+  private createOneTable(tableObject: TableObject[]): TableData {
+    const schema: string[] = Object.keys(tableObject[0]);
+    const table: (string | number)[][] = tableObject.map((row: any) => {
+      const rowData: (string | number)[] = [];
+      schema.forEach((key) => {
+        rowData.push(row[key]);
+      });
+      return rowData;
+    });
+    return { schema: schema, table: table };
   }
 }
 

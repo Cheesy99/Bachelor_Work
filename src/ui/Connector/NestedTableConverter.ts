@@ -2,11 +2,11 @@ import ConversionStrategy from "./Interface/ConversionStrategy";
 import { getMinMax } from "./Utils";
 
 class NestedTableConverter implements ConversionStrategy {
-  public async convert(sqlCommand: string): Promise<NestedTable> {
-    return await this.convertToNestedTable(sqlCommand);
+  public convert(tableObject: TableObject[]): NestedTable {
+    return this.convertToNestedTable(tableObject);
   }
 
-  private async convertToNestedTable(sqlCommand: string): Promise<NestedTable> {
+  private convertToNestedTable(tableObject: TableObject[]): NestedTable {
     return { schema: [], table: [] };
   }
 }

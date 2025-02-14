@@ -14,7 +14,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("sqlCommand", command, schema);
   },
 
-  subscribeToListener: (callback: (tableData: TableData) => void) => {
+  subscribeToListener: (callback: (TableObject: TableObject) => void) => {
     ipcRenderer.removeAllListeners("tableDataFromBackend");
     ipcRenderer.on("tableDataFromBackend", (_, tableData) => {
       callback(tableData);

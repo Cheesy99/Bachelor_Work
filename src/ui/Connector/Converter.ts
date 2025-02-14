@@ -7,8 +7,8 @@ class Converter {
     this.strategy = strategy;
   }
 
-  public async convertBackendData(sqlCommand: string): Promise<Table> {
-    return await this.strategy!.convert(sqlCommand);
+  public convertBackendData(tableObject: TableObject[]): Table {
+    return this.strategy!.convert(tableObject);
   }
 }
 

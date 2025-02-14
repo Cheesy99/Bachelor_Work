@@ -53,9 +53,7 @@ class MainManager {
   private schemaBuilder: SchemaBuilder;
   private tableBuilder: TableBuilder;
   private readonly persistencePath: string;
-  private sqlCommandStack: string[] = [
-    "SELECT * FROM main_table LIMIT 100 OFFSET 0;",
-  ];
+  private sqlCommandStack: string[] = [""];
 
   public constructor(browserWindow: BrowserWindow) {
     this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
@@ -101,43 +99,39 @@ class MainManager {
         tableSchema: TableSchema;
       } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
 
-      const mainTableSchema = schemaResult.tableSchema["main_table"];
-      const foreignKeys = mainTableSchema.filter(
-        (column) => column in schemaResult.tableSchema
-      );
-      const nonForeignKeys = mainTableSchema.filter(
-        (column) => !(column in schemaResult.tableSchema)
-      );
-
-      // Replace foreign keys with their respective table schemas
-      const foreignKeyColumns = foreignKeys.flatMap((foreignKey) => {
-        return schemaResult.tableSchema[foreignKey];
-      });
-
-      const columnNames = [...nonForeignKeys, ...foreignKeyColumns].join(", ");
-
-      // Replace * with column names in the sqlCommandStack
-      this.sqlCommandStack = this.sqlCommandStack.map((command) => {
-        return command.replace("*", columnNames);
-      });
-
       await this.dataBase.sqlCommand(schemaResult.command);
       const mainInsert: any[] = await this.tableBuilder.build(
         jsonObject,
         schemaResult.tableSchema
       );
       await this.dataBase.sqlCommand(mainInsert);
+      const sqlCommand = this.constructInitialSqlCommand();
 
-      const fromID = { startId: 0, endId: 100 };
-      const tableData = await this.getTableDataObject(fromID, "main_table");
+      const tableObject = await this.dataBase.sqlCommandWithResponse(
+        this.constructInitialSqlCommand
+      );
       this.saveToDiskWhenQuit();
-      this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+      this.browserWindow.webContents.send("tableDataFromBackend", tableObject);
 
-      return "ok";
+      return sqlCommand;
     } catch (error) {
       console.error("Error handling insertJson:", error);
       return "Invalid Json object please give valid json object";
     }
+  }
+
+  private async constructInitialSqlCommand(): Promise<string> {
+    const tableNames: string[] = await this.getAllTableName();
+    const mainTable = "main_table";
+    const joinConditions = tableNames
+      .filter((tableName) => tableName !== mainTable)
+      .map(
+        (tableName) =>
+          `LEFT JOIN ${tableName} ON ${mainTable}.id = ${tableName}.id`
+      )
+      .join(" ");
+
+    return `SELECT * FROM ${mainTable} ${joinConditions} LIMIT 100;`;
   }
 
   public async initTableData(): Promise<void> {
@@ -175,36 +169,15 @@ class MainManager {
     }
   }
 
-  public async getTableDataObject(
-    fromID: FromId,
-    tableName: string
-  ): Promise<TableData> {
-    const { startId, endId } = fromID;
-    const dataQuery = `SELECT * FROM ${tableName} WHERE id BETWEEN ${startId} AND ${endId}`;
-    const dataResult = await this.dataBase.sqlCommandWithResponse(dataQuery);
-    const schema = Object.keys(dataResult[0]);
-    const table = dataResult.map((row: string | number) => Object.values(row));
-
-    return { schema: schema, table: table };
-  }
-
   public async uiSqlCommand(sqlCommand: string): Promise<string> {
     try {
-      const result = await this.dataBase.sqlCommandWithResponse(sqlCommand);
-      this.sqlCommandStack.push(sqlCommand);
-      const mainSchema = Object.keys(result[0]);
-      const table = result.map((row: string | number) => Object.values(row));
-
-      const partialTableData = {
-        schema: mainSchema,
-        table: table,
-      };
-      this.browserWindow.webContents.send(
-        "tableDataFromBackend",
-        partialTableData
+      const resultObject = await this.dataBase.sqlCommandWithResponse(
+        sqlCommand
       );
 
-      return "ok";
+      this.browserWindow.webContents.send("tableDataFromBackend", resultObject);
+      this.sqlCommandStack.push(sqlCommand);
+      return sqlCommand;
     } catch (error) {
       console.error("Error executing SQL command:", error);
       return "An error occurred while executing the SQL command";
