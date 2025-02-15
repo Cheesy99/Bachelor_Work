@@ -62,11 +62,9 @@ class UiManager {
         this.setLoading(true);
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
-        let reponse = await window.electronAPI.sendJsonFile(fileData);
+        let reponse: string = await window.electronAPI.sendJsonFile(fileData);
+        this.setSqlCommandStack([...this.sqlCommandStack, reponse]);
         this.setLoading(false);
-        if (reponse !== "ok") {
-          alert(reponse);
-        }
       };
       reader.readAsText(file);
     }

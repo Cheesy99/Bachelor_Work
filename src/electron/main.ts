@@ -37,13 +37,6 @@ app.on("ready", () => {
     }
   });
 
-  ipcMain.handle(
-    "getNestedTableData",
-    async (_, fromID: FromId, tableName: string) => {
-      return await mainManager.getTableDataObject(fromID, tableName);
-    }
-  );
-
   ipcMain.handle("initTableData", async (_) => {
     return await mainManager.initTableData();
   });

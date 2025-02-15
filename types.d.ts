@@ -33,10 +33,6 @@ type FromId = {
 interface Window {
   electronAPI: {
     sendJsonFile: (fileData: string) => Promise<string>;
-    getNestedTableData: (
-      fromID: FromId,
-      tableName: string
-    ) => Promise<TableData>;
     initTableData: () => Promise<void>;
     getTableSchema: (tableName: string) => Promise<string[]>;
     subscribeToListener: (

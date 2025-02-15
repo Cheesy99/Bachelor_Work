@@ -7,8 +7,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     console.log("Preload got called");
     return ipcRenderer.invoke("upload-json", fileData);
   },
-  getNestedTableData: (fromID: FromId, tableName: string) =>
-    ipcRenderer.invoke("getNestedTableData", fromID, tableName),
 
   executeSqlCommand: (command: string): Promise<string> => {
     return ipcRenderer.invoke("sqlCommand", command);

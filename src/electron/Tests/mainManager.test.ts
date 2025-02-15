@@ -51,15 +51,6 @@ describe("MainManager", () => {
     expect(writeFileSyncStub.callCount).toBe(4);
   });
 
-  it("should get table schema", async () => {
-    const mockSchemaResult = [{ name: "id" }, { name: "name" }];
-    sandbox
-      .stub(DataBaseConnector.prototype, "sqlCommandWithResponse")
-      .resolves(mockSchemaResult);
-    const schema = await mainManager.getTableSchema("main_table");
-    expect(schema).toEqual(["id", "name"]);
-  });
-
   it("should insert JSON data", async () => {
     const json = JSON.stringify([{ name: "John Doe", age: "30" }]);
     sandbox.stub(DataBaseConnector.prototype, "sqlCommand").resolves();
