@@ -4,26 +4,22 @@ class SqlTextGenerator {
   public createSchemaText(tableSchema: TableSchema): string {
     let sql = "";
     Object.keys(tableSchema).forEach((tableName) => {
-      sql += this.schemaTextGenerator(
-        tableName,
-        tableSchema
-      );
+      sql += this.schemaTextGenerator(tableName, tableSchema);
     });
 
     return sql;
   }
 
-  private schemaTextGenerator = (
-    tableName: string,
-    tables: TableSchema
-  ) => {
+  private schemaTextGenerator = (tableName: string, tables: TableSchema) => {
     let stack: string[] = [];
-    let tableSQL = `CREATE TABLE ${tableName} (\n  id INTEGER PRIMARY KEY AUTOINCREMENT ,\n`;
-    const tableValues =  tables[tableName];
+    let tableSQL = `CREATE TABLE ${tableName} (\n  ${tableName}_id INTEGER PRIMARY KEY AUTOINCREMENT ,\n`;
+    const tableValues = tables[tableName];
     tableValues.forEach((column) => {
       if (tables[column]) {
         stack.push(`  ${column} INTEGER,\n`);
-        stack.push(`  FOREIGN KEY (${column}) REFERENCES ${column}(id),\n`);
+        stack.push(
+          `  FOREIGN KEY (${column}) REFERENCES ${column}(${column}_id),\n`
+        );
       } else {
         tableSQL += `  ${column} VARCHAR(255),\n`;
       }

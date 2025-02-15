@@ -120,17 +120,36 @@ class MainManager {
   }
 
   private async constructInitialSqlCommand(): Promise<string> {
-    const tableNames: string[] = await this.getAllTableName();
+    let tableNames: string[] = await this.getAllTableName();
     const mainTable = "main_table";
+    const columns: Set<string> = new Set();
+    // Ensure main_table is the first element for view
+    tableNames = tableNames.filter((tableName) => tableName !== mainTable);
+    tableNames.unshift(mainTable);
+    for (const tableName of tableNames) {
+      const query = `PRAGMA table_info(${tableName});`;
+      const result = await this.dataBase.sqlCommandWithResponse(query);
+
+      for (const column of result) {
+        columns.add(`${column.name}`);
+      }
+    }
+    const filteredColumn = [...columns].filter((values: string) => {
+      return !tableNames.includes(values);
+    });
     const joinConditions = tableNames
       .filter((tableName) => tableName !== mainTable)
       .map(
         (tableName) =>
-          `LEFT JOIN ${tableName} ON ${mainTable}.id = ${tableName}.id`
+          `LEFT JOIN ${tableName} ON ${mainTable}.${tableName} = ${tableName}.${tableName}_id`
       )
       .join(" ");
 
-    return `SELECT * FROM ${mainTable} ${joinConditions} LIMIT 100;`;
+    console.log("column: ", filteredColumn);
+
+    return `SELECT ${filteredColumn.join(
+      ", "
+    )} FROM ${mainTable} ${joinConditions} LIMIT 100;`;
   }
 
   public async initTableData(): Promise<void> {
@@ -273,21 +292,27 @@ class MainManager {
 
   async getAllValues(columnName: string): Promise<string[]> {
     try {
-      let tableName;
-      if (!tableName) {
-        throw new Error(`Table for column ${columnName} not found in schema.`);
-      }
-
-      const query = `SELECT ${columnName} FROM ${tableName};`;
+      const query = `SELECT name 
+                     FROM sqlite_master 
+                     WHERE type='table' 
+                     AND sql LIKE '%${columnName}%';`;
       const result = await this.dataBase.sqlCommandWithResponse(query);
 
-      return result.map((row: any) => row[columnName]);
+      if (result.length === 0) {
+        throw new Error(`Table for column ${columnName} not found.`);
+      }
+
+      const tableName = result[0].name;
+
+      const query2 = `SELECT ${columnName} FROM ${tableName};`;
+      const valuesResult = await this.dataBase.sqlCommandWithResponse(query2);
+
+      const values = valuesResult.map((row: any) => row[columnName]);
+
+      return values;
     } catch (error) {
-      console.error(
-        `Error getting all values for column ${columnName}:`,
-        error
-      );
-      throw new Error(`Failed to get all values for column ${columnName}`);
+      console.error(`Error finding table for column ${columnName}:`, error);
+      throw new Error(`Failed to find table for column ${columnName}`);
     }
   }
 
