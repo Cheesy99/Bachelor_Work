@@ -153,7 +153,7 @@ class MainManager {
 
     return `SELECT ${filteredColumn.join(
       ", "
-    )} FROM ${mainTable} ${joinConditions} LIMIT 100;`;
+    )} FROM ${mainTable} ${joinConditions} LIMIT 100 OFFSET 0;`;
   }
 
   public async initTableData(): Promise<void> {

@@ -20,10 +20,11 @@ interface SettingsModalProps {
 type ContextStack = [
   string,
   React.Dispatch<React.SetStateAction<string>>,
-  React.Dispatch<React.SetStateAction<string[]>>,
   number,
   React.Dispatch<React.SetStateAction<number>>,
-  number
+  number,
+  boolean,
+  React.Dispatch<React.SetStateAction<boolean>>
 ];
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -66,13 +67,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     }
 
     setterAmountSetting(newValue);
-    setIndexStart(0);
     const newSqlCommand = sqlCommand.replace(
       /LIMIT\s+\d+/,
       `LIMIT ${newValue}`
     );
     setSqlCommand(newSqlCommand);
-    await uiManager.executeStack(newSqlCommand);
+    await uiManager.executeSqlCommand(newSqlCommand);
   };
   useContext(Context);
   return (
@@ -102,8 +102,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           One View
         </label>
         <label>Max Row's:</label>
-        To many row value can lead to decreased preformance, if you want all
-        rows incert -1
         <input type="number" value={saveBetween} onChange={setAmount}></input>
         <button onClick={setStepAmount}>Change</button>
       </div>
