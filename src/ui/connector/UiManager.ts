@@ -114,7 +114,22 @@ class UiManager {
     newColumnName: string,
     oldColumnName: string
   ) {
-    await window.electronAPI.renameNamingColumn(newColumnName, oldColumnName);
+    if (!this.isValidColumnName(newColumnName)) {
+      alert(
+        "The new column name is invalid. Please use a valid SQL column name."
+      );
+      return;
+    }
+    const reponse = await window.electronAPI.renameNamingColumn(
+      newColumnName,
+      oldColumnName
+    );
+    this.setSqlCommand(reponse);
+  }
+
+  private isValidColumnName(columnName: string): boolean {
+    const validColumnNameRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+    return validColumnNameRegex.test(columnName);
   }
 
   async getMaxColumnValue(): Promise<number> {

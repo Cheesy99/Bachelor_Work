@@ -41,7 +41,7 @@ interface Window {
     renameNamingColumn: (
       newColumnName: string,
       oldColumnName: string
-    ) => Promise<void>;
+    ) => Promise<string>;
     isForeignTable: (tableName: string) => Promise<boolean>;
     getAllColumnValues: (columnName: string) => Promise<string[]>;
     getMaxRowValue: () => Promise<number>;

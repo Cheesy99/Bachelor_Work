@@ -217,14 +217,27 @@ class MainManager {
 
   public async exportToExcel(): Promise<void> {
     try {
-      // Here we have to get the table
-      const fullTable = { schema: [], table: [] };
+      const tableObject = await this.dataBase.sqlCommandWithResponse(
+        this.sqlCommandStack[this.sqlCommandStack.length - 1]
+      );
+      const fullTable = this.createOneTable(tableObject);
       const filePath = `${this.persistencePath}excelData.xlsx`;
       await this.excelExporter.exportResultToExcel(fullTable, filePath);
     } catch (error) {
       console.error("Error during Excel export:", error);
       throw new Error("Failed to export to Excel");
     }
+  }
+  private createOneTable(tableObject: TableObject[]): TableData {
+    const schema: string[] = Object.keys(tableObject[0]);
+    const table: (string | number)[][] = tableObject.map((row: any) => {
+      const rowData: (string | number)[] = [];
+      schema.forEach((key) => {
+        rowData.push(row[key]);
+      });
+      return rowData;
+    });
+    return { schema: schema, table: table };
   }
 
   public getDiskData() {
@@ -282,13 +295,26 @@ class MainManager {
   async renameColumn(
     newColumnName: string,
     oldColumnName: string
-  ): Promise<void> {
-    const tableName = this.getTableName(oldColumnName);
+  ): Promise<string> {
+    const tableName = await this.getTableName(oldColumnName);
     const renameColumnQuery = `
     ALTER TABLE ${tableName} 
     RENAME COLUMN ${oldColumnName} TO ${newColumnName};
   `;
+
+    console.log("command: ", renameColumnQuery);
     await this.dataBase.sqlCommand([renameColumnQuery]);
+
+    for (let i = 0; i < this.sqlCommandStack.length; i++) {
+      this.sqlCommandStack[i] = this.sqlCommandStack[i].replace(
+        new RegExp(`\\b${oldColumnName}\\b`, "g"),
+        newColumnName
+      );
+    }
+
+    const sqlCommand = this.sqlCommandStack.pop();
+    const reponse = await this.uiSqlCommand(sqlCommand!);
+    return reponse;
   }
 
   async getTableName(columnName: string) {
@@ -360,6 +386,8 @@ class MainManager {
     return reponse;
   }
   async undo(): Promise<string> {
+    if (this.sqlCommandStack.length === 1)
+      return this.sqlCommandStack[this.sqlCommandStack.length - 1];
     this.sqlCommandStack.pop();
     const oldCommand = this.sqlCommandStack[this.sqlCommandStack.length - 1];
     this.sqlCommandStack.pop();
