@@ -29,11 +29,11 @@ interface Window {
   electronAPI: {
     sendJsonFile: (fileData: string) => Promise<string>;
     initTableData: () => Promise<void>;
-    getTableSchema: (tableName: string) => Promise<string[]>;
     subscribeToListener: (
       callback: (TableObject: TableObject[]) => void
     ) => void;
-    popStack: () => Promise<void>;
+    undo: () => Promise<string>;
+    reset: () => Promise<string>;
     executeSqlCommand: (command: string) => Promise<string>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => Promise<void>;
@@ -48,8 +48,7 @@ interface Window {
     deleteColumn: (commandStack: string, columnName: string) => Promise<void>;
     getAllColumnValues: (columnName: string) => Promise<string[]>;
     getMaxRowValue: () => Promise<number>;
-    hasStack: () => Promise<boolean>;
-    getStack: () => Promise<string[]>;
+    getLastCommand: () => Promise<string>;
     getAllTableName: () => Promise<string[]>;
     getTable: (command: string) => Promise<TableData>;
   };

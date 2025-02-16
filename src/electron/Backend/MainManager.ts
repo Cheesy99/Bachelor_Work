@@ -15,6 +15,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class MainManager {
+  getLastCommand(): any {
+    throw new Error("Method not implemented.");
+  }
+  reset(): any {
+    throw new Error("Method not implemented.");
+  }
+  undo(): any {
+    throw new Error("Method not implemented.");
+  }
   async getAllTableName(): Promise<string[]> {
     try {
       const query = `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';`;
@@ -133,9 +142,15 @@ class MainManager {
         columns.add(`${column.name}`);
       }
     }
-    const filteredColumn = [...columns].filter((columnName: string) => {
-      return columnName === "main_table_id" || columnName.endsWith("_id");
-    });
+    const filteredColumn: string[] = [...columns]
+      .filter((columnName: string) => {
+        return !tableNames.includes(columnName);
+      })
+      .filter((columnName: string) => {
+        return !columnName.includes("_id");
+      });
+
+    filteredColumn.unshift("main_table_id");
     const joinConditions = tableNames
       .filter((tableName) => tableName !== mainTable)
       .map(
@@ -344,9 +359,6 @@ class MainManager {
     return result.length > 0;
   }
 
-  getStack(): string[] {
-    return this.sqlCommandStack;
-  }
   hasStack(): boolean {
     const stackFilePath = path.resolve(
       this.persistencePath,

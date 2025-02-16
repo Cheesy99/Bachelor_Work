@@ -21,11 +21,13 @@ interface MainWindowProps {
   setTable: React.Dispatch<React.SetStateAction<Table | null>>;
 }
 type ContextStack = [
-  string[],
-  React.Dispatch<React.SetStateAction<string[]>>,
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
   number,
   React.Dispatch<React.SetStateAction<number>>,
-  number
+  number,
+  boolean,
+  React.Dispatch<React.SetStateAction<boolean>>
 ];
 type ContextType = [
   Table | null,
@@ -53,11 +55,13 @@ function MainWindow({
     throw new Error("contextCommandStack is not defined");
   }
   const [
-    sqlCommandStack,
-    setSqlCommandStack,
+    sqlCommand,
+    setSqlCommand,
     amountOfShownRows,
     setIndexStart,
     indexStart,
+    selectedAll,
+    setSelectedAll,
   ] = contextCommandStack;
   const [tableData, tableType, loading, uiManager] = context;
 
@@ -69,6 +73,7 @@ function MainWindow({
         columnName: tableName,
       });
     }
+    setSelectedAll(false);
   };
 
   const onDoubleClick = async (
@@ -82,7 +87,7 @@ function MainWindow({
 
   const handleSqlSubmit = async () => {
     if (tableData) {
-      await uiManager.executeStack();
+      await uiManager.executeSqlCommand(sqlCommand);
     } else alert("Table Data is not been uploaded");
   };
 
@@ -99,8 +104,7 @@ function MainWindow({
   };
 
   const handleSqlInputField = (value: string) => {
-    const newSqlCommandStack = [...sqlCommandStack, value];
-    setSqlCommandStack(newSqlCommandStack);
+    setSqlCommand(value);
   };
 
   async function handleReset(): Promise<void> {
@@ -108,14 +112,8 @@ function MainWindow({
       "Are you sure you want to reset all changes will be removed"
     );
     if (confirmed) {
-      setSqlCommandStack([
-        tableData
-          ? `SELECT ${tableData?.schema!} FROM main_table LIMIT ${amountOfShownRows} OFFSET ${indexStart} ;`
-          : "",
-      ]);
+      await uiManager.reset();
       setIndexStart(0);
-
-      await uiManager.executeStack();
     }
   }
 
@@ -152,7 +150,7 @@ function MainWindow({
       {showSqlInput && (
         <div className="sql-input">
           <textarea
-            value={sqlCommandStack[sqlCommandStack.length - 1]}
+            value={sqlCommand}
             onChange={(e) => handleSqlInputField(e.target.value)}
             placeholder="Enter SQL command"
             spellCheck={false}

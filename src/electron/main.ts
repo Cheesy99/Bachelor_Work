@@ -83,24 +83,20 @@ app.on("ready", () => {
     return await mainManager.getMaxRowValue();
   });
 
-  ipcMain.handle("hasStack", async (_) => {
-    return await mainManager.hasStack();
-  });
-
-  ipcMain.handle("getStack", async (_) => {
-    return await mainManager.getStack();
-  });
-
   ipcMain.handle("getTable", async (_, command) => {
     return await mainManager.getTable(command);
   });
-
-  ipcMain.handle("popStack", async (_) => {
-    return await mainManager.popStack();
-  });
-
-  ipcMain.handle("getAllTableNames", async (_) => {
-    return await mainManager.getAllTableName();
+  ipcMain.handle("undo", async (_) => {
+    return await mainManager.undo();
+  }),
+    ipcMain.handle("reset", async (_) => {
+      return await mainManager.reset();
+    }),
+    ipcMain.handle("getAllTableNames", async (_) => {
+      return await mainManager.getAllTableName();
+    });
+  ipcMain.handle("getLastCommand", async (_) => {
+    return await mainManager.getLastCommand();
   });
 });
 

@@ -12,23 +12,23 @@ class UiManager {
     React.SetStateAction<Table | null>
   > | null;
   private readonly tableType: ViewSetting;
-  private sqlCommandStack: any[];
-  private setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>;
+  private sqlCommand: string;
+  private setSqlCommand: React.Dispatch<React.SetStateAction<string>>;
 
   public constructor(
     converter: Converter,
     setterTableRef: React.Dispatch<React.SetStateAction<Table | null>> | null,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     tableType: ViewSetting,
-    sqlCommandStack: string[],
-    setSqlCommandStack: React.Dispatch<React.SetStateAction<string[]>>
+    sqlCommand: string,
+    setSqlCommand: React.Dispatch<React.SetStateAction<string>>
   ) {
-    this.setSqlCommandStack = setSqlCommandStack;
+    this.setSqlCommand = setSqlCommand;
     this.converter = converter;
     this.setTableData = setterTableRef;
     this.setLoading = setLoading;
     this.tableType = tableType;
-    this.sqlCommandStack = sqlCommandStack;
+    this.sqlCommand = sqlCommand;
 
     window.electronAPI.subscribeToListener(
       async (tableObject: TableObject[]) => {
@@ -38,13 +38,6 @@ class UiManager {
         }
       }
     );
-  }
-
-  async getStack(): Promise<string[]> {
-    return await window.electronAPI.getStack();
-  }
-  async popStack() {
-    await window.electronAPI.popStack();
   }
 
   async insertJsonData(event: React.ChangeEvent<HTMLInputElement>) {
@@ -63,7 +56,7 @@ class UiManager {
         let fileData = reader.result as string;
         fileData = translateUmlauts(fileData);
         let reponse: string = await window.electronAPI.sendJsonFile(fileData);
-        this.setSqlCommandStack([...this.sqlCommandStack, reponse]);
+        this.setSqlCommand(reponse);
         this.setLoading(false);
       };
       reader.readAsText(file);
@@ -74,11 +67,8 @@ class UiManager {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists && this.setTableData) {
       await window.electronAPI.initTableData();
-    }
-    if (await window.electronAPI.hasStack()) {
-      this.setSqlCommandStack(await window.electronAPI.getStack());
     } else {
-      this.setSqlCommandStack([]);
+      this.setSqlCommand(await window.electronAPI.getLastCommand());
     }
   }
 
@@ -104,16 +94,14 @@ class UiManager {
     }
   }
 
-  public async executeStack(updatedSqlCommand?: string) {
-    const commandToExecute =
-      updatedSqlCommand ||
-      this.sqlCommandStack[this.sqlCommandStack.length - 1];
+  public async executeSqlCommand(updatedSqlCommand: string) {
+    const commandToExecute = updatedSqlCommand;
 
-    let reponse = await window.electronAPI.executeSqlCommand(commandToExecute);
+    let reponse: string = await window.electronAPI.executeSqlCommand(
+      commandToExecute
+    );
 
-    console.log("Man: ", reponse);
-    const stack = [...this.sqlCommandStack, reponse];
-    this.setSqlCommandStack(stack);
+    this.setSqlCommand(reponse);
   }
 
   public async changingSchemaName(
@@ -129,6 +117,16 @@ class UiManager {
 
   async getAllValue(columnName: string): Promise<string[]> {
     return await window.electronAPI.getAllColumnValues(columnName);
+  }
+
+  public async undo() {
+    const reponse = await window.electronAPI.undo();
+    this.setSqlCommand(reponse);
+  }
+
+  public async reset() {
+    const reponse = await window.electronAPI.reset();
+    this.setSqlCommand(reponse);
   }
 }
 

@@ -26,9 +26,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   exportToExcel: () => {
     return ipcRenderer.invoke("exportToExcel");
   },
-  getTableSchema: (tableName: string) => {
-    return ipcRenderer.invoke("getTableSchema", tableName);
-  },
 
   checkIfColumnIsTable: (tableName: string) => {
     return ipcRenderer.invoke("checkIfTable");
@@ -60,22 +57,20 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   isForeignTable: (tableName: string) => {
     return ipcRenderer.invoke("isForeignTable", tableName);
   },
-  hasStack: () => {
-    return ipcRenderer.invoke("hasStack");
+  undo: () => {
+    return ipcRenderer.invoke("undo");
   },
-
-  getStack: () => {
-    return ipcRenderer.invoke("getStack");
-  },
-
-  popStack() {
-    return ipcRenderer.invoke("popStack");
+  reset: () => {
+    return ipcRenderer.invoke("reset");
   },
   getAllTableName: () => {
     return ipcRenderer.invoke("getAllTableNames");
   },
-
   getTable: (command: string) => {
     return ipcRenderer.invoke("getTable", command);
+  },
+
+  getLastCommand: () => {
+    return ipcRenderer.invoke("getLastCommand");
   },
 } satisfies Window["electronAPI"]);

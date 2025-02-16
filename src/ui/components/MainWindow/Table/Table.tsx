@@ -90,39 +90,7 @@ function Table({
   };
 
   const renderNestedTable = (data: NestedTable) => {
-    return (
-      <>
-        <table>
-          <thead>
-            <tr>
-              {data.schema.map((column, index) => (
-                <th key={index}>{column}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.table.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {Array.isArray(row) ? (
-                  row.map((cell, cellIndex) => (
-                    <td key={cellIndex}>
-                      {typeof cell === "object" &&
-                      cell !== null &&
-                      "schema" in cell &&
-                      "table" in cell
-                        ? renderNestedTable(cell)
-                        : cell}
-                    </td>
-                  ))
-                ) : (
-                  <td colSpan={data.schema.length}>{row}</td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </>
-    );
+    return <>Not implemented</>;
   };
 
   return (

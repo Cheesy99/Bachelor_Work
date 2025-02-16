@@ -63,14 +63,6 @@ function SmallSidePanel({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     await uiManager.insertJsonData(event);
-
-    await new Promise<void>((resolve) => {
-      setTimeout(async () => {
-        const stack: string[] = await uiManager.getStack();
-        setSqlCommandStack(stack);
-        resolve();
-      }, 1000);
-    });
   };
 
   return (

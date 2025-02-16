@@ -24,11 +24,13 @@ type ContextType = [
   React.Dispatch<React.SetStateAction<Table | null>>
 ];
 type ContextStack = [
-  string[],
-  React.Dispatch<React.SetStateAction<string[]>>,
+  string,
+  React.Dispatch<React.SetStateAction<string>>,
   number,
   React.Dispatch<React.SetStateAction<number>>,
-  number
+  number,
+  boolean,
+  React.Dispatch<React.SetStateAction<boolean>>
 ];
 function BigSidePanel({
   columnValues,
@@ -46,11 +48,18 @@ function BigSidePanel({
     throw new Error("contextCommandStack is not defined");
   }
   const [tableData, tableType, loading, uiManager, setTableData] = context;
-  const [sqlCommandStack, setSqlCommandStack] = contextCommandStack;
+  const [
+    sqlCommandStack,
+    setSqlCommandStack,
+    amountOfShownRows,
+    setIndexStart,
+    indexStart,
+    selectedAll,
+    setSelectedAll,
+  ] = contextCommandStack;
   const [selectedColumnValues, setSelectedColumnValues] = useState<
     (string | number)[]
   >([]);
-  const [selectedAll, setSelectedAll] = useState<boolean>(false);
   const filteredColumnValues = Array.from(
     new Set(
       columnValues.values.filter(
@@ -91,10 +100,8 @@ function BigSidePanel({
         `$1 WHERE ${newCondition}$2`
       );
     }
-    const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
-    setSqlCommandStack(newSqlCommandStack);
 
-    await uiManager.executeStack(newSqlCommand);
+    await uiManager.executeSqlCommand(newSqlCommand);
   };
 
   const handleColumnCheckbox = (value: string | number) => {
@@ -123,11 +130,7 @@ function BigSidePanel({
       );
     }
 
-    console.log("New SQL Command:", newSqlCommand);
-    const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
-    setSqlCommandStack(newSqlCommandStack);
-
-    await uiManager.executeStack(newSqlCommand);
+    await uiManager.executeSqlCommand(newSqlCommand);
     closeSidePanel(false);
   };
 
@@ -160,10 +163,7 @@ function BigSidePanel({
         );
       }
 
-      const newSqlCommandStack = [...sqlCommandStack, newSqlCommand];
-      setSqlCommandStack(newSqlCommandStack);
-
-      await uiManager.executeStack(newSqlCommand);
+      await uiManager.executeSqlCommand(newSqlCommand);
       closeSidePanel(false);
     }
   };
