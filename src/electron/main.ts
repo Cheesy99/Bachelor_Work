@@ -49,17 +49,10 @@ app.on("ready", () => {
     await mainManager.exportToExcel();
   });
 
-  ipcMain.handle("checkIfTable", async (_, tableName: string) => {
-    return await mainManager.checkForTable(tableName);
-  });
-
   ipcMain.handle("howManyRows", async (_, tableName: string) => {
     return await mainManager.amountOfRows(tableName);
   });
 
-  ipcMain.handle("getSavedResult", async (_) => {
-    return await mainManager.getDiskData();
-  });
   ipcMain.handle("cleanDatabase", async (_) => {
     return await mainManager.cleanDatabase();
   });

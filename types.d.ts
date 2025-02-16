@@ -37,15 +37,12 @@ interface Window {
     executeSqlCommand: (command: string) => Promise<string>;
     databaseExists: () => Promise<boolean>;
     exportToExcel: () => Promise<void>;
-    checkIfColumnIsTable: (tableName: string) => Promise<boolean>;
-    getSaveResult: () => Promise<TableData | boolean>;
     cleanDatabase: () => Promise<void>;
     renameNamingColumn: (
       newColumnName: string,
       oldColumnName: string
     ) => Promise<void>;
     isForeignTable: (tableName: string) => Promise<boolean>;
-    deleteColumn: (commandStack: string, columnName: string) => Promise<void>;
     getAllColumnValues: (columnName: string) => Promise<string[]>;
     getMaxRowValue: () => Promise<number>;
     getLastCommand: () => Promise<string>;

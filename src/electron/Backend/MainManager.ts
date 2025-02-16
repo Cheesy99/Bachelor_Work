@@ -11,19 +11,11 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { isDev } from "../util.js";
 import fs from "fs";
+import { E } from "vitest/dist/chunks/reporters.6vxQttCV.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class MainManager {
-  getLastCommand(): any {
-    throw new Error("Method not implemented.");
-  }
-  reset(): any {
-    throw new Error("Method not implemented.");
-  }
-  undo(): any {
-    throw new Error("Method not implemented.");
-  }
   async getAllTableName(): Promise<string[]> {
     try {
       const query = `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';`;
@@ -165,20 +157,12 @@ class MainManager {
   }
 
   public async initTableData(): Promise<void> {
-    let schema: string[] = [];
-    let table: (string | number)[][] = [];
-
     if (this.checkForDisk()) {
       this.getDiskData();
       this.uiSqlCommand(this.sqlCommandStack[this.sqlCommandStack.length - 1]);
     } else {
-      const dataQuery = "SELECT * FROM main_table LIMIT 100 OFFSET 0;";
-      const dataResult = await this.dataBase.sqlCommandWithResponse(dataQuery);
-      schema = Object.keys(dataResult[0]);
-      table = dataResult.map((row: string | number) => Object.values(row));
-
-      const tableData: TableData = { schema: schema, table: table };
-      this.browserWindow.webContents.send("tableDataFromBackend", tableData);
+      const sqlCommand = await this.constructInitialSqlCommand();
+      this.uiSqlCommand(sqlCommand);
     }
   }
 
@@ -210,7 +194,7 @@ class MainManager {
       return sqlCommand;
     } catch (error) {
       console.error("Error executing SQL command:", error);
-      return "An error occurred while executing the SQL command";
+      return "error";
     }
   }
   async getForeignIds(
@@ -365,6 +349,22 @@ class MainManager {
       "sqlCommandStack.json"
     );
     return fs.existsSync(stackFilePath);
+  }
+  getLastCommand(): string {
+    return this.sqlCommandStack[this.sqlCommandStack.length - 1];
+  }
+  async reset(): Promise<string> {
+    this.sqlCommandStack = [];
+    const sqlCommand = await this.constructInitialSqlCommand();
+    const reponse = await this.uiSqlCommand(sqlCommand);
+    return reponse;
+  }
+  async undo(): Promise<string> {
+    this.sqlCommandStack.pop();
+    const oldCommand = this.sqlCommandStack[this.sqlCommandStack.length - 1];
+    this.sqlCommandStack.pop();
+    const reponse = await this.uiSqlCommand(oldCommand);
+    return reponse;
   }
 }
 

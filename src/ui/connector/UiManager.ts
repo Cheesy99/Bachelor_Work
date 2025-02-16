@@ -65,10 +65,10 @@ class UiManager {
 
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
-    if (databaseExists && this.setTableData) {
+    if (databaseExists) {
       await window.electronAPI.initTableData();
     } else {
-      this.setSqlCommand(await window.electronAPI.getLastCommand());
+      this.setSqlCommand("Insert Json data");
     }
   }
 
@@ -96,12 +96,18 @@ class UiManager {
 
   public async executeSqlCommand(updatedSqlCommand: string) {
     const commandToExecute = updatedSqlCommand;
+    console.log("command: ", updatedSqlCommand);
 
     let reponse: string = await window.electronAPI.executeSqlCommand(
       commandToExecute
     );
-
-    this.setSqlCommand(reponse);
+    if (reponse === "error") {
+      alert("The sql command is invalid please try again");
+      const getLastCommand = await window.electronAPI.getLastCommand();
+      this.setSqlCommand(getLastCommand);
+    } else {
+      this.setSqlCommand(reponse);
+    }
   }
 
   public async changingSchemaName(

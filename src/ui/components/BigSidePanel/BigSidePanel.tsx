@@ -49,8 +49,8 @@ function BigSidePanel({
   }
   const [tableData, tableType, loading, uiManager, setTableData] = context;
   const [
-    sqlCommandStack,
-    setSqlCommandStack,
+    sqlCommand,
+    setSqlCommand,
     amountOfShownRows,
     setIndexStart,
     indexStart,
@@ -86,7 +86,7 @@ function BigSidePanel({
       .join(", ");
     const newCondition = `${columnName} IN (${formattedValues})`;
 
-    let newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
+    let newSqlCommand = sqlCommand;
     if (newSqlCommand.includes("WHERE")) {
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
@@ -113,9 +113,9 @@ function BigSidePanel({
   };
 
   const handleDeleteRow = async (id: number) => {
-    const newCondition = `id != ${id}`;
+    const newCondition = `main_table.main_table_id != ${id}`;
 
-    let newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
+    let newSqlCommand = sqlCommand;
     if (newSqlCommand.includes("WHERE")) {
       // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
@@ -125,10 +125,12 @@ function BigSidePanel({
     } else {
       // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
-        /(FROM main_table)(\s+LIMIT|\s+OFFSET|$)/i,
+        /(\s+LEFT\s+JOIN.+?)(\s+LIMIT|\s+OFFSET|$)/i,
         `$1 WHERE ${newCondition}$2`
       );
     }
+
+    console.log("Remove id command: ", newSqlCommand);
 
     await uiManager.executeSqlCommand(newSqlCommand);
     closeSidePanel(false);
@@ -150,7 +152,7 @@ function BigSidePanel({
         table: tableData?.table!,
       });
 
-      let newSqlCommand = sqlCommandStack[sqlCommandStack.length - 1];
+      let newSqlCommand = sqlCommand;
       const selectColumnsMatch = newSqlCommand.match(/SELECT\s+(.*?)\s+FROM/i);
       if (selectColumnsMatch && selectColumnsMatch[1]) {
         let selectColumns = selectColumnsMatch[1]

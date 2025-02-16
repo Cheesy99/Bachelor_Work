@@ -4,7 +4,6 @@ const electron = require("electron");
 
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   sendJsonFile: (fileData: string): Promise<string> => {
-    console.log("Preload got called");
     return ipcRenderer.invoke("upload-json", fileData);
   },
 
@@ -27,14 +26,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("exportToExcel");
   },
 
-  checkIfColumnIsTable: (tableName: string) => {
-    return ipcRenderer.invoke("checkIfTable");
-  },
-
-  getSaveResult: () => {
-    return ipcRenderer.invoke("getSaveResult");
-  },
-
   initTableData: () => {
     return ipcRenderer.invoke("initTableData");
   },
@@ -45,9 +36,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   renameNamingColumn: (newColumnName: string, oldColumnName: string) => {
     return ipcRenderer.invoke("renameColumn", newColumnName, oldColumnName);
   },
-  deleteColumn: (commandStack: string, columnName: string) => {
-    return ipcRenderer.invoke("removeColumn", commandStack, columnName);
-  },
+
   getAllColumnValues: (columnName: string) => {
     return ipcRenderer.invoke("getAllValues", columnName);
   },
