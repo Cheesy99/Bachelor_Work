@@ -84,7 +84,6 @@ class MainManager {
     return this.dataBase.databaseExists();
   }
 
-  // Here I should return the starting sql command
   public async insertJson(json: string): Promise<string> {
     try {
       const cleanedJsonString = json.replace(/\\"/g, "");
@@ -134,8 +133,8 @@ class MainManager {
         columns.add(`${column.name}`);
       }
     }
-    const filteredColumn = [...columns].filter((values: string) => {
-      return !tableNames.includes(values);
+    const filteredColumn = [...columns].filter((columnName: string) => {
+      return columnName === "main_table_id" || columnName.endsWith("_id");
     });
     const joinConditions = tableNames
       .filter((tableName) => tableName !== mainTable)
@@ -144,8 +143,6 @@ class MainManager {
           `LEFT JOIN ${tableName} ON ${mainTable}.${tableName} = ${tableName}.${tableName}_id`
       )
       .join(" ");
-
-    console.log("column: ", filteredColumn);
 
     return `SELECT ${filteredColumn.join(
       ", "
@@ -212,8 +209,6 @@ class MainManager {
 
     return result.map((row: { id: number }) => row.id);
   }
-
-  // public async getTableSchema(tableName: string): Promise<string[]> {}
 
   public async checkForTable(tableName: string): Promise<boolean> {
     const query = `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`;
@@ -288,22 +283,34 @@ class MainManager {
   async renameColumn(
     newColumnName: string,
     oldColumnName: string
-  ): Promise<void> {}
+  ): Promise<void> {
+    const tableName = this.getTableName(oldColumnName);
+    const renameColumnQuery = `
+    ALTER TABLE ${tableName} 
+    RENAME COLUMN ${oldColumnName} TO ${newColumnName};
+  `;
+    await this.dataBase.sqlCommand([renameColumnQuery]);
+  }
+
+  async getTableName(columnName: string) {
+    const fetchTableNameByColumnQuery = `SELECT name 
+    FROM sqlite_master 
+    WHERE type='table' 
+    AND sql LIKE '%${columnName}%';`;
+    const result = await this.dataBase.sqlCommandWithResponse(
+      fetchTableNameByColumnQuery
+    );
+
+    if (result.length === 0) {
+      throw new Error(`Table for column ${columnName} not found.`);
+    }
+
+    return `${result[0].name}`;
+  }
 
   async getAllValues(columnName: string): Promise<string[]> {
     try {
-      const query = `SELECT name 
-                     FROM sqlite_master 
-                     WHERE type='table' 
-                     AND sql LIKE '%${columnName}%';`;
-      const result = await this.dataBase.sqlCommandWithResponse(query);
-
-      if (result.length === 0) {
-        throw new Error(`Table for column ${columnName} not found.`);
-      }
-
-      const tableName = result[0].name;
-
+      const tableName = await this.getTableName(columnName);
       const query2 = `SELECT ${columnName} FROM ${tableName};`;
       const valuesResult = await this.dataBase.sqlCommandWithResponse(query2);
 

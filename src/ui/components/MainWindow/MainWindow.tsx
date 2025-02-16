@@ -5,7 +5,6 @@ import { createSqlQuery, createSqlQueryForView } from "../../connector/Utils";
 import { Context, ContextCommandStack } from "../../App";
 import { ViewSetting, Display } from "../../connector/Enum/Setting";
 import UiManager from "../../connector/UiManager";
-import TreeComponent from "./Tree/TreeComponent";
 enum IndexDirection {
   RIGHT,
   LEFT,
@@ -20,7 +19,6 @@ interface MainWindowProps {
   handleUndo: () => Promise<void>;
   onIdClick: (values: (string | number)[]) => void;
   setTable: React.Dispatch<React.SetStateAction<Table | null>>;
-  setTableType: React.Dispatch<React.SetStateAction<ViewSetting>>;
 }
 type ContextStack = [
   string[],
@@ -44,9 +42,7 @@ function MainWindow({
   handleUndo,
   onIdClick,
   setTable,
-  setTableType,
 }: MainWindowProps) {
-  const [viewType, setViewType] = useState<Display>(Display.TABLE);
   const context: ContextType | undefined = useContext(Context);
   const contextCommandStack: ContextStack | undefined =
     useContext(ContextCommandStack);
@@ -90,10 +86,6 @@ function MainWindow({
     } else alert("Table Data is not been uploaded");
   };
 
-  const handleToggleChange = () => {
-    setViewType(viewType === Display.TABLE ? Display.TREE : Display.TABLE);
-  };
-
   const handleRight = () => {
     if (tableData) {
       index(IndexDirection.RIGHT);
@@ -134,18 +126,6 @@ function MainWindow({
           <button onClick={handleUndo}>Undo</button>
           <button onClick={handleReset}>Reset</button>
         </div>
-        <div className="toggle-container">
-          <span className="toggle-label">Table</span>
-          <label className="switch">
-            <input
-              type="checkbox"
-              onChange={handleToggleChange}
-              disabled={!tableData}
-            />
-            <span className="slider round"></span>
-          </label>
-          <span className="toggle-label">Tree</span>
-        </div>
       </div>
       <div
         className={`stage ${
@@ -155,23 +135,13 @@ function MainWindow({
         {loading ? (
           <div className="loading-bar">Loading...</div>
         ) : tableData ? (
-          viewType === Display.TABLE ? (
-            <Table
-              data={tableData}
-              onDoubleClick={onDoubleClick}
-              viewSetting={tableType}
-              onHeaderClick={handleOneHeaderClick}
-              onIdClick={onIdClick}
-            />
-          ) : (
-            <TreeComponent
-              tableSetter={setTable}
-              data={tableData}
-              viewSetting={tableType}
-              uiManager={uiManager}
-              setTableType={setTableType}
-            />
-          )
+          <Table
+            data={tableData}
+            onDoubleClick={onDoubleClick}
+            viewSetting={tableType}
+            onHeaderClick={handleOneHeaderClick}
+            onIdClick={onIdClick}
+          />
         ) : (
           <div className="default-stage">
             <p>No data available. Please select a table or load data.</p>

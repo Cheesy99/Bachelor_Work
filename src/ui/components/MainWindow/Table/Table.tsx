@@ -1,7 +1,6 @@
 import "./Table.css";
 import { ViewSetting } from "../../../connector/Enum/Setting";
 import React, { useState } from "react";
-import TreeComponent from "../Tree/TreeComponent";
 interface TableProps {
   data: Table;
   viewSetting: ViewSetting;
