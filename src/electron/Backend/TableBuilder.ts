@@ -4,11 +4,11 @@ import DataBaseConnector from "./DataBaseConnector.js";
 class TableBuilder {
   private databaseConnector: DataBaseConnector =
     DataBaseConnector.getInstance();
-  private collectMainInserts: any[] = [];
+  private collectMainInserts: (string | number)[] = [];
   public async build(
     json: JsonObject[],
     tableSchema: TableSchema
-  ): Promise<any[]> {
+  ): Promise<(string | number)[]> {
     await Promise.all(
       json.map(async (object) => {
         await this.recursive(object, tableSchema, "main_table");

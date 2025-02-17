@@ -100,7 +100,7 @@ class MainManager {
       } = this.schemaBuilder.generateSchemaWithCommand(jsonObject);
 
       await this.dataBase.sqlCommand(schemaResult.command);
-      const mainInsert: any[] = await this.tableBuilder.build(
+      const mainInsert: (string | number)[] = await this.tableBuilder.build(
         jsonObject,
         schemaResult.tableSchema
       );
