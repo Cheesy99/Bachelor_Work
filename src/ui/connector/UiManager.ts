@@ -34,7 +34,7 @@ class UiManager {
       async (tableObject: TableObject[]) => {
         if (this.setTableData) {
           sessionStorage.setItem("TableData", JSON.stringify(tableObject));
-          this.setTableData(await this.convert(this.tableType));
+          this.setTableData(this.convert(this.tableType));
         }
       }
     );
