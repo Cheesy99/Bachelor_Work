@@ -1,50 +1,45 @@
-# React + TypeScript + Vite
+# Build Final Desktop Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Follow these steps to build the final desktop application for your platform:
 
-Currently, two official plugins are available:
+## Step 1: Build the Application
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Run the build command to prepare the application for packaging.
 
-## Expanding the ESLint configuration
+- Run `npm install`
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Then 
+- Run `npm run build`
 
-- Configure the top-level `parserOptions` property like this:
+## Step 2: Install Dependencies
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Install Electron as a development dependency:
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- Run `npm install --save-dev electron`
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Also, install Electron Builder as a development dependency:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- Run `npm i --save-dev electron-builder`
+
+## Step 3: Transpile for Electron
+
+Transpile the application for Electron by running:
+
+- Run `npm run transpile:electron`
+
+**Note:** You might encounter an error in the terminal during this step. This is normal. Just save the changes, and you should see a new `dist-electron` folder created.
+
+## Step 4: Build for Your Platform
+
+Now, you're ready to build the application for different platforms.
+
+### For macOS:
+Run `npm run dist:mac` to build the application for macOS.
+
+### For Windows:
+Run `npm run dist:win` to build the application for Windows.
+
+### For Linux:
+Run `npm run dist:linux` to build the application for Linux.
+
+Once the build process is complete, the final desktop application for your selected platform will be ready.

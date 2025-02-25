@@ -1,4 +1,4 @@
-import TableDataBackend from "../Interfaces/TableData.js";
+
 import TableSchema from "../Interfaces/TableSchema.js";
 
 class DataCleaner {
