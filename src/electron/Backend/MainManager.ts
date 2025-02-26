@@ -11,7 +11,6 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { isDev } from "../util.js";
 import fs from "fs";
-import { E } from "vitest/dist/chunks/reporters.6vxQttCV.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -197,23 +196,7 @@ class MainManager {
       return "error";
     }
   }
-  async getForeignIds(
-    foreignTableName: string,
-    foreignColumnName: string,
-    values: any
-  ): Promise<number[]> {
-    const placeholders = values.map((val: string) => `'${val}'`).join(", ");
-    const query = `SELECT id FROM ${foreignTableName} WHERE ${foreignColumnName} IN (${placeholders})`;
-    const result = await this.dataBase.sqlCommandWithResponse(query);
 
-    return result.map((row: { id: number }) => row.id);
-  }
-
-  public async checkForTable(tableName: string): Promise<boolean> {
-    const query = `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`;
-    const result = await this.dataBase.sqlCommandWithResponse(query);
-    return result.length > 0;
-  }
 
   public async exportToExcel(): Promise<void> {
     try {
@@ -267,7 +250,7 @@ class MainManager {
   }
 
   async cleanDatabase(): Promise<void> {
-    try {
+
       await this.dataBase.recreateDatabase();
       this.tableBuilder = new TableBuilder();
       this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
@@ -286,10 +269,7 @@ class MainManager {
         console.warn(`File not found: ${file4Path}`);
       }
       console.info("Database file deleted successfully.");
-    } catch (error) {
-      console.error("Error deleting the database file:", error);
-      throw new Error("Failed to delete the database file.");
-    }
+
   }
 
   async renameColumn(
@@ -302,7 +282,6 @@ class MainManager {
     RENAME COLUMN ${oldColumnName} TO ${newColumnName};
   `;
 
-    console.log("command: ", renameColumnQuery);
     await this.dataBase.sqlCommand([renameColumnQuery]);
 
     for (let i = 0; i < this.sqlCommandStack.length; i++) {
@@ -369,13 +348,6 @@ class MainManager {
     return result.length > 0;
   }
 
-  hasStack(): boolean {
-    const stackFilePath = path.resolve(
-      this.persistencePath,
-      "sqlCommandStack.json"
-    );
-    return fs.existsSync(stackFilePath);
-  }
   getLastCommand(): string {
     return this.sqlCommandStack[this.sqlCommandStack.length - 1];
   }

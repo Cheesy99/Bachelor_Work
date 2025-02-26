@@ -27,7 +27,7 @@ describe("schemaBuilder", () => {
     expect(result.tableSchema).toEqual(tableSchema);
     const expectedCommand = [
       "CREATE TABLE main_table (",
-      "  id INTEGER PRIMARY KEY AUTOINCREMENT ,",
+      "  main_table_id INTEGER PRIMARY KEY AUTOINCREMENT ,",
       "  name VARCHAR(255),",
       "  age VARCHAR(255)",
       ")",
@@ -66,14 +66,14 @@ describe("schemaBuilder", () => {
 
     const expectedCommandAddressTable = [
       "CREATE TABLE main_table (",
-      "  id INTEGER PRIMARY KEY AUTOINCREMENT ,",
+      "  main_table_id INTEGER PRIMARY KEY AUTOINCREMENT ,",
       "  name VARCHAR(255),",
       "  age VARCHAR(255),",
       "  address INTEGER,",
-      "  FOREIGN KEY (address) REFERENCES address(id)",
+      "  FOREIGN KEY (address) REFERENCES address(address_id)",
       ")",
       "CREATE TABLE address (",
-      "  id INTEGER PRIMARY KEY AUTOINCREMENT ,",
+      "  address_id INTEGER PRIMARY KEY AUTOINCREMENT ,",
       "  address_city VARCHAR(255),",
       "  address_zip VARCHAR(255)",
       ")",
@@ -111,15 +111,15 @@ describe("schemaBuilder", () => {
     expect(result.tableSchema).toEqual(tableSchema);
     const expectedCommandMainTable = [
       "CREATE TABLE main_table (",
-      "  id INTEGER PRIMARY KEY AUTOINCREMENT ,",
+      "  main_table_id INTEGER PRIMARY KEY AUTOINCREMENT ,",
       "  name VARCHAR(255),",
       "  age VARCHAR(255),",
       "  address INTEGER,",
-      "  FOREIGN KEY (address) REFERENCES address(id)",
+      "  FOREIGN KEY (address) REFERENCES address(address_id)",
       ")",
       "",
       "CREATE TABLE address (",
-      "  id INTEGER PRIMARY KEY AUTOINCREMENT ,",
+      "  address_id INTEGER PRIMARY KEY AUTOINCREMENT ,",
       "  address_city VARCHAR(255),",
       "  address_zip VARCHAR(255)",
       ")",

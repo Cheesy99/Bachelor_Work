@@ -144,4 +144,39 @@ describe("TableBuilder", () => {
     mockDatabaseConnector.mockRestore();
     insertWithIdReponseSpy.mockRestore();
   });
+  it("should handle nested objects correctly", async () => {
+    const json: JsonObject = {
+      name: "John Doe",
+      address: {
+        street: "123 Main St",
+        city: "Anytown",
+      },
+    };
+
+    const tableSchema: TableSchema = {
+      main_table: ["name", "address"],
+      address: ["street", "city"],
+    };
+
+    const mockDatabaseConnector = vi
+        .spyOn(DataBaseConnector.prototype, "sqlCommandWithIdResponse")
+        .mockResolvedValue(-1);
+
+    const tableBuilder = new TableBuilder();
+
+    // Spy on the recursive method
+    const recursiveSpy = vi.spyOn(tableBuilder as any, "recursive");
+
+    await tableBuilder["recursive"](json, tableSchema, "main_table");
+
+    // Verify that the recursive method was called for the nested object
+    expect(recursiveSpy).toHaveBeenCalledWith(
+        json.address,
+        tableSchema,
+        "address"
+    );
+
+    mockDatabaseConnector.mockRestore();
+    recursiveSpy.mockRestore();
+  });
 });
