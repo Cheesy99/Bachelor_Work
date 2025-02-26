@@ -44,4 +44,4 @@ Run `npm run dist:win` to build the application for Windows.
 ### For Linux:
 Run `npm run dist:linux` to build the application for Linux.
 
-Once the build process is complete, the final desktop application for your selected platform will be ready.
+Once the build process is complete, the final desktop application for your selected platform will be ready this will be the dist file.
