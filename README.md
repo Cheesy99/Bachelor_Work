@@ -1,10 +1,12 @@
 # Build Final Desktop Application
 
-Follow these steps to build the final desktop application for your platform:
+Follow these steps to build the final desktop application for your platform.
 
 ## Step 1: Build the Application
 
-Run the build command to prepare the application for packaging.
+Ensure that the filename you save the application as does not contain spaces. Use underscores (`_`) instead. This is because the `sqlite3` library may cause an error when running `npm install`.
+
+Run the build command to prepare the application for packaging:
 
 - Run `npm install`
 
