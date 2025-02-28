@@ -47,7 +47,7 @@ describe("MainManager", () => {
 
   it("should save schema to disk", () => {
     const writeFileSyncStub = sandbox.stub(fs, "writeFileSync");
-    mainManager.saveToDiskWhenQuit();
+    mainManager.persistSqlStack();
     expect(writeFileSyncStub.callCount).toBe(4);
   });
 

@@ -22,8 +22,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return ipcRenderer.invoke("databaseExists");
   },
 
-  exportToExcel: () => {
-    return ipcRenderer.invoke("exportToExcel");
+  exportToExcel: (name: string) => {
+    return ipcRenderer.invoke("exportToExcel", name);
   },
 
   initTableData: () => {

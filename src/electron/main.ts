@@ -45,8 +45,8 @@ app.on("ready", () => {
     return await mainManager.uiSqlCommand(command);
   });
 
-  ipcMain.handle("exportToExcel", async (_) => {
-    await mainManager.exportToExcel();
+  ipcMain.handle("exportToExcel", async (_, name: string) => {
+    await mainManager.exportToExcel(name);
   });
 
   ipcMain.handle("howManyRows", async (_, tableName: string) => {
@@ -93,8 +93,3 @@ app.on("ready", () => {
   });
 });
 
-app.on("before-quit", () => {
-  if (mainManager) {
-    mainManager.saveToDiskWhenQuit();
-  }
-});

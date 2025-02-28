@@ -6,6 +6,7 @@ import SettingsModal from "./Settings/Settings";
 import React from "react";
 import { ViewSetting } from "../../connector/Enum/Setting";
 import Modal from "react-modal";
+import InputModal from "./InputModal/InputModal";
 
 Modal.setAppElement("#root");
 interface SmallSidePanelProps {
@@ -25,6 +26,7 @@ function SmallSidePanel({
   const context = useContext(Context);
   const contextCommandStack = useContext(ContextCommandStack);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   if (!context || !contextCommandStack) {
     throw new Error("SmallSidePanel must be used within a Context.Provider");
   }
@@ -37,8 +39,11 @@ function SmallSidePanel({
     setIndexStart,
     indexStart,
   ] = contextCommandStack;
-  const exportToExcel = async () => {
-    uiManager.export();
+  
+    const exportToExcel = async (appName: string) => {
+    if (appName) {
+      await uiManager.export(appName);
+    }
   };
 
   const deleteDatabase = async () => {
@@ -90,11 +95,16 @@ function SmallSidePanel({
       <label
         htmlFor="excelUpload"
         className="excel-icon-label"
-        onClick={exportToExcel}
+        onClick={() => setIsInputModalOpen(true)}
         title="Export to Excel"
       >
         <i className="fas fa-file-excel icon"></i>
       </label>
+      <InputModal
+        isOpen={isInputModalOpen}
+        onRequestClose={() => setIsInputModalOpen(false)}
+        onSubmit={exportToExcel}
+      />
       <label
         htmlFor="sqlUpload"
         className="sql-icon-label"
