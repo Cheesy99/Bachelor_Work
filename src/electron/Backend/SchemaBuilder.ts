@@ -64,11 +64,7 @@ class SchemaBuilder {
   }
 
   private cleanData(tableSchema: TableSchema[]): TableSchema {
-    // Removes Duplicate object that are exactly the same
     this.removeDuplicates(tableSchema);
-
-    //Here we need to make sure that we only have one table and all the columns types found for a
-    //column are collected and are all add to the table
 
     const mergedSchema: { [key: string]: Set<string> } = {};
 

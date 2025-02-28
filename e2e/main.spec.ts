@@ -1,5 +1,4 @@
 import { test, expect, _electron } from "@playwright/test";
-import { resolve } from "path";
 
 let electronApp: Awaited<ReturnType<typeof _electron.launch>>;
 let mainPage: Awaited<ReturnType<typeof electronApp.firstWindow>>;
@@ -26,7 +25,6 @@ test("should open a window", async () => {
 });
 
 test("should display the SmallSidePanel", async () => {
-  // Wait for the element to be present
   await mainPage.waitForSelector(".small_panel");
   const smallSidePanel = await mainPage.$(".small_panel");
   expect(smallSidePanel).not.toBeNull();

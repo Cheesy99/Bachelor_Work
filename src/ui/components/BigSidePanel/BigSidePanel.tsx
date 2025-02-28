@@ -85,7 +85,6 @@ function BigSidePanel({
       .map((value) => (typeof value === "string" ? `'${value}'` : value))
       .join(", ");
     const newCondition = `${columnName} IN (${formattedValues})`;
-    console.log("New condition: ", newCondition);
     let newSqlCommand = sqlCommand;
     if (newSqlCommand.includes("WHERE")) {
       newSqlCommand = newSqlCommand.replace(
@@ -115,21 +114,16 @@ function BigSidePanel({
 
     let newSqlCommand = sqlCommand;
     if (newSqlCommand.includes("WHERE")) {
-      // If there's already a WHERE clause, add the new condition with AND
       newSqlCommand = newSqlCommand.replace(
         /WHERE\s+(.+?)(\s+LIMIT|\s+OFFSET|$)/i,
         `WHERE $1 AND ${newCondition}$2`
       );
     } else {
-      // If there's no WHERE clause, add one with the new condition
       newSqlCommand = newSqlCommand.replace(
-        /(\s+LEFT\s+JOIN.+?)(\s+LIMIT|\s+OFFSET|$)/i,
+        /(LEFT JOIN .+? ON .+?)(\s+LIMIT|\s+OFFSET|$)/i,
         `$1 WHERE ${newCondition}$2`
       );
     }
-
-    console.log("Remove id command: ", newSqlCommand);
-
     await uiManager.executeSqlCommand(newSqlCommand);
     closeSidePanel(false);
   };
