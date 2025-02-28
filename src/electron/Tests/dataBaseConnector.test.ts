@@ -149,17 +149,14 @@ describe("DataBaseConnector", () => {
 
     serializeStub.callsFake((fn) => fn());
 
-    // Mock BEGIN TRANSACTION success
     runStub.withArgs("BEGIN TRANSACTION").callsFake((sql, callback) => {
       if (typeof callback === 'function') callback(null);
     });
 
-    // Mock SQL command success
     runStub.withArgs(sqlCommands[0]).callsFake((sql, callback) => {
       if (typeof callback === 'function') callback(null);
     });
 
-    // Mock COMMIT failure
     runStub.withArgs("COMMIT").callsFake((sql, callback) => {
       if (typeof callback === 'function') callback(error);
     });

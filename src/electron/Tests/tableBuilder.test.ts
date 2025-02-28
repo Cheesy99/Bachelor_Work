@@ -164,12 +164,10 @@ describe("TableBuilder", () => {
 
     const tableBuilder = new TableBuilder();
 
-    // Spy on the recursive method
     const recursiveSpy = vi.spyOn(tableBuilder as any, "recursive");
 
     await tableBuilder["recursive"](json, tableSchema, "main_table");
 
-    // Verify that the recursive method was called for the nested object
     expect(recursiveSpy).toHaveBeenCalledWith(
         json.address,
         tableSchema,
