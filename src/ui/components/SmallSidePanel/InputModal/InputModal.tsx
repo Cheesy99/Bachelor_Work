@@ -31,6 +31,7 @@ const InputModal: React.FC<InputModalProps> = ({
       </div>
       <button className="submit-button" onClick={handleSubmit}>Submit</button>
       <button className="cancel-button" onClick={onRequestClose}>Cancel</button>
+      <h3>File will be saved in download folder</h3>
     </Modal>
   );
 };
