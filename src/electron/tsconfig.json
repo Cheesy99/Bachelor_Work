@@ -11,5 +11,9 @@
     "skipLibCheck": true,
 
     "types": ["../../types"]
-  }
+  },
+    "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
