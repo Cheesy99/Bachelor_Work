@@ -58,6 +58,8 @@ class MainManager {
   private sqlCommandStack: string[] = [""];
 
   public constructor(browserWindow: BrowserWindow) {
+    // This is for development
+    // this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
     const userDataPath = app.getPath("userData");
     this.persistencePath = userDataPath;
     this.dataBase = DataBaseConnector.getInstance();

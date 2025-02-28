@@ -67,6 +67,7 @@ class UiManager {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists) {
       const reponse = await window.electronAPI.initTableData();
+      console.log("reponse: ", reponse);
       this.setSqlCommand(reponse);
     } else {
       this.setSqlCommand("Insert Json data");

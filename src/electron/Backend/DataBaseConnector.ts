@@ -18,8 +18,15 @@ class DataBaseConnector {
     return DataBaseConnector.instance;
   }
   private constructor() {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+    // const __filename = fileURLToPath(import.meta.url);
+    // const __dirname = path.dirname(__filename);
+    // For development envirnoment
+    // this.dbPath = path.join(
+    //   __dirname,
+    //   isDev() ? "../../" : "../",
+    //   "dataBase.db"
+    // );
+    // this.dataBase = new sqlite3.Database(this.dbPath);
     // FOR PRODUCTION BUILD
     const userDataPath = app.getPath("userData");
     this.dbPath = path.join(userDataPath, "dataBase.db");
