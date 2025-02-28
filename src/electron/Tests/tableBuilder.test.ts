@@ -20,7 +20,6 @@ describe("TableBuilder", () => {
 
     const tableBuilder = new TableBuilder();
 
-    // Spy on the insertWithIdReponse method
     const insertWithIdReponseSpy = vi.spyOn(
       tableBuilder as any,
 
@@ -31,7 +30,6 @@ describe("TableBuilder", () => {
 
     expect(result).toHaveLength(0);
 
-    // Verify that insertWithIdReponse was called with the expected statements
     expect(insertWithIdReponseSpy).toHaveBeenCalledWith(
       "INSERT INTO main_table (name, age) VALUES ('John Doe', '30');"
     );
@@ -113,7 +111,6 @@ describe("TableBuilder", () => {
 
     const tableBuilder = new TableBuilder();
 
-    // Spy on the insertWithIdReponse method
     const insertWithIdReponseSpy = vi.spyOn(
       tableBuilder as any,
       "insertWithIdResponse"

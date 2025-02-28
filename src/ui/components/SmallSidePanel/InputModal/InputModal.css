@@ -4,7 +4,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  color: black; /* Ensure text color is black */
+  color: black; 
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -30,7 +30,7 @@
 .input-group label {
   margin-bottom: 10px;
   font-size: 16px;
-  color: black; /* Ensure label text color is black */
+  color: black; 
 }
 
 .input-group input[type="text"] {
