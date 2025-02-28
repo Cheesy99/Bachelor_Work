@@ -158,13 +158,13 @@ class MainManager {
     )} FROM ${mainTable} ${joinConditions} LIMIT 100 OFFSET 0;`;
   }
 
-  public async initTableData(): Promise<void> {
+  public async initTableData(): Promise<string> {
     if (this.checkForDisk()) {
       this.getDiskData();
-      this.uiSqlCommand(this.sqlCommandStack[this.sqlCommandStack.length - 1]);
+      return this.uiSqlCommand(this.sqlCommandStack[this.sqlCommandStack.length - 1]);
     } else {
       const sqlCommand = await this.constructInitialSqlCommand();
-      this.uiSqlCommand(sqlCommand);
+      return this.uiSqlCommand(sqlCommand);
     }
   }
 
@@ -202,14 +202,13 @@ class MainManager {
   }
 
 
-  public async exportToExcel(): Promise<void> {
+  public async exportToExcel(name: string): Promise<void> {
     try {
       const tableObject = await this.dataBase.sqlCommandWithResponse(
         this.sqlCommandStack[this.sqlCommandStack.length - 1]
       );
       const fullTable = this.createOneTable(tableObject);
-      const filePath = `${this.persistencePath}excelData.xlsx`;
-      await this.excelExporter.exportResultToExcel(fullTable, filePath);
+      await this.excelExporter.exportResultToExcel(fullTable, name);
     } catch (error) {
       console.error("Error during Excel export:", error);
       throw new Error("Failed to export to Excel");

@@ -47,8 +47,8 @@ describe("MainManager", () => {
 
   it("should save schema to disk", () => {
     const writeFileSyncStub = sandbox.stub(fs, "writeFileSync");
-    mainManager.saveToDiskWhenQuit();
-    expect(writeFileSyncStub.callCount).toBe(1);
+    mainManager.persistSqlStack();
+    expect(writeFileSyncStub.callCount).toBe(4);
   });
 
   it("should insert JSON data", async () => {
@@ -63,7 +63,7 @@ describe("MainManager", () => {
     });
     sandbox.stub(TableBuilder.prototype, "build").resolves([]);
     const result = await mainManager.insertJson(json);
-    expect(result).toBe("SELECT main_table_id FROM main_table  LIMIT 100 OFFSET 0;");
+    expect(result).toBe("ok");
   });
 
   it("should handle invalid JSON data", async () => {

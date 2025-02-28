@@ -28,7 +28,7 @@ type FromId = {
 interface Window {
   electronAPI: {
     sendJsonFile: (fileData: string) => Promise<string>;
-    initTableData: () => Promise<void>;
+    initTableData: () => Promise<string>;
     subscribeToListener: (
       callback: (TableObject: TableObject[]) => void
     ) => void;
@@ -36,7 +36,7 @@ interface Window {
     reset: () => Promise<string>;
     executeSqlCommand: (command: string) => Promise<string>;
     databaseExists: () => Promise<boolean>;
-    exportToExcel: () => Promise<void>;
+    exportToExcel: (name: string) => Promise<void>;
     cleanDatabase: () => Promise<void>;
     renameNamingColumn: (
       newColumnName: string,

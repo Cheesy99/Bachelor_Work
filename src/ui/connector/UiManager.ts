@@ -66,7 +66,8 @@ class UiManager {
   public async getInitTableData() {
     const databaseExists = await window.electronAPI.databaseExists();
     if (databaseExists) {
-      await window.electronAPI.initTableData();
+      const reponse = await window.electronAPI.initTableData();
+      this.setSqlCommand(reponse);
     } else {
       this.setSqlCommand("Insert Json data");
     }
@@ -83,8 +84,8 @@ class UiManager {
     return this.converter.convertBackendData(result);
   }
 
-  public async export(): Promise<void> {
-    return await window.electronAPI.exportToExcel();
+  public async export(name: string): Promise<void> {
+    return await window.electronAPI.exportToExcel(name);
   }
   private setStrategyByViewSetting(viewSetting: ViewSetting) {
     if (viewSetting === ViewSetting.NESTEDTABLES) {
