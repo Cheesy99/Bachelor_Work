@@ -11,6 +11,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { isDev } from "../util.js";
 import fs from "fs";
+import { app } from "electron";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -56,7 +58,8 @@ class MainManager {
   private sqlCommandStack: string[] = [""];
 
   public constructor(browserWindow: BrowserWindow) {
-    this.persistencePath = path.join(__dirname, isDev() ? "../../" : "../");
+    const userDataPath = app.getPath("userData");
+    this.persistencePath = userDataPath;
     this.dataBase = DataBaseConnector.getInstance();
     this.tableBuilder = new TableBuilder();
     this.schemaBuilder = new SchemaBuilder(new SqlTextGenerator());
@@ -165,7 +168,7 @@ class MainManager {
     }
   }
 
-  public saveToDiskWhenQuit(): void {
+  public persistSqlStack(): void {
     const sqlCommandFilePath = path.join(
       this.persistencePath,
       "sqlCommandStack.json"
@@ -190,6 +193,7 @@ class MainManager {
 
       this.browserWindow.webContents.send("tableDataFromBackend", resultObject);
       this.sqlCommandStack.push(sqlCommand);
+      this.persistSqlStack();
       return sqlCommand;
     } catch (error) {
       console.error("Error executing SQL command:", error);

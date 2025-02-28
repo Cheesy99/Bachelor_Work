@@ -23,12 +23,6 @@ class DataBaseConnector {
     // FOR PRODUCTION BUILD
     const userDataPath = app.getPath("userData");
     this.dbPath = path.join(userDataPath, "dataBase.db");
-    //FOR DEVELOPMENT BUILD
-    // this.dbPath = path.join(
-    //   __dirname,
-    //   isDev() ? "../../" : "../",
-    //   "dataBase.db"
-    // );
     this.dataBase = new sqlite3.Database(this.dbPath);
   }
 

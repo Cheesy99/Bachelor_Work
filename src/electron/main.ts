@@ -93,8 +93,4 @@ app.on("ready", () => {
   });
 });
 
-app.on("before-quit", () => {
-  if (mainManager) {
-    mainManager.saveToDiskWhenQuit();
-  }
-});
+
