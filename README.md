@@ -1,39 +1,28 @@
-# Build Final Desktop Application
+npm run dist:mac
+```
 
-Follow these steps to build the final desktop application for your platform.
+For **Windows**:
 
-## Step 1: Install Dependencies
+```sh
+npm run dist:win
+```
 
-Ensure that the filename you save the application as does not contain spaces. Use underscores (`_`) instead. This is because the `sqlite3` library may cause an error when running `npm install`.
+For **Linux**:
 
-Once you have cloned the repo 
+```sh
+npm run dist:linux
+```
 
-- Run `cd Bachelor_Work`
+#### Step 4: Transpile for Electron (Only if needed)
 
-Run the build command to prepare the application for packaging:
+If you encounter an error while building, transpile the application for Electron by running:
 
-- Run `npm install`
+```sh
+npm run transpile:electron
+```
 
-Install Electron as a development dependency:
+> **Note:** You might encounter an error in the terminal during this step. This is normal. Just save the changes, and you should see a new `dist-electron` folder created. After this, retry Step 3.
 
-- Run `npm install --save-dev electron`
+---
 
-Also, install Electron Builder as a development dependency:
-
-- Run `npm i --save-dev electron-builder`
-
-## Step 3: Build for Your Platform
-
-Now, you're ready to build the application for different platforms.
-
-### For macOS:
-Run `npm run dist:mac` to build the application for macOS.
-
-### For Windows:
-Run `npm run dist:win` to build the application for Windows.
-
-### For Linux:
-Run `npm run dist:linux` to build the application for Linux.
-
-Once the build process is complete, the final desktop application for your selected platform will be ready this will be the dist file for mac in the dist file go to the file 
-mac-arm64 and there you can start the application.
+Once the build process is complete, the final desktop application for your selected platform will be ready. This will be the `dist` file.
