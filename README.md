@@ -16,6 +16,7 @@ node -v
 Then:
 
 ```sh
+npm install
 npm run build
 ```
 
