@@ -4,15 +4,14 @@ Follow these steps to build the final desktop application for your platform.
 
 ---
 
-### Step 1: Build the Application
+### Prerequisite: Use Node.js 20
 
-Ensure that the filename you save the application as does not contain spaces. Use underscores (`_`) instead. This is because the `sqlite3` library may cause an error when running `npm install`.
-
-Run the build command to prepare the application for packaging:
+Ensure you are using **Node.js version 20** before running any commands. You can check your Node.js version with:
 
 ```sh
-npm install
+node -v
 ```
+
 
 Then:
 
